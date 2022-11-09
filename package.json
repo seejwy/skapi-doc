@@ -1,0 +1,14 @@
+{
+  "name": "skapi-docs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "serve": "npx vuepress dev"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "vuepress": "^1.9.7"
+  }
+}
