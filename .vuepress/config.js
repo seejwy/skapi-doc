@@ -16,7 +16,9 @@ module.exports = {
             '/getting-started/',
             '/the-basics/',
             '/authentication/',
-            '/user-account/'
+            '/authentication-tutorial/',
+            '/user-account/',
+            '/data-types/'
         ]
     }
 };

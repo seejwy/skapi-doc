@@ -1,179 +1,52 @@
 # The Basics
 
-**skapi** class methods provides everything you need to operate your web service.\
-Execute class methods with approporiate arguments guided in the documentations.
-
-Before we jump in to the features of skapi,
-I'd like to show you how the documentation will be written so we will not get confused.
-
-## Reading the Doc
-Let's look at the example below.
-
-``` js
-// example
-let params = {
-    A: 'some_data',
-    B: true,
-    C: 1,
-}
-let options = {
-    A: ['A','B','C'],
-    B: [0, true]
-}
-window.skapi.method(params, options);
-```
-
-The code above is running a **method** called `method`.\
-The method named `method` takes two **arguments** which is `params` and `options`.\
-Of course, the method named `method` does not actually exists in **skapi**.\
-This is just a demonstration to guide how the data types are documented.
-
-The example code above will be documented as below:
-
-### `skapi.method(params, options?)`
-
-This is a documentation example for method called `method`.
-
-- **`params: {}`**
-
-  The params takes `object` as an argument.
-
-  - `A: string`
-
-    Parameter named "A" takes a `string` typed data.
-  - `B: boolean`
-
-    Parameter named "B" takes `boolean` typed data.
-  - `C?: number | string`
-
-    Optional parameter named "C" takes `number` or `string` typed data.
-
-- **`options?: {} | null`**
-
-  The options is optional.
-  options takes `object` or `null` as an argument.
-
-  - `A: Array<string>`
-
-    Parameter named "A" takes a array of `string` typed data.
-  - `B?: Array<number | boolean>`
-
-    Optional parameter named "B" takes array `boolean` or `number` typed data.
-
-- **Returns**
-  
-  Returns an `object` with property "a" as `string` and "b" as `number`
-  ``` ts
-  {
-    a:string;
-    b:number;
-  }
-  ```
-
-## Working with forms
-
-If the method argument type accepts `form` you can pass vanilla HTML forms as an argument.\
-**skapi** takes each input element name as a parameter name.
-
-``` html
-<body>
-  <form onsubmit='skapi.login(this)' onerror='loginFailed(event)' action='/welcome'>
-    <input name='email'>
-    <input name='password'>
-    <input type='submit'>
-  </form>
-</body>
-<script>
-    let skapi = new Skapi('your_service_id', 'your_user_id');
-    function loginFailed(err) {
-      // executes when failed
-      console.log(err);
-    }
-</script>
-```
-
-... is equivelant as
-
-``` html
-<body>
-    <input id='email'>
-    <input id='password'>
-    <button onclick='submit()'>Submit</button>
-</body>
-<script>
-    let skapi = new Skapi('your_service_id', 'your_user_id');
-
-    async function submit(){
-      let params = {
-        email: email.value,
-        password: password.value
-      }
-      try{
-        let user = await skapi.login(params);
-        // login success!
-        console.log(user);
-      }
-      catch(err) {
-        // failed
-      }
-    }
-</script>
-```
 
 ## Working with promises
 
-All the skapi methods returns a promise.
-Which means all the skapi methods needs to be resolved to get the actual data you want to fetch from the backend.
+All skapi methods return a promise, which means that you need to resolve these methods in order to retrieve the desired data from the backend.
 
-Let's look at the example code below:
+Here is an example:
 
 ``` js
 let data = skapi.method1();
 console.log(data) // Promise { <pending> }
 ```
 
-When you run `method1()` it returns you a promise.\
-To resolve an actual data you are fetching you must do:
+When you run method1(), it returns a promise. To resolve the actual data that you are fetching, you can do the following:
 
 ``` js
-skapi.method1().then(data=>{
+skapi.method1().then(data => {
   console.log(data) // Your data!
-  // Do what you want with your data!
 })
 ```
 
-Since promises runs syncronously, Some times you need to be careful.
+Keep in mind that promises run synchronously, so you need to be careful when chaining multiple skapi methods. For example:
 
 ``` js
 let my_data;
-skapi.method1().then(data=>{
+skapi.method1().then(data => {
   my_data = data;
 });
-skapi.method2().then(data=>{
+skapi.method2().then(data => {
   my_data = my_data + data;
 })
 ```
 
-Here, we are trying to run `method1` first, and append the data to `my_data`.\
-Then run `method2` to add more data after that.\
-But since Javascript promises run syncronously (meaning runs at the same time),\
-The methods above will run at the same time.\
-The `method2` will not wait for `method1` to be resolved and both methods will execute immediatley.
-The data will not be resolved in the order above.\
-Because it is not always certain which data will be resolved first.
+In the code above, we are trying to run method1 first, and then append the data to myData. After that, we run method2 to add more data. However, since JavaScript promises run synchronously (meaning they run at the same time), the above code will run both method1 and method2 immediately. The data will not be resolved in the order specified.
+
+To ensure that the methods are run in the desired order, you can do the following:
 
 ``` js
 let my_data;
-skapi.method1().then(data=>{
+skapi.method1().then(data => {
   my_data = data;
-  skapi.method2().then(data=>{
+  skapi.method2().then(data => {
     my_data = my_data + data;
   })
 });
 ```
 
-You can do it this way
-
+Alternatively, you can wrap the process in an async function and use the await syntax:
 
 ``` js
 async function run_in_order(){
@@ -185,4 +58,70 @@ async function run_in_order(){
 run_in_order();
 ```
 
-You can wrap all the process in async function and use await syntax.
+## Working with forms
+
+skapi allows you to pass an HTML form SubmitEvent as an argument for methods that accept a form parameter. The input element names will be used as the parameter names for the method.
+
+Here is an example of how to use a form with skapi:
+
+``` html
+<form onsubmit='skapi.login(event, { response: r => console.log(r), onerror: err => console.log(err) })'>
+  <input name='email'>
+  <input name='password'>
+  <input type='submit' value='Login'>
+</form>
+```
+
+This is equivalent to the following code:
+
+``` html
+  ...
+  <input id='email'>
+  <input id='password'>
+  <button onclick='login()'>Login</button>
+</body>
+<script>
+    async function login() {
+      let params = {
+        email: email.value,
+        password: password.value
+      }
+      try{
+        let response = await skapi.login(params);
+        // login success!
+        console.log(response);
+      }
+      catch(err) {
+        console.log(err)
+      }
+    }
+    ...
+</script>
+```
+
+If you give a url to the action property, the user will be taken to that URL when the request is successful.
+When the user is redirected to the new page, you can use the skapi.getFormResponse() method to retrieve the resolved data.
+
+(index.html)
+``` html
+<form onsubmit='skapi.login(event, { onerror: err => console.log(err) })' action='/welcome.html'>
+  <input name='email'>
+  <input name='password'>
+  <input type='submit' value='Login'>
+</form>
+```
+
+(welcome.html)
+``` html
+<script>
+  skapi.getFormResponse().then(r => {
+    // Resolved data from skapi.login()
+    console.log(r);
+  });  
+  ...
+</script>
+```
+
+::: warning NOTE
+If your website consists of static HTML files, make sure you have set the origin URL properly in the skapi constructor.
+:::

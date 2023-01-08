@@ -1,74 +1,116 @@
 # Getting Started
 
-When you are building your application (website, app... etc),
-you need a backend **service** to handle your customers security and network requests.
+To get started with skapi, you'll need to create a service and import the skapi library in your project code. Once you've done this, you can connect your application to the skapi server to handle your customer security and database requests.
 
-To get started, first thing we need to do is to create a service, and import skapi in your project code.
+Here are the steps to get started with skapi:
+
 
 ## Creating a service
 
 1. Create your account in [skapi](https://skapi.com)
 2. Create a new service.
-   
-## Importing skapi
 
-skapi works well on both HTML and webpack based projects.<br>
-If you are working on vanilla HTML project, You can import skapi directly from your headers tag.<br>
-For webpack based projects (Vue, React, Angular...etc), you can install skapi-js from npm.<br>
 
-### For vanilla HTML
+## Importing the skapi library
 
-If you are working on vanila HTML, Import the script from your head tag in your `index.html`.
+skapi works with both HTML and webpack-based projects. To use skapi in your project, you'll need to import the library either directly in the head tag (for HTML projects) or by installing it via npm (for webpack projects).
+
+### For HTML projects
+
+To import skapi in an HTML project, add the following script to the head tag of your html file:
+
 ``` html
-<html>
-  <head>
-    <script src="https://skapi.com/lib/skapi.js">
-  </head>
-</html>
+<script src="https://broadwayinc.dev/jslib/skapi/0.0.62/skapi.js"></script>
 ```
 
 ### For webpack projects
 
-If you are working on webpack projects(Vue, React, Angular...etc), install skapi-js from npm.
+To use skapi in a webpack-based project (such as Vue, React, or Angular), install skapi-js from npm:
+
 ```
 $ npm i skapi-js
 ```
-... then on your main file import.
+
+Then, import the library in your main file:
+
 ``` js
 // main.js
 import {Skapi} from 'skapi-js';
 ```
+
 
 ## Connecting to your service
 
-Now to make use of your service in your application, we need to connect your application to your backend **service**.
-
-1. Get your service ID and owners ID from your dashboard.
-2. Establish your **service** connection by initializing the skapi class.
-
-### For vanilla HTML
-
-If you are working on vanila HTML, Add `<script>` tag below your `<head>` tag.
-
-``` html
-<html>
-  <head>
-    <script src="https://skapi.com/lib/skapi.js"></script>
-  </head>
-  <script>
-    const skapi = new Skapi('your_service_id', 'your_user_id');
-  </script>
-</html>
-```
+Once you have imported the skapi library, you can create a new Skapi instance by providing your 'service_id' and 'owner_id' as follows:
 
 ### For webpack projects
-For webpack users, Initialize skapi right below your import.
 ``` js
 // main.js
 import {Skapi} from 'skapi-js';
-const skapi = new Skapi('your_service_id', 'your_user_id');
+let skapi = new Skapi('service_id', 'owner_id')
 ```
 
-You only need to initialize `skapi` once in web site.
+### For HTML projects
+``` html
+<!DOCTYPE html>
+<head>
+  <script src="https://broadwayinc.dev/jslib/skapi/0.0.62/skapi.js"></script>
+</head>
+<script>
+  let skapi = new Skapi('service_id', 'owner_id')
+</script>
+```
 
-Now you can execute your service methods by running `window.skapi[method_name](*arg)` from anywhere in your project.
+::: warning NOTE
+Be sure to replace 'service_id' and 'owner_id' with the appropriate values that are provided in your skapi dashboard.
+:::
+
+### Optional parameters
+The Skapi constructor accepts an optional options object as the third argument. This object can be used to customize the behavior of Skapi.
+
+```js
+let options = {
+  autoLogin: false,
+  origin: null
+}
+
+let skapi = new Skapi('service_id', 'owner_id', options)
+```
+
+- options.autoLogin:
+  If set to true, skapi will automatically login the user when the website is revisited.
+
+- options.origin:
+  When set to a page origin URL, form action URLs will be made relative to this origin URL. This can be useful for static HTML projects.
+
+
+## Obtaining Connection Information
+
+After initializing the skapi object, you can retrieve information about the current connection by calling the getConnection() method. This method returns a promise that resolves with an object containing the following properties:
+
+``` ts
+{
+  email: string; // The e-mail address of the service owner.
+  ip: string; // The IP address of the current connection.
+  locale: string; // The current locale of the connection.
+  owner: string; // The user ID of the service owner.
+  region: string; // The region where the service resource is located.
+  service: string; // The service ID.
+  timestamp: number; // The timestamp of the service creation.
+}
+```
+
+Here's an example of how to use getConnection():
+``` js
+skapi.getConnection()
+  .then(c => {
+    // connection success
+    console.log(c);
+  })
+  .catch(err => {
+    // connection failed
+    console.log(err);
+    throw err;
+  })
+```
+
