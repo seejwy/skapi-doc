@@ -70,8 +70,7 @@ The Skapi constructor accepts an optional options object as the third argument. 
 
 ```js
 let options = {
-  autoLogin: false,
-  origin: null
+  autoLogin: false
 }
 
 let skapi = new Skapi('service_id', 'owner_id', options)
@@ -79,10 +78,7 @@ let skapi = new Skapi('service_id', 'owner_id', options)
 
 - options.autoLogin:
   If set to true, skapi will automatically login the user when the website is revisited.
-
-- options.origin:
-  When set to a page origin URL, form action URLs will be made relative to this origin URL. This can be useful for static HTML projects.
-
+  
 
 ## Obtaining Connection Information
 

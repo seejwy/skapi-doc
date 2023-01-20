@@ -18,6 +18,7 @@ module.exports = {
             '/authentication/',
             '/authentication-tutorial/',
             '/user-account/',
+            '/user-account-tutorial/',
             '/data-types/'
         ]
     }

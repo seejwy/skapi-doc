@@ -60,7 +60,7 @@ run_in_order();
 
 ## Working with forms
 
-skapi allows you to pass an HTML form SubmitEvent as an argument for methods that accept a form parameter. The input element names will be used as the parameter names for the method.
+skapi allows you to pass an HTML form SubmitEvent as an argument for methods that accept a form parameter. The input element names will be used as the parameter names for the method. You can also specify callback functions for the response and error in the second argument.
 
 Here is an example of how to use a form with skapi:
 
@@ -99,12 +99,11 @@ This is equivalent to the following code:
 </script>
 ```
 
-If you give a url to the action property, the user will be taken to that URL when the request is successful.
-When the user is redirected to the new page, you can use the skapi.getFormResponse() method to retrieve the resolved data.
+If you specify a URL in the action property of the form element, the user will be redirected to that page upon a successful request. On the new page, you can use the skapi.getFormResponse() method to retrieve the resolved data from the previous request. However, if you specify a response callback in the second argument, the form will not redirect to a new page.
 
 (index.html)
 ``` html
-<form onsubmit='skapi.login(event, { onerror: err => console.log(err) })' action='/welcome.html'>
+<form onsubmit='skapi.login(event, { onerror: err => console.log(err) })' action='welcome.html'>
   <input name='email'>
   <input name='password'>
   <input type='submit' value='Login'>
@@ -121,7 +120,3 @@ When the user is redirected to the new page, you can use the skapi.getFormRespon
   ...
 </script>
 ```
-
-::: warning NOTE
-If your website consists of static HTML files, make sure you have set the origin URL properly in the skapi constructor.
-:::

@@ -10,7 +10,7 @@ Here is an example of how to use `signup(params, options?)`:
 ``` ts
 let parameters = {
   email: "user@email.com",
-  password: "password",
+  password: "password", // The password should be at least 6 characters and 60 characters maximum.
   name: "User's name"
 };
 
@@ -46,16 +46,22 @@ type parameters = {
 
 Optional parameters for signup() method.
 
+- confirmation:
+  
+  If confirmation is set to true, the user will receive an email to confirm their signup.
+  Once they click the link in the email, their signup will be confirmed and they will be able to log in to your service.
+  If the user does not confirm within a day, their signup will be invalid and they will need to sign up again.
+  Alternatively, you can specify a URL to redirect the user to when they click the confirmation link.
+  It is advised to let your users to confirm their signup to prevent automated bots.
+
+- login:
+  
+  If set to true, the user will be automatically logged in to the service upon successful signup.
+  
 ``` ts
 type options = {
-  /**
-   If set to true, the user will receive an email to confirm their signup.
-   Once they click the link in the email, their signup will be confirmed and they will be able to log in to your service.
-   If the user does not confirm within a day, their signup will be invalid and they will need to sign up again.
-   Alternatively, you can specify a URL to redirect the user to when they click the confirmation link.
-   */
   confirmation?: boolean | string;
-  login?: boolean; // If set to true, the user will be automatically logged in to the service upon successful signup.
+  login?: boolean;
   response?(response: any): any; // A callback function to be called upon success.
   onerror?(error: Error): any; // A callback function to be called on error.
 }
@@ -69,6 +75,37 @@ If `options.login` is not set or is set to `false`, the method returns one of th
 - "SUCCESS: The account has been created. User's email confirmation is required."
 - "SUCCESS: The account has been created."
 
+
+## Signup Confirmation
+
+When the user created an account with `options.confirmation = true` in `signup()` method,
+User will need to click the link in the email to log in to your service.
+If a user didn't receive or lost their signup confirmation email, you can allow them to request another one by using the `resendSignupConfirmation()` method.
+To resend the user's signup confirmation email, the user must have at least one attempt to login to your service.
+
+``` js
+// user tries to login
+try {
+  let user = await skapi.login('user@email.com', 'password');
+} catch(err) {
+  /**
+   * {
+   *  code: 'SIGNUP_CONFIRMATION_NEEDED',
+   *  message: "User's signup confirmation is required.",
+   *  name: 'SkapiError'
+   * }
+   */
+  
+  if(err.code === 'SIGNUP_CONFIRMATION_NEEDED') {
+    // now you can resend signup confirmation E-Mail to user@email.com.
+    let redirectUrl = "/redirect/on/success"
+    await skapi.resendSignupConfirmation(redirectUrl);
+  }
+
+  else
+    throw err;
+}
+```
 
 ## Login
 
@@ -128,35 +165,15 @@ Returns an [Account object](/data-types/#account) when log in is successful.
 ```
 
 
-## Signup Confirmation
+## Get Account
 
-When the user created an account with `options.confirmation = true` in `signup()` method,
-User will need to click the link in the email to log in to your service.
-If a user didn't receive or lost their signup confirmation email, you can allow them to request another one by using the `resendSignupConfirmation()` method.
-To resend the user's signup confirmation email, the user must have at least one attempt to login to your service.
+Once a user has been logged in, you can call skapi.getAccount() to retrieve their [Account data object](/data-types/#account).
+If the user is not logged in, skapi.getAccount() will return null.
 
 ``` js
-// user tries to login
-try {
-  let user = await skapi.login('user@email.com', 'password');
-} catch(err) {
-  /**
-   * {
-   *  code: 'SIGNUP_CONFIRMATION_NEEDED',
-   *  message: "User's signup confirmation is required.",
-   *  name: 'SkapiError'
-   * }
-   */
-  
-  if(err.code === 'SIGNUP_CONFIRMATION_NEEDED') {
-    // now you can resend signup confirmation E-Mail to user@email.com.
-    let redirectUrl = "/redirect/on/success"
-    await skapi.resendSignupConfirmation(redirectUrl);
-  }
-
-  else
-    throw err;
-}
+skapi.getAccount().then(account=>{
+  console.log(account);
+})
 ```
 
 ### redirectUrl (optional)
@@ -203,7 +220,7 @@ let params = {
 }
 
 skapi.forgotPassword(params);
-// User receives verification E-Mail with verification code.
+// User receives an e-mail with a verification code.
 ```
 
 ``` js
@@ -211,20 +228,38 @@ skapi.forgotPassword(params);
 let params = {
   email: 'user@email.com',
   code: 'xxxx...',
-  new_password: 'users_new_password'
+  new_password: 'users_new_password' // The password should be at least 6 characters and 60 characters maximum.
 }
 skapi.resetPassword({ email, code, new_password })
     .then(()=>{
-        // users account password is now set to a new_password.
+        // New password is set.
     });
 ```
 
-## Get Account
+::: warning NOTE
+If the user's account does not have a verified e-mail address, user will not be able to receive any verification code.
+Advise users to verify their e-mail.
+:::
 
-Once a user has been logged in, you can call skapi.getAccount() to retrieve their [Account data object](/data-types/#account). If the user is not logged in, skapi.getAccount() will return null.
+## Recovering a Disabled Account
+
+If a user's account has been disabled, it is possible to recover it within 3 months by using the skapi.recoverAccount() method. In order to initiate the account recovery process, the user must have at least one sign-in attempt associated with their disabled account and their email must have been verified. If the account is unverified, it cannot be recovered.
+
+The skapi.recoverAccount() method sends a signup confirmation email to the user with a confirmation link. It also accepts an optional URL argument, which will be used to redirect the user to a specific page upon successful account recovery.
+
+Here is an example of how to use the skapi.recoverAccount() method:
 
 ``` js
-skapi.getAccount().then(account=>{
-  console.log(account);
-})
+try {
+  await skapi.signin('user@email.com','password'); // user attempt to login
+} catch(failed) {
+  console.log(failed.message); // This account is disabled.
+  console.log(failed.code); // USER_IS_DISABLED
+  if(failed.code === 'USER_IS_DISABLED') {
+    // Send a recovery email to the user with a link.
+    // When the user click on the link, the user will be redirected when account recovery is successful.
+    await skapi.recoverAccount("http://mywebsite.com/welcome-back");
+  }
+}
+
 ```

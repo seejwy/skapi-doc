@@ -29,7 +29,7 @@
     address?:string // The user's address.
     gender?:string // The user's gender. Can be "female" or "male", or other values if neither of these are applicable.
     birthdate?:string, // The user's birthdate in the format "YYYY-MM-DD".
-    email_subscription?:number, // The user has subscribed to the service's email if this is a positive number. The email should be verified.
+    email_subscription?:boolean, // The user has subscribed to the service's email if this is set to true. The email should be verified.
     email_public?:boolean, // The user's email is public if this is set to true. The email should be verified.
     phone_number_public?:boolean, // The user's phone number is public if this is set to true. The phone number should be verified.
     address_public?:boolean, // The user's address is public if this is set to true.

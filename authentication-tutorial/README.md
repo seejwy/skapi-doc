@@ -39,7 +39,8 @@ The form also includes a confirm_password field to allow the user to confirm the
     function validatePassword() {
         if (password.value != confirm_password.value) {
             confirm_password.setCustomValidity("Passwords don't match");
-        } else {
+        }
+        else {
             confirm_password.setCustomValidity('');
         }
     }
@@ -76,12 +77,19 @@ If the user has not yet confirmed their signup confirmation email, they will not
         <p>Signup confirmation is needed.</p>
         <button onclick="skapi.resendSignupConfirmation().then(r => alert(r))">Resend Confirmation e-mail</button>
     </div>
+    <div id="recovery" style="display: none;">
+        <p>This account is disabled.</p>
+        <button onclick='skapi.recoverAccount("http://mywebsite.com/welcome-back").then(r => alert(r))'>Send Recovery E-Mail</button>
+    </div>
 </body>
 <script>
     let skapi = new Skapi('ap22TS2zkW1pl08TnsVi', '7aa4ffe1-1b06-4375-9be2-47d89da9d206');
     function handleError(err) {
         if (err?.code === 'SIGNUP_CONFIRMATION_NEEDED') {
             confirmation.style.display = 'block';
+        }
+        else if(err?.code === 'USER_IS_DISABLED') {
+            recovery.style.display = 'block';
         }
         else {
             alert(err.message);
@@ -122,7 +130,8 @@ Once the password has been successfully reset, the user will be redirected to th
         try {
             let response = await skapi.forgotPassword({ email: email.value });
             alert(response); // "SUCCESS: Verification code has been sent."
-        } catch (err) {
+        }
+        catch (err) {
             alert(err.message);
         }
     }
@@ -148,7 +157,7 @@ This file is for the welcome page that is displayed to a user once they have suc
     </form>
 </body>
 <script>
-    let skapi = new Skapi('ap22TS2zkW1pl08TnsVi', '7aa4ffe1-1b06-4375-9be2-47d89da9d206', true);
+    let skapi = new Skapi('ap22TS2zkW1pl08TnsVi', '7aa4ffe1-1b06-4375-9be2-47d89da9d206', {autoLogin: true});
     skapi.getAccount().then(account => {
         if (account) {
             welcome.textContent = welcome.textContent.replace('#name', account.name || '');
