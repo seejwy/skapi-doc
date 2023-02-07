@@ -165,13 +165,13 @@ Returns an [Account object](/data-types/#account) when log in is successful.
 ```
 
 
-## Get Account
+## User's Profile
 
-Once a user has been logged in, you can call skapi.getAccount() to retrieve their [Account data object](/data-types/#account).
-If the user is not logged in, skapi.getAccount() will return null.
+Once a user has been logged in, you can call skapi.getProfile() to retrieve [User's Profile](/data-types/#user-profile).
+If the user is not logged in, skapi.getProfile() will return null.
 
 ``` js
-skapi.getAccount().then(account=>{
+skapi.getProfile().then(account=>{
   console.log(account);
 })
 ```

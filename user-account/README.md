@@ -84,9 +84,9 @@ skapi.disableAccount().then(()=>{
 });
 ```
 
-## Retrieving User Profiles
+## Retrieving Other User Profiles
 
-The skapi.getUsers() method allows you to retrieve user profiles from your service's database. By default, the method will return all users sorted by most recent sign-up date. A user login is required to use this method.
+The skapi.getUsers() method allows users to retrieve other user profiles from your service's database. By default, the method will return all users sorted by most recent sign-up date. A user login is required to use this method.
 
 ``` js
 skapi.getUsers().then(u=>{
@@ -112,7 +112,8 @@ The following attributes can be used in the 'searchFor' parameter:
 The 'condition' parameter allows you to specify the search criteria when searching for user attributes. Available options include '>', '>=', '=', '<', '<='. Default condition is '='. When searching for a string attribute, '>' and '<' will search for strings that are higher or lower in lexicographical order, respectively. '>=' will search for strings that start with the given value, '<=' will work like '='.
 
 ::: warning NOTE
-It is important to note that the 'user_id' attribute can only be searched with '=' condition.
+- 'user_id' attribute can only be searched with '=' condition.
+- Users won't be able to search for attributes that is not set to public.
 :::
 
 The 'range' parameter allows you to search for the users who have the certain attribute value between the given value and the range value. The 'range' parameter cannot be used with 'condition' parameter.
@@ -191,5 +192,5 @@ skapi.getUsers(null, options).then(u=>{
 });
 ```
 :::warning NOTE
-It is important to note that when using the fetchMore parameter, it is the developer's responsibility to check if the returned list is the last batch of data. The method will continue to fetch the next batch of data until the end of the list is reached. Once the end of the list is reached, the method will return an empty list, indicating that there are no more items to fetch.
+When using the fetchMore parameter, it is the developer's responsibility to check if the returned list is the last batch of data. The method will continue to fetch the next batch of data until the end of the list is reached. Once the end of the list is reached, the method will return an empty list, indicating that there are no more items to fetch.
 :::

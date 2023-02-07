@@ -19,6 +19,8 @@ module.exports = {
             '/authentication-tutorial/',
             '/user-account/',
             '/user-account-tutorial/',
+            '/database/',
+            '/database-advanced/',
             '/data-types/'
         ]
     }

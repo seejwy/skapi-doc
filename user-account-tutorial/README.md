@@ -19,7 +19,7 @@ The &lt;script&gt; block at the bottom of the HTML is where the code that retrie
 A new instance of the Skapi class is created, passing in three arguments: the service ID, service owner ID and an options object with autoLogin: true.
 We are using autoLogin to true so if the user revisits the page, they will be automatically logged in.
 
-The getAccount() method is then called on the skapi object, which retrieves the user's account information.
+The getProfile() method is then called on the skapi object, which retrieves the user's account information.
 If the user is not logged in, the script redirects the user to the login page.
 
 Otherwise, it declares an array of keys that will be used to display the user's profile information.
@@ -44,7 +44,7 @@ It then iterates through the array of keys and uses the innerHTML property to ap
 <script>
     let skapi = new Skapi('ap22TS2zkW1pl08TnsVi', '7aa4ffe1-1b06-4375-9be2-47d89da9d206', { autoLogin: true });
 
-    skapi.getAccount().then(user => {
+    skapi.getProfile().then(user => {
         if (user === null) {
             // user is not logged in!
             // redirect to login page.
@@ -94,7 +94,7 @@ It then iterates through the array of keys and uses the innerHTML property to ap
 
 ## edit_profile.html
 
-This page is for editing user's account profile.
+This page is for editing user's account profile and e-mail verification.
 
 (edit_profile.html)
 ```html
@@ -107,63 +107,69 @@ This page is for editing user's account profile.
 <body>
     <h1>Edit Profile</h1>
     <form onsubmit='skapi.updateProfile(event, { onerror:(err)=>alert(err) })' action="profile.html">
-        <label for="email">E-mail</label>
-        <br>
-        <input id='email' type="email" name="email">
-
-        <br>
-        <br>
-        <label for="email_public">Make E-Mail public</label>
-        <input id='email_public' type="checkbox" name="email_public">
-
+        <label>E-mail
+            <br>
+            <input type="email" name="email">
+        </label>
         <br>
         <br>
-        <label for="name">Name</label>
-        <br>
-        <input id='name' name="name">
-
-        <br>
-        <br>
-        <label for="address">Address</label>
-        <br>
-        <input id='address' name="address">
-        
+        <label>Make E-Mail public
+            <br>
+            <input type="checkbox" name="email_public">
+        </label>
         <br>
         <br>
-        <label for="address_public">Make address public</label>
-        <input id='address_public' type="checkbox" name="address_public">
-
+        <label>Name
+            <br>
+            <input name="name">
+        </label>
         <br>
         <br>
-        <label for="gender">Gender</label>
-        <br>
-        <input id='gender' name="gender">
-        
-        <br>
-        <br>
-        <label for="gender_public">Make gender public</label>
-        <input id='gender_public' type="checkbox" name="gender_public">
-        
+        <label>Address
+            <br>
+            <input name="address">
+        </label>
         <br>
         <br>
-        <label for="birthdate">birthdate</label>
-        <br>
-        <input id='birthdate' type="date" name="birthdate">
-        
-        <br>
-        <br>
-        <label for="birthdate_public">Make birthdate public</label>
-        <input id='birthdate_public' type="checkbox" name="birthdate_public">
-        
+        <label>Make address public
+            <br>
+            <input type="checkbox" name="address_public">
+        </label>
         <br>
         <br>
-        <label for="email_subscription">Subscribe to newsletters</label>
-        <input id='email_subscription' type="checkbox" name="email_subscription">
-
+        <label>Gender
+            <br>
+            <input name="gender">
+        </label>
+        <br>
+        <br>
+        <label>Make gender public
+            <br>
+            <input type="checkbox" name="gender_public">
+        </label>
+        <br>
+        <br>
+        <label>birthdate
+            <br>
+            <input type="date" name="birthdate">
+        </label>
+        <br>
+        <br>
+        <label>Make birthdate public
+            <input type="checkbox" name="birthdate_public">
+        </label>
+        <br>
+        <br>
+        <label>Subscribe to newsletters
+            <input type="checkbox" name="email_subscription">
+        </label>
         <br>
         <br>
         <input type="submit">
     </form>
+    <br>
+    <button onsubmit='emailVerification();'>Verify your E-Mail</h1>
+
 </body>
 <script>
     // email: (v: string) => validateEmail(v),
@@ -180,13 +186,21 @@ This page is for editing user's account profile.
     // email_subscription: 'boolean'
     let skapi = new Skapi('ap22TS2zkW1pl08TnsVi', '7aa4ffe1-1b06-4375-9be2-47d89da9d206', { autoLogin: true });
 
-    skapi.getAccount().then(user => {
+    skapi.getProfile().then(user => {
         if (user === null) {
             // user is not logged in!
             // redirect to login page.
             return window.location.replace("login.html");
         }
     });
+
+    async function emailVerification() {
+        // Send verification code to user's E-Mail
+        await skapi.verifyEmail();
+        let code = prompt('Enter the verification code:');
+        await skapi.verifyEmail({ code });
+        alert('Your E-Mail is verified!');
+    }
 </script>
 ```
 
@@ -222,7 +236,7 @@ This is an example of a web page that allows a user to change their password. Th
 <script>
     let skapi = new Skapi('ap22TS2zkW1pl08TnsVi', '7aa4ffe1-1b06-4375-9be2-47d89da9d206', { autoLogin: true });
 
-    skapi.getAccount().then(user => {
+    skapi.getProfile().then(user => {
         if (user === null) {
             // user is not logged in!
             // redirect to login page.

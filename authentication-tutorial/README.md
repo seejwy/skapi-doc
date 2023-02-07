@@ -140,7 +140,7 @@ Once the password has been successfully reset, the user will be redirected to th
 
 ## welcome.html
 
-This file is for the welcome page that is displayed to a user once they have successfully logged in. The page includes a form for the user to log out of their account and a heading and paragraph displaying the user's name and email, respectively. The skapi.getAccount() method is used to retrieve the user's account data, including their name and email, and this data is then displayed on the page. If the user is not logged in, they are redirected to the login page.
+This file is for the welcome page that is displayed to a user once they have successfully logged in. The page includes a form for the user to log out of their account and a heading and paragraph displaying the user's name and email, respectively. The skapi.getProfile() method is used to retrieve the user's account data, including their name and email, and this data is then displayed on the page. If the user is not logged in, they are redirected to the login page.
 
 ``` html
 <!DOCTYPE html>
@@ -158,7 +158,7 @@ This file is for the welcome page that is displayed to a user once they have suc
 </body>
 <script>
     let skapi = new Skapi('ap22TS2zkW1pl08TnsVi', '7aa4ffe1-1b06-4375-9be2-47d89da9d206', {autoLogin: true});
-    skapi.getAccount().then(account => {
+    skapi.getProfile().then(account => {
         if (account) {
             welcome.textContent = welcome.textContent.replace('#name', account.name || '');
             your_email.textContent = your_email.textContent.replace('#email', account.email);

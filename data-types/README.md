@@ -1,6 +1,6 @@
 # Data Types
 
-## Account
+## User Profile
 
 ```ts
 {

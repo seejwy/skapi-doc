@@ -57,7 +57,7 @@ let skapi = new Skapi('service_id', 'owner_id')
   <script src="https://broadwayinc.dev/jslib/skapi/0.0.62/skapi.js"></script>
 </head>
 <script>
-  let skapi = new Skapi('service_id', 'owner_id')
+  let skapi = new Skapi('service_id', 'owner_id');
 </script>
 ```
 
