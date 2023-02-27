@@ -30,7 +30,7 @@ It then iterates through the array of keys and uses the innerHTML property to ap
 <!DOCTYPE html>
 
 <head>
-    <script src="https://broadwayinc.dev/jslib/skapi/0.0.67/skapi.js"></script>
+    <script src="https://broadwayinc.dev/jslib/skapi/latest/skapi.js"></script>
 </head>
 
 <body>
@@ -42,7 +42,7 @@ It then iterates through the array of keys and uses the innerHTML property to ap
     <a href='change_password.html'>Change password</a>
 </body>
 <script>
-    let skapi = new Skapi('ap22TS2zkW1pl08TnsVi', '7aa4ffe1-1b06-4375-9be2-47d89da9d206', { autoLogin: true });
+    let skapi = new Skapi('service_id', 'owners_id', { autoLogin: true });
 
     skapi.getProfile().then(user => {
         if (user === null) {
@@ -184,7 +184,7 @@ This page is for editing user's account profile and e-mail verification.
     // gender_public: 'boolean',
     // birthdate_public: 'boolean',
     // email_subscription: 'boolean'
-    let skapi = new Skapi('ap22TS2zkW1pl08TnsVi', '7aa4ffe1-1b06-4375-9be2-47d89da9d206', { autoLogin: true });
+    let skapi = new Skapi('service_id', 'owners_id', { autoLogin: true });
 
     skapi.getProfile().then(user => {
         if (user === null) {
@@ -234,7 +234,7 @@ This is an example of a web page that allows a user to change their password. Th
     </form>
 </body>
 <script>
-    let skapi = new Skapi('ap22TS2zkW1pl08TnsVi', '7aa4ffe1-1b06-4375-9be2-47d89da9d206', { autoLogin: true });
+    let skapi = new Skapi('service_id', 'owners_id', { autoLogin: true });
 
     skapi.getProfile().then(user => {
         if (user === null) {

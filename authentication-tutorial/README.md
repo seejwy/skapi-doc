@@ -17,7 +17,7 @@ The form also includes a confirm_password field to allow the user to confirm the
 ``` html
 <!DOCTYPE html>
 <head>
-    <script src="https://broadwayinc.dev/jslib/skapi/0.0.62/skapi.js"></script>
+    <script src="https://broadwayinc.dev/jslib/skapi/latest/skapi.js"></script>
 </head>
 <body>
     <h1>Create Account</h1>
@@ -35,7 +35,7 @@ The form also includes a confirm_password field to allow the user to confirm the
     </form>
 </body>
 <script>
-    let skapi = new Skapi('ap22TS2zkW1pl08TnsVi', '7aa4ffe1-1b06-4375-9be2-47d89da9d206');
+    let skapi = new Skapi('service_id', 'owners_id');
     function validatePassword() {
         if (password.value != confirm_password.value) {
             confirm_password.setCustomValidity("Passwords don't match");
@@ -60,7 +60,7 @@ If the user has not yet confirmed their signup confirmation email, they will not
 <!DOCTYPE html>
 
 <head>
-    <script src="https://broadwayinc.dev/jslib/skapi/0.0.62/skapi.js"></script>
+    <script src="https://broadwayinc.dev/jslib/skapi/latest/skapi.js"></script>
 </head>
 
 <body>
@@ -79,11 +79,11 @@ If the user has not yet confirmed their signup confirmation email, they will not
     </div>
     <div id="recovery" style="display: none;">
         <p>This account is disabled.</p>
-        <button onclick='skapi.recoverAccount("http://mywebsite.com/welcome-back").then(r => alert(r))'>Send Recovery E-Mail</button>
+        <button onclick="skapi.recoverAccount('http://mywebsite.com/welcome-back').then(r => alert(r))">Send Recovery E-Mail</button>
     </div>
 </body>
 <script>
-    let skapi = new Skapi('ap22TS2zkW1pl08TnsVi', '7aa4ffe1-1b06-4375-9be2-47d89da9d206');
+    let skapi = new Skapi('service_id', 'owners_id');
     function handleError(err) {
         if (err?.code === 'SIGNUP_CONFIRMATION_NEEDED') {
             confirmation.style.display = 'block';
@@ -108,7 +108,7 @@ Once the password has been successfully reset, the user will be redirected to th
 ``` html
 <!DOCTYPE html>
 <head>
-    <script src="../../dist/skapi.js"></script>
+    <script src="https://broadwayinc.dev/jslib/skapi/latest/skapi.js"></script>
 </head>
 <body>
     <h1>Forgot Password</h1>
@@ -125,7 +125,7 @@ Once the password has been successfully reset, the user will be redirected to th
     </form>
 </body>
 <script>
-    let skapi = new Skapi('ap22TS2zkW1pl08TnsVi', '7aa4ffe1-1b06-4375-9be2-47d89da9d206');
+    let skapi = new Skapi('service_id', 'owners_id');
     async function requestCode() {
         try {
             let response = await skapi.forgotPassword({ email: email.value });
@@ -146,7 +146,7 @@ This file is for the welcome page that is displayed to a user once they have suc
 <!DOCTYPE html>
 
 <head>
-    <script src="../../dist/skapi.js"></script>
+    <script src="https://broadwayinc.dev/jslib/skapi/latest/skapi.js"></script>
 </head>
 
 <body>
@@ -157,7 +157,7 @@ This file is for the welcome page that is displayed to a user once they have suc
     </form>
 </body>
 <script>
-    let skapi = new Skapi('ap22TS2zkW1pl08TnsVi', '7aa4ffe1-1b06-4375-9be2-47d89da9d206', {autoLogin: true});
+    let skapi = new Skapi('service_id', 'owners_id', {autoLogin: true});
     skapi.getProfile().then(account => {
         if (account) {
             welcome.textContent = welcome.textContent.replace('#name', account.name || '');

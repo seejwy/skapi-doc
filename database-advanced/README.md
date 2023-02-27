@@ -317,9 +317,10 @@ Lets assume user 'A' have uploaded a record as below:
 ```js
 // User 'A' uploads record in subscription group 5.
 skapi.postRecord(null, {
-  table: 'Posts',
-  subscription_group: 5
-})
+  table: {
+    name:'Posts',
+    subscription_group: 5
+}})
 ```
 
 Now in order for user 'B' to have access the record the user uploaded to subscription group 5,
@@ -344,13 +345,14 @@ Now user 'B' can fetch user 'A' uploaded to subscription group 5 as below:
 ```js
 // User 'B' can get records in subscription group of user 'A'
 skapi.getRecords({
-  table: 'Posts',
-  subscription: {
-    user_id: 'user_id_of_user_A',
-    group: 5
-  }
-}).then(response=>{
-  console.log(response.list); // All posts user 'A' uploaded to table 'Posts' as subscription group 5
+  table: {
+    name: 'Posts',
+    subscription: {
+        user_id: 'user_id_of_user_A',
+        group: 5
+    }
+  }}).then(response=>{
+    console.log(response.list); // All posts user 'A' uploaded to table 'Posts' as subscription group 5
 });
 ```
 

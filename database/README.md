@@ -353,14 +353,16 @@ This limitation is intentional in the design of the skapi database, as it priori
 
 
 ## Access Restrictions
-
-You can set restrictions on access to the records by using the config.access_group parameter in your postRecord call. The value of this parameter determines who can access the record. The following values can be set for config.access_group:
+You can set additional table settings by using object instead of string in the the config.table parameter.
+You can set restrictions on access to the records by giving additional settings to the config.table.access_group parameter in your postRecord call.
+The value of this parameter determines who can access the record.
+The following values can be set for config.table.access_group:
 
 - "private": Only the user who uploaded the record will be able to access it.
-- 0: The record will be accessible to everyone.
-- 1: The record will be accessible only to users who are logged into your service.
+- "public": The record will be accessible to everyone.
+- "authorized": The record will be accessible only to users who are logged into your service.
 
-If the config.access_group parameter is not set, its default value is 1.
+If the config.table.access_group parameter is not set, its default value is "public".
 
 Here's an example of uploading both a private and a public record:
 
@@ -370,8 +372,10 @@ let privateRecord = {
 };
 
 let privateConfig = {
-    table: 'Personal',
-    access_group: 'private'
+    table: {
+        name: 'Personal',
+        access_group: 'private'
+    }
 };
 
 skapi.postRecord(privateRecord, privateConfig).then(record => {
@@ -383,8 +387,10 @@ let publicRecord = {
 };
 
 let publicConfig = {
-    table: 'Public',
-    access_group: 0
+    table: {
+        name: 'Public',
+        access_group: "public"
+    }
 };
 
 skapi.postRecord(publicRecord, publicConfig).then(record => {

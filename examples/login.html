@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 
 <head>
-    <script src="https://broadwayinc.dev/jslib/skapi/0.0.67/skapi.js"></script>
+    <script src="https://broadwayinc.dev/jslib/skapi/latest/skapi.js"></script>
 </head>
 
 <body>
@@ -20,7 +20,7 @@
     </div>
 </body>
 <script>
-    let skapi = new Skapi('ap22TS2zkW1pl08TnsVi', '7aa4ffe1-1b06-4375-9be2-47d89da9d206');
+    let skapi = new Skapi('service_id', 'owners_id');
     function handleError(err) {
         if (err?.code === 'SIGNUP_CONFIRMATION_NEEDED') {
             confirmation.style.display = 'block';

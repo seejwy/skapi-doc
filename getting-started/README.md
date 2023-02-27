@@ -20,7 +20,7 @@ skapi works with both HTML and webpack-based projects. To use skapi in your proj
 To import skapi in an HTML project, add the following script to the head tag of your html file:
 
 ``` html
-<script src="https://broadwayinc.dev/jslib/skapi/0.0.62/skapi.js"></script>
+<script src="https://broadwayinc.dev/jslib/skapi/latest/skapi.js"></script>
 ```
 
 ### For webpack projects
