@@ -51,10 +51,7 @@ The form also includes a confirm_password field to allow the user to confirm the
 ## login.html
 
 This page allows users to log in to your website. Upon successful login, the user will be redirected to the welcome page.
-
 There is also a link to the forgot password page, where users can reset their forgotten password.
-
-If the user has not yet confirmed their signup confirmation email, they will not be able to log in and will see a message stating that signup confirmation is needed, along with a button to resend the confirmation email.
 
 ``` html
 <!DOCTYPE html>
