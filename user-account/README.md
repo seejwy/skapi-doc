@@ -191,6 +191,7 @@ skapi.getUsers(null, options).then(u=>{
   }
 });
 ```
+
 :::warning NOTE
 When using the fetchMore parameter, it is the developer's responsibility to check if the returned list is the last batch of data. The method will continue to fetch the next batch of data until the end of the list is reached. Once the end of the list is reached, the method will return an empty list, indicating that there are no more items to fetch.
 :::

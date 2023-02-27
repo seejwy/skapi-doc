@@ -261,5 +261,4 @@ try {
     await skapi.recoverAccount("http://mywebsite.com/welcome-back");
   }
 }
-
 ```
