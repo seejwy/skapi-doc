@@ -21,7 +21,7 @@ The form also includes a confirm_password field to allow the user to confirm the
 </head>
 <body>
     <h1>Create Account</h1>
-    <form onsubmit="skapi.signup(event, { confirmation: true, onerror: err => alert(err.message) })" action="login.html">
+    <form onsubmit="skapi.signup(event, { onerror: err => alert(err.message) })" action="login.html">
         <input type="email" name="email" placeholder="E-Mail" required>
         <br>
         <input id="password" type="password" name="password" placeholder="Password" required>
@@ -73,10 +73,6 @@ If the user has not yet confirmed their signup confirmation email, they will not
         <input type="submit" value="Login">
     </form>
     <a href="forgot_password.html">Forgot Password?</a>
-    <div id="confirmation" style="display: none;">
-        <p>Signup confirmation is needed.</p>
-        <button onclick="skapi.resendSignupConfirmation().then(r => alert(r))">Resend Confirmation e-mail</button>
-    </div>
     <div id="recovery" style="display: none;">
         <p>This account is disabled.</p>
         <button onclick="skapi.recoverAccount('http://mywebsite.com/welcome-back').then(r => alert(r))">Send Recovery E-Mail</button>
@@ -85,10 +81,7 @@ If the user has not yet confirmed their signup confirmation email, they will not
 <script>
     let skapi = new Skapi('service_id', 'owners_id');
     function handleError(err) {
-        if (err?.code === 'SIGNUP_CONFIRMATION_NEEDED') {
-            confirmation.style.display = 'block';
-        }
-        else if(err?.code === 'USER_IS_DISABLED') {
+        if(err?.code === 'USER_IS_DISABLED') {
             recovery.style.display = 'block';
         }
         else {

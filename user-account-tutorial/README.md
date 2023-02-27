@@ -101,7 +101,7 @@ This page is for editing user's account profile and e-mail verification.
 <!DOCTYPE html>
 
 <head>
-    <script src="../dist/skapi.js"></script>
+    <script src="https://broadwayinc.dev/jslib/skapi/latest/skapi.js"></script>
 </head>
 
 <body>
@@ -214,7 +214,7 @@ This is an example of a web page that allows a user to change their password. Th
 <!DOCTYPE html>
 
 <head>
-    <script src="../dist/skapi.js"></script>
+    <script src="https://broadwayinc.dev/jslib/skapi/latest/skapi.js"></script>
 </head>
 
 <body>
