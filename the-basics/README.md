@@ -16,7 +16,7 @@ let skapi = new Skapi('service_id', 'owner_id')
 ``` html
 <!DOCTYPE html>
 <head>
-  <script src="https://broadwayinc.dev/jslib/skapi/0.0.62/skapi.js"></script>
+  <script src="https://broadwayinc.dev/jslib/skapi/lastest/skapi.js"></script>
 </head>
 <script>
   let skapi = new Skapi('service_id', 'owner_id');
