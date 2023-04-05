@@ -14,9 +14,7 @@ let newRecord = {
 }
 
 let config = {
-    table: {
-        name: 'Collection'
-    }
+    table: 'Collection'
 }
 
 skapi.postRecord(newRecord, config).then(record=>{
@@ -61,9 +59,7 @@ Example:
 
 let config = {
     record_id: 'record_id_to_edit',
-    table: {
-        name: 'NewTableName'
-    }
+    table: name: 'NewTableName'
 }
 
 skapi.postRecord(undefined, config).then(record=>{
