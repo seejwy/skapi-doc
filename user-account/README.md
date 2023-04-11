@@ -38,7 +38,6 @@ let updates = {
     // address_public, // The user's address is public if this is set to true.
     // gender_public, // The user's gender is public if this is set to true.
     // birthdate_public, // The user's birthdate is public if this is set to true.
-    // email_subscription // Subscribes user to the service's email if this is set to true. The email should be verified.
 };
 
 skapi.updateProfile(updates).then(account => {

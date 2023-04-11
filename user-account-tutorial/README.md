@@ -30,7 +30,7 @@ It then iterates through the array of keys and uses the innerHTML property to ap
 <!DOCTYPE html>
 
 <head>
-    <script src="https://broadwayinc.dev/jslib/skapi/latest/skapi.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/skapi-js@latest/dist/skapi.js"></script>
 </head>
 
 <body>
@@ -101,7 +101,7 @@ This page is for editing user's account profile and e-mail verification.
 <!DOCTYPE html>
 
 <head>
-    <script src="https://broadwayinc.dev/jslib/skapi/latest/skapi.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/skapi-js@latest/dist/skapi.js"></script>
 </head>
 
 <body>
@@ -169,7 +169,6 @@ This page is for editing user's account profile and e-mail verification.
     </form>
     <br>
     <button onsubmit='emailVerification();'>Verify your E-Mail</h1>
-
 </body>
 <script>
     // email: (v: string) => validateEmail(v),
@@ -214,7 +213,7 @@ This is an example of a web page that allows a user to change their password. Th
 <!DOCTYPE html>
 
 <head>
-    <script src="https://broadwayinc.dev/jslib/skapi/latest/skapi.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/skapi-js@latest/dist/skapi.js"></script>
 </head>
 
 <body>

@@ -7,8 +7,8 @@ Here are the steps to get started with skapi:
 
 ## Creating a service
 
-1. Create your account in [skapi](https://skapi.com)
-2. Create a new service.
+1. Create your account in [skapi](https://www.skapi.com/signup)
+2. Create a new service from your dashboard.
 
 
 ## Importing the skapi library
@@ -20,7 +20,7 @@ skapi works with both HTML and webpack-based projects. To use skapi in your proj
 To import skapi in an HTML project, add the following script to the head tag of your html file:
 
 ``` html
-<script src="https://broadwayinc.dev/jslib/skapi/latest/skapi.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/skapi-js@latest/dist/skapi.js"></script>
 ```
 
 ### For webpack projects

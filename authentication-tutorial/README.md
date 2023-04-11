@@ -17,7 +17,7 @@ The form also includes a confirm_password field to allow the user to confirm the
 ``` html
 <!DOCTYPE html>
 <head>
-    <script src="https://broadwayinc.dev/jslib/skapi/latest/skapi.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/skapi-js@latest/dist/skapi.js"></script>
 </head>
 <body>
     <h1>Create Account</h1>
@@ -57,7 +57,7 @@ There is also a link to the forgot password page, where users can reset their fo
 <!DOCTYPE html>
 
 <head>
-    <script src="https://broadwayinc.dev/jslib/skapi/latest/skapi.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/skapi-js@latest/dist/skapi.js"></script>
 </head>
 
 <body>
@@ -98,7 +98,7 @@ Once the password has been successfully reset, the user will be redirected to th
 ``` html
 <!DOCTYPE html>
 <head>
-    <script src="https://broadwayinc.dev/jslib/skapi/latest/skapi.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/skapi-js@latest/dist/skapi.js"></script>
 </head>
 <body>
     <h1>Forgot Password</h1>
@@ -136,7 +136,7 @@ This file is for the welcome page that is displayed to a user once they have suc
 <!DOCTYPE html>
 
 <head>
-    <script src="https://broadwayinc.dev/jslib/skapi/latest/skapi.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/skapi-js@latest/dist/skapi.js"></script>
 </head>
 
 <body>

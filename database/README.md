@@ -19,6 +19,18 @@ let config = {
 
 skapi.postRecord(newRecord, config).then(record=>{
     console.log(record);
+    /*
+    {
+        data: { myData: "Hello, I'm your data" }, // Data user had posted
+        ip: "uploaders.ip.address.xxx",
+        record_id: "uploaded_record_id",
+        reference: { reference_limit: null, allow_multiple_reference: true, referenced_count: 0 }, // Reference settings
+        table: { name: 'Host', access_group: 0 }, // Table information
+        updated: 0000000000000, // Updated time in milliseconds
+        uploaded: 0000000000000, // Uploaded time in milliseconds
+        user_id: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" // Uploaders UUID
+    }
+    */
 });
 ```
 
@@ -42,11 +54,23 @@ let updatedRecord = {
 }
 
 let config = {
-    record_id: 'record_id_to_edit'
+    record_id: 'uploaded_record_id'
 }
 
 skapi.postRecord(updatedRecord, config).then(record=>{
     console.log(record);
+    /*
+    {
+        data: { newData: "Overwritten with new data." }, // Updated data
+        ip: "uploaders.ip.address.xxx",
+        record_id: "uploaded_record_id",
+        reference: { reference_limit: null, allow_multiple_reference: true, referenced_count: 0 }, // Reference settings
+        table: { name: 'Host', access_group: 0 }, // Table information
+        updated: 0000000000000, // Updated time in milliseconds
+        uploaded: 0000000000000, // Uploaded time in milliseconds
+        user_id: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" // Uploaders UUID
+    }
+    */
 });
 ```
 
@@ -59,7 +83,7 @@ Example:
 
 let config = {
     record_id: 'record_id_to_edit',
-    table: name: 'NewTableName'
+    table: 'NewTableName'
 }
 
 skapi.postRecord(undefined, config).then(record=>{

@@ -9,6 +9,7 @@ Once you have imported the skapi library, you can create a new Skapi instance by
 ``` js
 // main.js
 import {Skapi} from 'skapi-js';
+// Replace 'service_id' and 'owner_id' with the appropriate values that are provided in your skapi dashboard.
 let skapi = new Skapi('service_id', 'owner_id')
 ```
 
@@ -16,9 +17,10 @@ let skapi = new Skapi('service_id', 'owner_id')
 ``` html
 <!DOCTYPE html>
 <head>
-  <script src="https://broadwayinc.dev/jslib/skapi/latest/skapi.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/skapi-js@latest/dist/skapi.js"></script>
 </head>
 <script>
+  // Replace 'service_id' and 'owner_id' with the appropriate values that are provided in your skapi dashboard.
   let skapi = new Skapi('service_id', 'owner_id');
 </script>
 ```
@@ -39,7 +41,7 @@ let skapi = new Skapi('service_id', 'owner_id', options)
 ```
 
 - options.autoLogin:
-  If set to true, skapi will automatically login the user when the website is revisited.
+  If set to true(default), skapi will automatically login the user when the website is revisited.
   
 
 ## Obtaining Connection Information
@@ -76,43 +78,45 @@ skapi.getConnection()
 
 All skapi methods return a promise, which means that you need to resolve these methods in order to retrieve the desired data from the backend.
 
+For this example, we will use 'skapi.mock()' which is the method that calls your server and pings your data back to you.
+
 Here is an example:
 
 ``` js
-let data = skapi.method1();
+let data = skapi.mock({msg: 'Hello'});
 console.log(data) // Promise { <pending> }
 ```
 
-When you run method1(), it returns a promise. To resolve the actual data that you are fetching, you can do the following:
+When you run mock(), it returns a promise. To resolve the actual data that you are fetching, you can do the following:
 
 ``` js
-skapi.method1().then(data => {
-  console.log(data) // Your data!
+skapi.mock({msg: 'Hello'}).then(data => {
+  console.log(data) // {msg: 'Hello'}
 })
 ```
 
 Keep in mind that promises run synchronously, so you need to be careful when chaining multiple skapi methods. For example:
 
 ``` js
-let my_data;
-skapi.method1().then(data => {
-  my_data = data;
+let my_data = '';
+skapi.mock({msg: 'This is the first ping. '}).then(data => {
+  my_data += data.msg;
 });
-skapi.method2().then(data => {
-  my_data = my_data + data;
+skapi.mock({msg: 'This is the second ping.'}).then(data => {
+  my_data += data.msg;
 })
 ```
 
-In the code above, we are trying to run method1 first, and then append the data to myData. After that, we run method2 to add more data. However, since JavaScript promises run synchronously (meaning they run at the same time), the above code will run both method1 and method2 immediately. The data will not be resolved in the order specified.
+In the code above, we are trying to run first 'skapi.mock()', and then append the data to myData. After that, we run the second 'skapi.mock()' to add more data. However, since JavaScript promises run synchronously (meaning they run at the same time), the above code will run both 'skapi.mock()' immediately. The data will not always be resolved in the order specified.
 
 To ensure that the methods are run in the desired order, you can do the following:
 
 ``` js
-let my_data;
-skapi.method1().then(data => {
-  my_data = data;
-  skapi.method2().then(data => {
-    my_data = my_data + data;
+let my_data = '';
+skapi.mock({msg: 'This is the first ping. '}).then(data => {
+  my_data += data.msg;
+  skapi.mock({msg: 'This is the second ping.'}).then(data => {
+    my_data += data.msg; // 'This is the first ping. This is the second ping.'
   })
 });
 ```
@@ -121,10 +125,10 @@ Alternatively, you can wrap the process in an async function and use the await s
 
 ``` js
 async function run_in_order(){
-  let my_data;
-  let m1 = await skapi.method1();
-  let m2 = await skapi.method2();
-  my_data = m1 + m2;
+  let my_data = '';
+  let m1 = await skapi.mock({msg: 'This is the first ping. '});
+  let m2 = await skapi.mock({msg: 'This is the second ping.'});
+  my_data = m1.msg + m2.msg;
 }
 run_in_order();
 ```
@@ -136,10 +140,11 @@ skapi allows you to pass an HTML form SubmitEvent as an argument for methods tha
 Here is an example of how to use a form with skapi:
 
 ``` html
-<form onsubmit='skapi.login(event, { response: r => console.log(r), onerror: err => console.log(err) })'>
-  <input name='email'>
-  <input name='password'>
-  <input type='submit' value='Login'>
+...
+<form onsubmit='skapi.mock(event, { response: r => console.log(r), onerror: err => console.log(err) })'>
+  <input name='name'>
+  <input name='msg'>
+  <input type='submit'>
 </form>
 ```
 
@@ -147,20 +152,19 @@ This is equivalent to the following code:
 
 ``` html
   ...
-  <input id='email'>
-  <input id='password'>
-  <button onclick='login()'>Login</button>
+  <input id='name'>
+  <input id='msg'>
+  <button onclick='mock()'>Mock</button>
 </body>
 <script>
-    async function login() {
-      let params = {
-        email: email.value,
-        password: password.value
-      }
+    async function mock() {
+      let name = document.getElementById('name');
+      let msg = document.getElementById('msg');
+
       try{
-        let response = await skapi.login(params);
+        let r = await skapi.mock({ name: name, msg: msg });
         // login success!
-        console.log(response);
+        console.log(r);
       }
       catch(err) {
         console.log(err)
@@ -174,20 +178,26 @@ If you specify a URL in the action property of the form element, the user will b
 
 (index.html)
 ``` html
-<form onsubmit='skapi.login(event, { onerror: err => console.log(err) })' action='welcome.html'>
-  <input name='email'>
-  <input name='password'>
-  <input type='submit' value='Login'>
+...
+<form onsubmit='skapi.mock(event, { onerror: err => console.log(err) })' action='welcome.html'>
+  <input name='name'>
+  <input name='msg'>
+  <input type='submit'>
 </form>
 ```
 
 (welcome.html)
 ``` html
+<!DOCTYPE html>
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/skapi-js@latest/dist/skapi.js"></script>
+</head>
 <script>
+  // Replace 'service_id' and 'owner_id' with the appropriate values that are provided in your skapi dashboard.
+  let skapi = new Skapi('service_id', 'owner_id');
   skapi.getFormResponse().then(r => {
-    // Resolved data from skapi.login()
+    // Resolved data from skapi.mock()
     console.log(r);
   });  
-  ...
 </script>
 ```
