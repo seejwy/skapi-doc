@@ -2,3 +2,4 @@ node_modules
 package-lock.json
 .vuepress/dist
 dist
+publish.py
