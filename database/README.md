@@ -1,8 +1,7 @@
 # Database
+skapi provides a lightweight, cloud-based NoSQL database service designed to be easy to use, scalable, and flexible. It is well-suited for web and mobile applications that require a data storage solution without the complexity of traditional SQL databases.
 
-skapi provides an auto-indexed scalable database storage solution.
-
-Records are the unit of data stored in the database.
+In this guide, we will cover the basics of querying and manipulating data in skapi.
 
 ## Creating a Record
 
@@ -79,8 +78,8 @@ Note that if you don't specify any additional configuration parameters, the prev
 Also, for the record data, if you give undefined you can only upload record config with out touching the previous record data.
 
 Example:
-```js
 
+```js
 let config = {
     record_id: 'record_id_to_edit',
     table: 'NewTableName'
@@ -93,23 +92,26 @@ skapi.postRecord(undefined, config).then(record=>{
 
 ## Submitting Forms
 
-The skapi.postRecord() method can also accept form submissions as data. This is particularly useful when you want to upload binary files. The names of the input fields in the form will serve as the key names for the corresponding values.
+The `skapi.postRecord()` method can also accept form submissions as data. This is particularly useful when you want to upload binary files. The names of the input fields in the form will serve as the key names for the corresponding values.
 
 In case you do not use the action attribute to redirect users after a successful submission, you can include an additional response callback in the configuration to receive the response.
 
 Here's an example of how you can use skapi with a form:
 ```html
-<form onsubmit='skapi.postRecord(event, { table: "Collection", response: record => console.log(record); })'>
+<form onsubmit='skapi.postRecord(event, { table: "Collection", response: record => console.log(record) })'>
     <input name='description' />
     <input name='picture' type='file' />
     <input type='submit' value='Submit' />
 </form>
 ```
 
+In this example, a form is created with two input fields: `description` and `picture`. When the form is submitted, the `skapi.postRecord()` method is called with an event object and a configuration object that specifies the name of the table where the record should be stored (`Collection`) and a response callback function that logs the response to the console.
+
+The `postRecord()` method will automatically retrieve the data from the form inputs and upload it to the specified table in the database.
+
 ## Fetching Records
 
-The getRecords() method allows you to fetch records stored in the database.
-The example below retrieves an array of records stored in a table named 'Collection':
+The `getRecords()` method allows you to fetch records stored in the database. The example below retrieves an array of records stored in a table named 'Collection':
 
 ```js
 let query = {
@@ -122,16 +124,13 @@ skapi.getRecords(query).then(response=>{
 });
 ```
 
-By default, getRecords() retrieves up to 100 records per call.
-The config object passed to getRecords() is used to specify query parameters such as the table name to retrieve records from.
-The response from getRecords() includes the array of records, endOfList which is a boolean indicating if there are no more records to retrieve, and startKey which is the key for the next set of records to retrieve.
+By default, `getRecords()` retrieves up to 50 records per call. The config object passed to `getRecords()` is used to specify query parameters such as the table name to retrieve records from. The response from `getRecords()` includes the array of records, `endOfList` which is a boolean indicating if there are no more records to retrieve, and `startKey` which is the key for the next set of records to retrieve.
 
-### fetchMore
+### Fetching More Records
 
-If you need to fetch users beyond the limit, you can set the fetchMore parameter to true in the config parameter.
-The method will then fetch the next batch of records on every execution until it reaches the end of the list.
+If you need to fetch more records than the default limit of 50, you can set the `fetchMore` parameter to `true` in the config parameter. The method will then fetch the next batch of records on every execution until it reaches the end of the list.
 
-Below is an example of fetching 50 records per call:
+Below is an example of fetching 100 records per call:
 
 ``` js
 let query = {
@@ -144,18 +143,18 @@ let config = {
 }
 
 skapi.getRecords(query, config).then(response=>{
-    // every execution will fetch next batch of 50 records until end of list.
+    // every execution will fetch next batch of 100 records until end of list.
     console.log(response.list);
 });
 ```
 
 :::warning NOTE
-When using the fetchMore parameter, it is the developer's responsibility to check if the returned list is the last batch of data. The method will continue to fetch the next batch of data until the end of the list is reached. Once the end of the list is reached, the method will return an empty list, indicating that there are no more items to fetch.
+When using the `fetchMore` parameter, it is the developer's responsibility to check if the returned list is the last batch of data. The method will continue to fetch the next batch of data until the end of the list is reached. Once the end of the list is reached, the method will return an empty list, indicating that there are no more items to fetch.
 :::
 
 ### Fetching Record by ID
 
-You can fetch a record by its unique ID using the getRecords method.
+You can fetch a record by its unique ID using the `getRecords` method.
 Here is an example of how to retrieve a record using its ID:
 
 ```js
@@ -169,6 +168,7 @@ skapi.getRecords(query).then(response => {
     console.log(response.startKey); // This will be null, as no more records can be retrieved beyond the specified ID.
 });
 ```
+
 :::warning NOTE
 When fetching a record by its ID, no other configuration parameters are necessary.
 :::
@@ -304,6 +304,82 @@ When using range parameter, the value and range parameter value should be of the
 Range can condition parameter cannot be used simultaneously.
 :::
 
+
+## Fetching Index
+
+The skapi.getIndex() method can be used to retrieve information about an index, including its sum, average, and total count of records.
+
+Here's an example of how to use skapi.getIndex():
+
+```js
+skapi.getIndex({
+    table: 'Poll',
+    index: 'Vote.Beer'
+}).then(response => {
+    console.log(response.list[0]); // Information of VoteForBeer
+    /*
+    {
+        table: String, // Table name of the index.
+        index: String, // Index name.
+        average_bool: Number, // Rate of the true values of booleans.
+        average_number: Number, // Average of the number type values.
+        total_bool: Number, // Total number of true values of booleans.
+        total_number: Number, // Total sum of the number values.
+        boolean_count: Number, // Total number of records that has boolean as index value.
+        number_count: Number, // Total number of record that has number as index value.
+        string_count: Number, // Total number of record that has string as index value.
+        number_of_records: Number, // Total number of records in the index.
+    }
+    */
+});
+```
+
+With this example, you can fetch information about the "Vote.Beer" index of the "Poll" table, and access the various statistics about the index.
+
+### Querying index values
+
+If you want to list all the indexes in a table and order them in a specific order, you can use the order.by parameter in the query. For example, to list all indexes in the "Poll" table ordered by "average_bool", you can do the following:
+
+```js
+let config = {
+    ascending: false
+};
+
+let query = {
+    table: 'Poll',
+    order: {
+        by: 'average_bool'
+    }
+};
+
+skapi.getIndex(query, config).then(response => {
+    console.log(response.list); // List of indexes ordered from high votes.
+});
+```
+
+Note that in the config object, the ascending value is set to false, so the list will be ordered from higher votes to lower votes.
+
+If the index name is a compound index name, you can fetch only certain indexes and order them. For example, to list all indexes under "Vote." that has higher votes then 50% and order them by average_bool, you can do the following:
+
+```js
+let config = {
+    ascending: false
+};
+
+let query = {
+    table: 'Poll',
+    index: 'Vote.',
+    order: {
+        by: 'average_bool',
+        value: 0.5,
+        condition: '>'
+    }
+};
+
+skapi.getIndex(query, config).then(response => {
+    console.log(response.list); // List of votes that rates higher then 50%, ordered from high votes.
+});
+```
 
 ## Tags
 

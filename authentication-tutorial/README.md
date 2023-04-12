@@ -1,4 +1,5 @@
 # Full Example: Implementing Authentication
+
 This example demonstrates how to build an authentication system for a website using the Skapi library. It includes four separate files:
 
 - create_account.html: a page for creating a new user account
@@ -14,7 +15,7 @@ Upon account creation, the user is required to confirm their email address by fo
 
 The form also includes a confirm_password field to allow the user to confirm their password before creating the account.
 
-``` html
+```html
 <!DOCTYPE html>
 <head>
     <script src="https://cdn.jsdelivr.net/npm/skapi-js@latest/dist/skapi.js"></script>
@@ -47,19 +48,16 @@ The form also includes a confirm_password field to allow the user to confirm the
 </script>
 ```
 
-
 ## login.html
 
 This page allows users to log in to your website. Upon successful login, the user will be redirected to the welcome page.
 There is also a link to the forgot password page, where users can reset their forgotten password.
 
-``` html
+```html
 <!DOCTYPE html>
-
 <head>
     <script src="https://cdn.jsdelivr.net/npm/skapi-js@latest/dist/skapi.js"></script>
 </head>
-
 <body>
     <h1>Login</h1>
     <form onsubmit="skapi.login(event, { onerror: handleError });" action="welcome.html">
@@ -79,15 +77,14 @@ There is also a link to the forgot password page, where users can reset their fo
     let skapi = new Skapi('service_id', 'owners_id');
     function handleError(err) {
         if(err?.code === 'USER_IS_DISABLED') {
-            recovery.style.display = 'block';
-        }
-        else {
-            alert(err.message);
-        }
+        recovery.style.display = 'block';
     }
+    else {
+        alert(err.message);
+    }
+}
 </script>
 ```
-
 
 ## forgot_password.html
 
@@ -95,7 +92,7 @@ This page allows users to reset their forgotten password.
 To reset their password, the user should click the 'Request Code' button to receive a reset password code via email.
 Once the password has been successfully reset, the user will be redirected to the login page.
 
-``` html
+```html
 <!DOCTYPE html>
 <head>
     <script src="https://cdn.jsdelivr.net/npm/skapi-js@latest/dist/skapi.js"></script>
@@ -132,13 +129,11 @@ Once the password has been successfully reset, the user will be redirected to th
 
 This file is for the welcome page that is displayed to a user once they have successfully logged in. The page includes a form for the user to log out of their account and a heading and paragraph displaying the user's name and email, respectively. The skapi.getProfile() method is used to retrieve the user's account data, including their name and email, and this data is then displayed on the page. If the user is not logged in, they are redirected to the login page.
 
-``` html
+```html
 <!DOCTYPE html>
-
 <head>
     <script src="https://cdn.jsdelivr.net/npm/skapi-js@latest/dist/skapi.js"></script>
 </head>
-
 <body>
     <h1 id="welcome">Welcome #name</h1>
     <p id="your_email">Your e-mail is: #email</p>
@@ -161,3 +156,4 @@ This file is for the welcome page that is displayed to a user once they have suc
     });
 </script>
 ```
+

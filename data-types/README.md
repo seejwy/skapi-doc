@@ -36,3 +36,18 @@
     birthdate_public?:boolean, // The user's birthdate is public if this is set to true.
 }
 ```
+
+## Fetch Options
+
+Fetch option parameter is used in methods that calls the database.
+
+```ts
+    /** Maximum number of records to fetch per call */
+    limit?: number;
+    /** Fetch next batch of data. Will return empty list if there is nothing more to fetch. */
+    fetchMore?: boolean;
+    /** Result in ascending order if true, decending when false. */
+    ascending?: boolean;
+    /** Start key to be used to query from the certain batch of fetch. */
+    startKey?: string;
+```

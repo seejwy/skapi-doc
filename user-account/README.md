@@ -22,7 +22,7 @@ skapi.changePassword(params).then(r=>{
 
 User can update their account profile by calling skapi.updateProfile() and passing in an object with the desired updates. The user must be logged in to make this request.
 
-The updated [Account data object](/data-types/#account) will be returned if the update is successful. Note that certain fields, such as the email and phone number, will be unverified if they are changed.
+The updated [User profile object](/data-types/#user-profile) will be returned if the update is successful. Note that certain fields, such as the email and phone number, will be unverified if they are changed.
 
 
 ``` js
@@ -73,6 +73,7 @@ You can customize the verification E-Mail/SMS, template from the skapi dashboard
 Refer: [Setting up E-Mail templates]()
 :::
 
+
 ## Disabling account
 
 User can remove their account from your service using the skapi.disableAccount() method. Upon successful request, all data related to the account will be deleted after 3 months. Within this period, the user can recover their account if they choose to do so. It's important to note that the user will be logged out after the request is successful.
@@ -85,9 +86,9 @@ skapi.disableAccount().then(()=>{
 
 ## Retrieving Other User Profiles
 
-The skapi.getUsers() method allows users to retrieve other user profiles from your service's database. By default, the method will return all users sorted by most recent sign-up date. A user login is required to use this method.
+The `skapi.getUsers()` method allows users to retrieve other user profiles from your service's database. By default, the method will return all users sorted by most recent sign-up date. A user login is required to use this method.
 
-``` js
+```js
 skapi.getUsers().then(u=>{
   console.log(u.list); // List of all users in your service, sorted by most recent sign-up date.
 });
@@ -110,7 +111,7 @@ The following attributes can be used in the 'searchFor' parameter:
 
 The 'condition' parameter allows you to specify the search criteria when searching for user attributes. Available options include '>', '>=', '=', '<', '<='. Default condition is '='. When searching for a string attribute, '>' and '<' will search for strings that are higher or lower in lexicographical order, respectively. '>=' will search for strings that start with the given value, '<=' will work like '='.
 
-::: warning NOTE
+:::warning NOTE
 - 'user_id' attribute can only be searched with '=' condition.
 - Users won't be able to search for attributes that is not set to public.
 :::
@@ -150,15 +151,14 @@ skapi.getUsers(params).then(u=>{
   console.log(u.list); // List of users whose birthday is between 1985 ~ 1990
 });
 ```
-
 ### Options
 
-The skapi.getUsers() method allows you to specify additional options to customize the data retrieval process.
+The `skapi.getUsers()` method allows you to specify additional options to customize the data retrieval process.
 
 #### Limit
-By default, the method will return a maximum of 100 items per call. If you need to fetch more data, you can set the limit parameter up to 1000 items per call in the optional second argument of the method. Here is an example:
+By default, the method will return a maximum of 100 items per call. If you need to fetch more data, you can set the `limit` parameter up to 1000 items per call in the optional second argument of the method. Here is an example:
 
-``` js
+```js
 let options = {
   limit: 1000
 }
@@ -189,6 +189,7 @@ skapi.getUsers(null, options).then(u=>{
     });
   }
 });
+
 ```
 
 :::warning NOTE

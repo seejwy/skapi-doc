@@ -1,39 +1,48 @@
 # Getting Started
 
-To get started with skapi, you'll need to create a service and import the skapi library in your project code. Once you've done this, you can connect your application to the skapi server to handle your customer security and database requests.
+Welcome to skapi, the serverless-based backend API service designed to simplify your application's security and database management. This guide will walk you through creating a service, importing the skapi library into your project, and connecting your application to the skapi server.
 
-Here are the steps to get started with skapi:
-
+Follow these steps to get started with skapi:
 
 ## Creating a service
 
-1. Create your account in [skapi](https://www.skapi.com/signup)
-2. Create a new service from your dashboard.
-
+1. Register for an account at [skapi.com](https://www.skapi.com).
+2. Log in and create a new service from your dashboard.
 
 ## Importing the skapi library
 
-skapi works with both HTML and webpack-based projects. To use skapi in your project, you'll need to import the library either directly in the head tag (for HTML projects) or by installing it via npm (for webpack projects).
+skapi is compatible with both HTML and webpack-based projects. Depending on your project type, you'll need to import the library either directly in the head tag (for HTML projects) or by installing it via npm (for webpack projects).
 
 ### For HTML projects
 
-To import skapi in an HTML project, add the following script to the head tag of your html file:
+To import skapi into an HTML project, add the following script to the head tag of your HTML file:
 
-``` html
-<script src="https://cdn.jsdelivr.net/npm/skapi-js@latest/dist/skapi.js"></script>
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/skapi-js@latest/dist/skapi.js"></script>
+    ...
+</head>
+<body>
+    ...
+</body>
+</html>
 ```
 
 ### For webpack projects
 
-To use skapi in a webpack-based project (such as Vue, React, or Angular), install skapi-js from npm:
+To use skapi in a webpack-based project (such as Vue, React, or Angular), first install skapi-js from npm:
 
+```sh
+$ npm install skapi-js
 ```
-$ npm i skapi-js
-```
 
-Then, import the library in your main file:
+Then, import the library into your main JavaScript file:
 
-``` js
+```javascript
 // main.js
-import {Skapi} from 'skapi-js';
+import { Skapi } from 'skapi-js';
 ```
+
+Next, you can begin integrating skapi into your application's logic.
