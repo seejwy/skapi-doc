@@ -174,6 +174,73 @@ When fetching a record by its ID, no other configuration parameters are necessar
 :::
 
 
+## Deleting Records
+
+The `skapi.deleteRecords()` method allows users to delete records in their tables. It accepts the following parameters:
+
+`skapi.deleteRecords()` takes an argument as below.
+```ts
+type Params = {
+    /** Record ID, or an array of record IDs to delete. */
+    record_id?: string | string[];
+
+    /** The name of the table to delete records from. If the `record_id` parameter is provided, this parameter is ignored. */
+    table?: {
+        /** The name of the table. */
+        name: string;
+        /** The access group of the table. */
+        access_group?: number | 'private' | 'public' | 'authorized';
+        /** The subscription group number (1~99) of the table. If specified, only the records posted in that group will be deleted.*/
+        subscription_group?: number;
+    };
+}
+```
+
+Here is an example of deleting records by record ID:
+
+```js
+let query = {
+    record_id: ['record_A','record_B']
+};
+
+skapi.deleteRecords(query).then(response => {
+    console.log(response); // 'SUCCESS: records are being deleted. please give some time to finish the process.'
+});
+```
+
+Users can delete up to 100 records at once. When deleting more than one record, the process will take some time to finish even after the user receives the response.
+
+Users can also delete all records they posted in certain tables. Here is an example of deleting all records posted by the user in table 'A':
+
+
+```js
+let query = {
+    table: {
+        name: 'A'
+    }
+};
+
+skapi.deleteRecords(query).then(response => {
+    console.log(response); // 'SUCCESS: records are being deleted. please give some time to finish the process.'
+});
+```
+
+Users can also delete all records they posted in certain tables with more specific targeting. Here is an example of a user deleting all records in table 'A' under access group 3 and subscription group 4.
+Learn more about [Subscription](/database-advanced/#subscription) in the [Database Advanced](/database-advanced) section.
+
+```js
+let query = {
+    table: {
+        name: 'A'
+    }
+};
+
+skapi.deleteRecords(query).then(response => {
+    console.log(response); // 'SUCCESS: records are being deleted. please give some time to finish the process.'
+});
+```
+
+
 ## Indexing
 
 When uploading records, you can set additional configurations for indexing.
