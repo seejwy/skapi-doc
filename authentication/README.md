@@ -9,7 +9,7 @@ Here's an example of how to use `signup(params, options?)`:
 ```ts
 let parameters = {
   email: "user@email.com",
-  password: "password", // The password should be at least 6 characters and 60 characters maximum.
+  password: "password", // The password should be at least 6 characters.
   name: "User's name"
 };
 
@@ -26,7 +26,6 @@ skapi.signup(parameters, options).then(r => console.log(r));
 type parameters = {
   email: string; // The email address to use for the account. The email should be at least 5 characters and a maximum of 64 characters.
   password: string; // The password to use for the account. The password should be at least 6 characters and a maximum of 60 characters.
-  email_subscription?: boolean; // Set to true if the user wishes to receive emails from your service.
   name?: string; // The user's name to be used in their login profile.
   email_public?: boolean; // Set to true to make the email address visible to others.
   phone_number?: string; // The user's phone number. The format should be "+0012341234". This will not be visible to others unless the phone_number_public option is set to true.
@@ -44,14 +43,17 @@ type parameters = {
 
 Optional parameters for the `signup()` method.
 
-- confirmation:
-  - If `confirmation` is set to `true`, the user will receive an email to confirm their signup. Once they click the link in the email, their signup will be confirmed, and they will be able to log in to your service. If the user does not confirm within a day, their signup will be invalid, and they will need to sign up again. Alternatively, you can specify a URL to redirect the user to when they click the confirmation link. It is advised to let your users confirm their signup to prevent automated bots.
+- signup_confirmation:
+  - If `options.signup_confirmation` is set to `true`, the user will receive an email to confirm their signup. Once they click the link in the email, their signup will be confirmed, and they will be able to log in to your service. If the user does not confirm within a day, their signup will be invalid, and they will need to sign up again. Alternatively, you can specify a URL to redirect the user to when they click the confirmation link. It is advised to let your users confirm their signup to prevent automated bots.
 - login:
   - If set to `true`, the user will be automatically logged in to the service upon successful signup.
+- email_subscription:
+  - If set to `true`, the user is subscribed to the service newsletters when account is created. `options.signup_confirmation` must be `true`.
 
 ```ts
 type options = {
-  confirmation?: boolean | string;
+  signup_confirmation?: boolean | string;
+  email_subscription?: boolean;
   login?: boolean;
   response?(response: any): any; // A callback function to be called upon success.
   onerror?(error: Error): any; // A callback function to be called on error.
@@ -62,12 +64,12 @@ type options = {
 Returns an [User profile object](/data-types/#user-profile) when `options.login` is `true`.
 
 If `options.login` is not set or is set to `false`, the method returns one of the following message strings:
-- "SUCCESS: The account has been created. User's email confirmation is required."
+- "SUCCESS: The account has been created. User's signup confirmation is required."
 - "SUCCESS: The account has been created."
 
 ## Signup Confirmation
 
-When the user created an account with `options.confirmation = true` in `signup()` method,
+When the user created an account with `options.signup_confirmation` = `true` in `signup()` options,
 User will need to click the link in the email to log in to your service.
 If a user didn't receive or lost their signup confirmation email, you can allow them to request another one by using the `resendSignupConfirmation()` method.
 To resend the user's signup confirmation email, the user must have at least one attempt to login to your service.
@@ -99,7 +101,7 @@ try {
 ## Login
 
 Use the `login` method to log a user into your service.
-If the `options.confirmation` was set to `true` in the `skapi.signup()` method,
+If the `options.signup_confirmation` was set to `true` in the `skapi.signup()` options,
 the user will not be able to log in until they have confirmed their signup confirmation email.
 
 ```js
