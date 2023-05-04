@@ -5,7 +5,7 @@ In this guide, we will cover the basics of querying and manipulating data in ska
 
 ## Creating a Record
 
-The postRecord() method allows you to create a new record in the database.
+The `postRecord()` method creates a new record in the database.
 
 ```js
 let newRecord = {
@@ -33,10 +33,16 @@ skapi.postRecord(newRecord, config).then(record=>{
 });
 ```
 
-The postRecord method takes two arguments.
-The first argument is the data to be uploaded. It can be any type of object, including null or a form submit event.
-And the second argument takes a configuration object.
+`postRecord()` takes two arguments.
 
+The first argument is the data to be uploaded. It can be any `object`, including `null` or a form `SubmitEvent`.
+The second argument takes a configuration object.
+
+```ts
+type configuration {
+    table: string | { name: string, };
+}
+```
 The table property in the config object is required and specifies the name of the table where you want to store the data.
 If the table does not exist, it will be created automatically when you post the record.
 If a table has no records, it will be automatically deleted.
