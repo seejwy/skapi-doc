@@ -2,11 +2,12 @@
 
 ## Creating an Account
 
-To create a new account with skapi, you can use the `signup()` method. This method allows you to specify a variety of parameters to create the account, as well as some optional options.
+To create a new account(user) in your service, you can use the `signup()` method. This method accepts some mandatory parameters as well as some optional options.
 
 Here's an example of how to use `signup(params, options?)`:
 
-```ts
+
+```js
 let parameters = {
   email: "user@email.com",
   password: "password", // The password should be at least 6 characters.
@@ -38,17 +39,9 @@ type parameters = {
   gender_public?: boolean; // Set to true to make the gender visible to others.
 };
 ```
+`signup` accepts `SubmitEvent` as its parameter. See [Working with forms](/the-basics/#working-with-forms) for more information.
 
-### Options (Optional)
-
-Optional parameters for the `signup()` method.
-
-- signup_confirmation:
-  - If `options.signup_confirmation` is set to `true`, the user will receive an email to confirm their signup. Once they click the link in the email, their signup will be confirmed, and they will be able to log in to your service. If the user does not confirm within a day, their signup will be invalid, and they will need to sign up again. Alternatively, you can specify a URL to redirect the user to when they click the confirmation link. It is advised to let your users confirm their signup to prevent automated bots.
-- login:
-  - If set to `true`, the user will be automatically logged in to the service upon successful signup.
-- email_subscription:
-  - If set to `true`, the user is subscribed to the service newsletters when account is created. `options.signup_confirmation` must be `true`.
+### options (Optional)
 
 ```ts
 type options = {
@@ -59,21 +52,47 @@ type options = {
   onerror?(error: Error): any; // A callback function to be called on error.
 };
 ```
-### Returns
 
-Returns an [User profile object](/data-types/#user-profile) when `options.login` is `true`.
+- signup_confirmation:
+  - If `true`, the user will receive an email containing a confirmation link to verify their email. Clicking the link will confirm their signup, and allow them access to your service.
+  - You can specify a URL `string` to redirect the user to when they click the confirmation link. 
+::: warning NOTE
+If the user fails to confirm within a day, their signup will be invalidated, and they will need to sign up again. 
+:::
+::: warning NOTE
+You should always use this option to prevent automated signup by bots
+:::
+
+- login:
+  - If `true`, the user will be automatically logged in to the service upon successful signup.
+  - Will not work with `options.signup_confirmation`
+- email_subscription:
+  - If `true`, the user will be subscribed to service newsletters when the account is created.
+  - Must be used with `options.signup_confirmation`
+
+### Return
+
+Returns a [User Profile](/data-types/#user-profile) object when `options.login` is `true`.
 
 If `options.login` is not set or is set to `false`, the method returns one of the following message strings:
 - "SUCCESS: The account has been created. User's signup confirmation is required."
 - "SUCCESS: The account has been created."
 
+### Errors
+```ts
+{
+  code: 'EXISTS';
+  message: "User's signup confirmation is required.";
+  name: 'SkapiError';
+}
+```
+
 ## Signup Confirmation
 
-When the user created an account with `options.signup_confirmation` = `true` in `signup()` options,
-User will need to click the link in the email to log in to your service.
-If a user didn't receive or lost their signup confirmation email, you can allow them to request another one by using the `resendSignupConfirmation()` method.
-To resend the user's signup confirmation email, the user must have at least one attempt to login to your service.
-
+When an account is created with `options.signup_confirmation` set to `true`, users must verify their email before logging into your service. If you need to resend the confirmation email, use the `resendSignupConfirmation()` method. 
+::: warning Note
+To resend signup confirmation emails, users must have at least one login or signup attempt to the service.
+:::
 ```js
 // user tries to login
 try {
@@ -98,76 +117,8 @@ try {
 }
 ```
 
-## Login
-
-Use the `login` method to log a user into your service.
-If the `options.signup_confirmation` was set to `true` in the `skapi.signup()` options,
-the user will not be able to log in until they have confirmed their signup confirmation email.
-
-```js
-let parameters = {
-  email: 'user@email.com',
-  password: 'password'
-}
-
-skapi.login(parameters).then(account => console.log(account));
-```
-
-### parameters
-
-```ts
-// Params accepts SubmitEvent
-
-type parameters = {
-  email:string; // User's login E-Mail.
-  password:string; // User's login password.
-}
-```
-
-### Returns
-
-Returns an [User profile object](/data-types/#user-profile) when log in is successful.
-
-### Errors
-```ts
-{
-  code: 'INVALID_REQUEST';
-  message: string;
-  name: 'SkapiError';
-}
-|
-{
-  code: 'SIGNUP_CONFIRMATION_NEEDED';
-  message: "User's signup confirmation is required.";
-  name: 'SkapiError';
-}
-|
-{
-  code: 'USER_IS_DISABLED';
-  message: 'This account is disabled.';
-  name: 'SkapiError';
-}
-|
-{
-  code: 'INCORRECT_USERNAME_OR_PASSWORD';
-  message: 'Incorrect username or password.';
-  name: 'SkapiError';
-}
-```
-
-## User's Profile
-
-Once a user has been logged in, you can call `skapi.getProfile()` to retrieve [User's Profile](/data-types/#user-profile).
-If the user is not logged in, `skapi.getProfile()` will return null.
-
-```js
-skapi.getProfile().then(account=>{
-  console.log(account);
-})
-```
-
 ### redirectUrl (optional)
-When a URL string is provided as an argument, you can redirect the user to the URL once they click on the confirmation email link.
+When a URL string is provided as an argument, users will be redirected to the URL when they click on the confirmation email link.
 
 ### Return
 ```ts
@@ -182,6 +133,64 @@ When a URL string is provided as an argument, you can redirect the user to the U
 }
 ```
 
+## Login
+
+Use the `login()` method to log a user into your service.
+If `signup_confirmation` was set to `true` in signup,
+users will not be able to log in until they have confirmed their account.
+
+```js
+let parameters = {
+  email: 'user@email.com',
+  password: 'password'
+}
+
+skapi.login(parameters).then(account => console.log(account));
+```
+
+### parameters
+
+```ts
+type parameters = {
+  email:string; // User's login E-Mail.
+  password:string; // User's login password.
+}
+```
+`login` accepts `SubmitEvent` as its parameter. See [Working with forms](/the-basics/#working-with-forms) for more information.
+
+### Return
+
+Returns a [User profile](/data-types/#user-profile) object when log in is successful.
+
+### Errors
+```ts
+{
+  code: "SIGNUP_CONFIRMATION_NEEDED";
+  message: "User's signup confirmation is required.";
+;
+}
+|
+{
+  code: 'USER_IS_DISABLED';
+  message: 'This account is disabled.';
+}
+|
+{
+  code: 'INCORRECT_USERNAME_OR_PASSWORD';
+  message: 'Incorrect username or password.';
+}
+```
+
+## User's Profile
+
+Once a user has been logged in, you can call `skapi.getProfile()` to retrieve [User's Profile](/data-types/#user-profile).
+If the user is not logged in, `skapi.getProfile()` will return null.
+
+```js
+skapi.getProfile().then(profile=>{
+  console.log(profile);
+})
+```
 ## Logout
 
 Logs user out from the service.
@@ -197,38 +206,30 @@ skapi.logout();
 
 ## Forgot password
 
-To reset a forgotten password, a user can follow the steps below:
+To reset a forgotten password:
 
-- Request a reset password code by calling `skapi.forgotPassword(params)`, where `params` is an object containing the user's email address.
-- The user will receive an email containing a verification code.
-- Use the `skapi.resetPassword(params)` method to reset the password, passing in an object containing the user's email, the verification code, and the new password.
-- Upon successful password reset, the user's account password will be set to the new password provided.
-
+1. Request a verification code using the `forgotPassword()` method.
 ```js
-let params = {
-  email: 'user@email.com'
-}
-
-skapi.forgotPassword(params);
+skapi.forgotPassword({email: 'someone@gmail.com'});
 // User receives an e-mail with a verification code.
 ```
-
+2. The user will receive an email containing a verification code.
+3. Use the `resetPassword()` method to reset the password with their verification code.
 ```js
-// User can now use the verification code to reset password.
-let params = {
-  email: 'user@email.com',
-  code: 'xxxx...',
-  new_password: 'users_new_password' // The password should be at least 6 characters and 60 characters maximum.
-}
-skapi.resetPassword({ email, code, new_password })
-    .then(()=>{
-        // New password is set.
-    });
+skapi.resetPassword({
+  email: 'someone@gmail.com', 
+  code: '123456', // code sent to user's registered email address
+  new_password: 'new_password' // The password should be at least 6 characters and 60 characters maximum.
+}).then(() => {
+  // new password is set
+});
 ```
+4. Upon successful password reset, the user's account password will be set to the new password provided.
 
-::: warning NOTE
-If the user's account does not have a verified e-mail address, user will not be able to receive any verification code.
-Advise users to verify their e-mail.
+::: danger WARNING
+Users will not be able to receive a verification code if their email is not verified, causing them to lose their accounts forever.
+
+We highly recommend encouraging users to verify their email.
 :::
 
 ## Recovering a Disabled Account
