@@ -1,5 +1,7 @@
 # Authentication
 
+Methods related to authentication.
+
 ## Creating an Account
 
 To create a new account(user) in your service, you can use the `signup()` method. This method accepts some mandatory parameters as well as some optional options.
@@ -237,8 +239,8 @@ Returns a [User profile](/data-types/#user-profile) object when log in is succes
 
 ## User's Profile
 
-Once a user has been logged in, you can call `skapi.getProfile()` to retrieve [User's Profile](/data-types/#user-profile).
-If the user is not logged in, `skapi.getProfile()` will return null.
+Once a user has been logged in, you can call `skapi.getProfile()` to retrieve the [User's Profile](/data-types/#user-profile).
+If a user is not logged in, `skapi.getProfile()` will return null.
 
 ```js
 skapi.getProfile().then(profile=>{
