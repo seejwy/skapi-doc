@@ -1,7 +1,14 @@
 module.exports = {
     title: 'skapi',
     description: 'skapi API documentation',
-    themeConfig:{
+    plugins: [
+        'code-switcher',
+        ['vuepress-plugin-code-copy', {
+            color: "#636569",
+            staticIcon: true
+        }]
+    ],
+    themeConfig: {
         // nav: [
         //     {
         //         text: 'Home',
