@@ -6,20 +6,49 @@ To create a new account(user) in your service, you can use the `signup()` method
 
 Here's an example of how to use `signup(params, options?)`:
 
+<CodeSwitcher :languages="{js:'Using JavaScript',form:'Using Forms'}">
+<template v-slot:js>
 
 ```js
 let parameters = {
   email: "user@email.com",
-  password: "password", // The password should be at least 6 characters.
+  password: "password", // Password must be between 6 and 60 characters.
   name: "User's name"
 };
 
 let options = {
-  login: true // If set to true, the user will be automatically logged in to the service upon successful signup.
+  signup_confirmation: true // If set to true, users must confirm their email to complete signup.
 };
 
-skapi.signup(parameters, options).then(r => console.log(r));
+skapi.signup(parameters, options)
+  .then(res => console.log({res}))
+  .catch(err => console.log({err}));
 ```
+
+</template>
+<template v-slot:form>
+
+```html
+<form onsubmit="skapi.signup(event, 
+    { 
+        signup_confirmation: true, 
+        response: (res) => {console.log({res})}, // response runs on successful signup
+        onerror: err => console.log({err}) // onerror runs when signup fails 
+    })">
+    <input type="email" name="email" placeholder="E-Mail" required>
+    <br>
+    <input id="password" type="password" name="password" placeholder="Password" required>
+    <br>
+    <input id="confirm_password" type="password" placeholder="Confirm Password" required>
+    <br>
+    <input name="name" placeholder="Your name">
+    <br>
+    <input type="submit" value="Create Account">
+</form>
+```
+
+</template>
+</CodeSwitcher>
 
 ### parameters
 
@@ -139,14 +168,39 @@ Use the `login()` method to log a user into your service.
 If `signup_confirmation` was set to `true` in signup,
 users will not be able to log in until they have confirmed their account.
 
+<CodeSwitcher :languages="{js:'Using JavaScript',form:'Using Forms'}">
+<template v-slot:js>
+
 ```js
 let parameters = {
   email: 'user@email.com',
   password: 'password'
 }
 
-skapi.login(parameters).then(account => console.log(account));
+skapi.login(parameters)
+  .then(res => console.log({res}))
+  .catch(err => console.log({err}));
 ```
+
+</template>
+<template v-slot:form>
+
+```html
+<form onsubmit="skapi.login(event, 
+    { 
+        response: (res) => {console.log({res})}, // response runs on successful signup
+        onerror: err => console.log({err}) // onerror runs when signup fails 
+    })">
+    <input type="email" name="email" placeholder="E-Mail" required>
+    <br>
+    <input id="password" type="password" name="password" placeholder="Password" required>
+    <br>
+    <input type="submit" value="Login">
+</form>
+```
+
+</template>
+</CodeSwitcher>
 
 ### parameters
 
@@ -209,12 +263,38 @@ skapi.logout();
 To reset a forgotten password:
 
 1. Request a verification code using the `forgotPassword()` method.
+
+<CodeSwitcher :languages="{js:'Using JavaScript',form:'Using Forms'}">
+<template v-slot:js>
+
 ```js
 skapi.forgotPassword({email: 'someone@gmail.com'});
 // User receives an e-mail with a verification code.
 ```
+</template>
+<template v-slot:form>
+
+```html
+<form onsubmit="skapi.forgotPassword(event, 
+    { 
+        response: (res) => {console.log({res})}, // response runs on successful signup
+        onerror: err => console.log({err}) // onerror runs when signup fails 
+    })">
+    <input type="email" name="email" placeholder="E-Mail" required>
+    <br>
+    <input type="submit" value="Request Verification Code">
+</form>
+```
+
+</template>
+</CodeSwitcher>
+
 2. The user will receive an email containing a verification code.
 3. Use the `resetPassword()` method to reset the password with their verification code.
+
+<CodeSwitcher :languages="{js:'Using JavaScript',form:'Using Forms'}">
+<template v-slot:js>
+
 ```js
 skapi.resetPassword({
   email: 'someone@gmail.com', 
@@ -224,6 +304,28 @@ skapi.resetPassword({
   // new password is set
 });
 ```
+</template>
+<template v-slot:form>
+
+```html
+<form onsubmit="skapi.resetPassword(event, 
+    { 
+        response: (res) => {console.log({res})}, // response runs on successful signup
+        onerror: err => console.log({err}) // onerror runs when signup fails 
+    })">
+    <input type="email" name="email" placeholder="E-Mail" required>
+    <br>
+    <input type="text" name="code" required>
+    <br>
+    <input type="password" name="new_password" required>
+    <br>
+    <input type="submit" value="Change Password">
+</form>
+```
+
+</template>
+</CodeSwitcher>
+
 4. Upon successful password reset, the user's account password will be set to the new password provided.
 
 ::: danger WARNING
@@ -234,11 +336,17 @@ We highly recommend encouraging users to verify their email.
 
 ## Recovering a Disabled Account
 
-If a user's account has been disabled, it is possible to recover it within 3 months by using the `skapi.recoverAccount()` method. In order to initiate the account recovery process, the user must have at least one sign-in attempt associated with their disabled account and their email must have been verified. If the account is unverified, it cannot be recovered.
+Disabled accounts can be reactivated within 3 months using the `skapi.recoverAccount()` method. To recover accounts, the following criteria must be met:
 
-The `skapi.recoverAccount()` method sends a signup confirmation email to the user with a confirmation link. It also accepts an optional URL argument, which will be used to redirect the user to a specific page upon successful account recovery.
+- account email must be verified.
+- have at least one sign-in attempt using the disabled account 
+ 
 
-Here is an example of how to use the `skapi.recoverAccount()` method:
+**If the account is unverified, it cannot be recovered**.
+
+The `recoverAccount()` method sends the account owner an email containing a confirmation link. In addition, the `recoverAccount()` method accepts an optional `URL: string` argument, redirecting the user to the URL upon successful account recovery.
+
+Here is an example of how to use the `recoverAccount()` method:
 
 ```js
 try {
