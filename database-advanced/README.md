@@ -4,7 +4,7 @@ In this section, we will cover advanced features for skapi database.
 
 ## Fetching Tables
 
-You can fetch list of table as below:
+You can fetch a list of table using the `getTables()` method.
 
 ```js
 skapi.getTables().then(response=>{
@@ -14,20 +14,20 @@ skapi.getTables().then(response=>{
 
 ### Quering tables
 
-You can also query table names as below:
+You can query table names that meet a `condition`.
 
 ```js
 skapi.getTables({
     table: 'A',
     condition: '>'
 }).then(response => {
-    console.log(response.limit); // Table names starting with 'A'
+    console.log(response.limit); // Table names starting from 'A'
 })
 ```
 
 ## Fetching Tags
 
-You can fetch list of tags as below:
+You can fetch all tags used in a table with `getTag()`.
 
 ```js
 skapi.getTag({
@@ -39,7 +39,7 @@ skapi.getTag({
 
 ### Quering tags
 
-You can also query tags as below:
+You can also query tags that meet a `condition`.
 
 ```js
 skapi.getTag({
@@ -47,13 +47,13 @@ skapi.getTag({
     tag: 'A',
     condition: '>'
 }).then(response=>{
-    console.log(response.limit); // List of all tags starting with 'A' in table named 'MyTable'
+    console.log(response.limit); // List of all tags starting from 'A' in table named 'MyTable'
 })
 ```
 
 ## Referencing
 
-You can reference another record when uploading a new record, which can be useful when building features such as a comments section, a poll, or a message box. To reference a record, you'll need to specify the record_id of the record you want to reference in the reference parameter in the config object.
+You can reference another record in your records. Referencing is useful when you want to point your record to an existing record. Think of it as a "1 : many" relationship in a relational database. To reference a record, you'll need to specify the `record_id` of the record you want to reference in the `reference` parameter in the `config` object.
 
 Here's an example of uploading a record to be referenced and another record that references it:
 
@@ -85,24 +85,35 @@ skapi.postRecord(referencedRecord, referencedConfig).then(response => {
 });
 ```
 
-Now you can query all the records that reference the original post as follows:
+Now you can query all the records that references the original record by passing the record ID:
 
 ```js
 skapi.getRecord({
     table: 'Comments',
-    reference: { record_id: 'record_id_of_the_original_post' }
+    reference: 'record_id_of_the_original_post'
 }).then(response => {
     console.log(response.list);  // Array of comments on the original post
 });
 ```
 
-:::tip NOTE
-You can reference a record that references other records, which allows you to build a Reddit-like comment board easily.
+You can even query all the records posted by a user using the user's ID.
+
+```js
+skapi.getRecord({
+    table: 'Comments',
+    reference: 'user_id_whose_post_you_want'
+}).then(response => {
+    console.log(response.list);  // Array of comments posted by a user
+});
+```
+
+:::tip Hint
+You can easily build a discussion board similar to Reddit by chaining your referenced records.
 :::
 
 ### Removing a reference
 
-To remove a reference, simply set the record_id value in the reference parameter to null when updating the record.
+To remove a reference, set the the `reference.record_id` parameter to `null` when updating the record.
 
 ```js
 skapi.postRecord(undefined, {
@@ -115,11 +126,26 @@ skapi.postRecord(undefined, {
 
 ### Reference settings
 
-When uploading a record, you can control the behavior of references by specifying parameters in the options object. The following parameters are available:
+When uploading records, you can set restrictions on referencing using the following parameters:
 
-reference.allowed_references: The maximum number of references that can be created for a given record. If this parameter is set to null, the number of references is unlimited. The default value is null.
+```ts
+{
+    ...
+    reference: {
+        allowed_references: number;
+        allow_multiple_reference: boolean;
+    }
+    ...
+}
 
-reference.allow_multiple_reference: If set to false, a user will not be able to post multiple references to the same record. If set to true, a user will be able to post multiple references. The default value is true.
+```
+`allowed_references`: The maximum number of references that can be created for a given record. If this parameter is set to null, the number of references is unlimited. The default value is `null`.
+
+:::tip Hint
+Set `allowed_references` to `0` to prevent referencing.
+ :::
+
+`allow_multiple_reference`: If set to `false`, a user will be able to post only one reference to the same record. If set to `true`, a user will be able to post multiple references. The default value is `true`.
 
 For example, you can use these parameters to build a poll where only 10 people are allowed to vote and each user can only vote once. The following code demonstrates how to create such a poll:
 
@@ -149,13 +175,13 @@ skapi.postRecord({
 });
 ```
 
-Note that the vote value uses the index and boolean types, so you can later calculate the average vote value.
+Note that the "Vote.Beer" `index` uses a `value` of type `boolean` so you can later calculate the average vote value.
 
 
 ## Subscription
-skapi database provides subscription for records. You can use subscriptions to provide access only to users who have subscribed to the uploader.
+skapi database provides `subscription_group` in its records. You can use `subscription_group` to restrict access to the record only to users who have subscribed to the uploader.
 
-To create a subscription group, the uploader specifies a group number between 1 and 99 when uploading a record:
+To create a subscription group, specify a `subscription_group` between 1 and 99 when uploading a record.
 ```js
 // User 'A' uploads record in subscription group 5.
 skapi.postRecord(null, {
@@ -165,7 +191,7 @@ skapi.postRecord(null, {
 }})
 ```
 
-To allow other users to access the records in the subscription group, they must first subscribe to the uploader:
+To allow other users to access the records in a subscription group, they must first subscribe to that subscription group of the uploader using the `subscribe()` method.
 
 ```js
 // User 'B' subscribes to user 'A' to subscription group 5.
@@ -175,7 +201,7 @@ skapi.subscribe({
 })
 ```
 
-Once a user has subscribed to another user in a particular subscription group, they can fetch the records in that group:
+Once a user has subscribed to the subscription group of a user, they will have access to the records in that subscription group.
 
 ```js
 // User 'B' can get records in subscription group 5 of user 'A'
@@ -194,7 +220,7 @@ skapi.getRecords({
 
 ### Unsubscribing
 
-Users can unsubscribe from the users they have subscribed to:
+Users can unsubscribe from the users they have subscribed to using the `unsubscribe()` method.
 
 ```js
 // User 'B'
@@ -204,7 +230,7 @@ skapi.unsubscribe({
 })
 ```
 
-Users can also unsubscribe from all groups by passing the `'*'` wildcard character in the group parameter:
+Users can also unsubscribe from all groups by passing the `'*'` wildcard character in the group parameter.
 
 ```js
 // User 'B'
@@ -219,7 +245,7 @@ skapi.unsubscribe({
 
 Users can block certain users from their subscription groups. If a user is blocked from a subscription group, they will not have access to the records in that group.
 
-To block a subscriber, the user can call the `blockSubscriber` method:
+To block a subscriber, use the `blockSubscriber()` method:
 
 ```js
 // User A
@@ -229,7 +255,7 @@ skapi.blockSubscriber({
 })
 ```
 
-To unblock a subscriber, the user can call the unblockSubscriber method:
+To unblock a subscriber, use the `unblockSubscriber()` method:
 
 ```js
 // User A
@@ -240,61 +266,59 @@ skapi.unblockSubscriber({
 ```
 
 :::warning Note
-Although Users can block user from their subscription, subscription group is not meant to be used as database security
-because any user with an account can subscribe to any other user in any subscription group.
-If security is the purpose, use 'access_group' instead.
+Although users can use `subscription_group` to restrict their records, it should not be used as a layer of security. The `subscribe()` method is accessible to all users. If you want to securely set your records private, use `access_group` instead. Refer to [Access Restrictions](/database/#access-restrictions)
 :::
 
 
 ## Listing subscriptions
 
-`skapi.getSubscriptions` retrieves subscription information from the database.
+The `getSubscriptions()` method retrieves subscription information from the database.
 
 ### Parameters
 - Params (object, required): An object that contains the following properties:
     - subscriber (string): The user ID of the subscriber.
-    - subscription (string): The user ID of the subscription.
+    - subscription (string): The user ID of the uploader.
     - group (number | string): The subscription group number to retrieve, or "*" to retrieve all groups. Defaults to all groups.
-    - blocked (boolean): Whether to retrieve blocked subscriptions or not.
+    - blocked (boolean): Set to `true` to only retrieve blocked subscriptions.
 - FetchOptions (object): An object that contains the following properties:
-    - limit (number): The maximum number of records to retrieve.
-    - fetchMore (boolean): Whether to fetch the next batch of records or not.
-    - ascending (boolean): Whether to sort the records in ascending or descending order.
+    - limit (number): The maximum number of users to retrieve.
+    - fetchMore (boolean): Set to `true` to fetch the next batch of subscriptions.
+    - ascending (boolean): Set to `true` to sort the records in ascending order.
     - startKey (string): The start key to use when fetching the next batch of records.
 
 ```js
-// Retrieve all subscriptions for a given subscriber
+// Retrieve all subscription information where userA is the subscriber
 skapi.getSubscriptions({
   subscriber: "userA"
 }).then((response) => {
-  console.log(response.list); // An array of subscription records for userA
+  console.log(response.list); // An array of subscription information
 });
 
-// Retrieve all subscriptions for a given subscription
+// Retrieve all subscription information where userB is being subscribed to
 skapi.getSubscriptions({
   subscription: "userB"
 }).then((response) => {
-  console.log(response.list); // An array of subscription records for userB
+  console.log(response.list); // An array of subscription information
 });
 
-// Retrieve subscriptions for a given subscriber and group
+// Retrieve subscription information where userA is the subscriber and subscription group is 2
 skapi.getSubscriptions({
   subscriber: "userA",
   group: 2,
 }).then((response) => {
-  console.log(response.list); // An array of subscription records for userA in group 2
+  console.log(response.list); // An array of subscription information
 });
 
-// Retrieve blocked subscriptions for a given subscriber and group
+// Retrieve all subscription information where userA is a subscriber and subscription group is group 2 and userA is blocked
 skapi.getSubscriptions({
   subscriber: "userA",
   group: 2,
   blocked: true,
 }).then((response) => {
-  console.log(response.list); // An array of blocked subscription records for userA in group 2
+  console.log(response.list); // An array of blocked subscription records
 });
 
-// Check if userA is subscribed to userB in group 1
+// Check if userA is subscribed to userB in group 2
 skapi.getSubscriptions({
   subscriber: "userA",
   subscription: "userB",
@@ -304,15 +328,29 @@ skapi.getSubscriptions({
 });
 ```
 
+### Returns
+```ts
+[
+    {
+        subscriber: string;
+        subscription: string;
+        group: number;
+        timestamp: number;
+        blocked: boolean
+    }
+    ...
+]
+```
+
 :::warning Note
 Either the subscriber or subscription parameter must be provided in the Params object. If neither is provided, an error will occur.
 :::
 
 ## Compound Index Names
 
-When uploading a record, you can make use of compound index names to have more control over querying the records. This makes it easier to search and retrieve records based on specific criteria.
+When posting records, you can use compound index names to have more control over querying the records. This makes it easier to search and retrieve records.
 
-In the example below, we are uploading an album record with a compound index name:
+In the example below, we are uploading a record with a compound index name:
 
 ```js
 let album_data = {
@@ -329,11 +367,11 @@ skapi.postRecord(album_data, {
 })
 ```
 
-In this example, we have created a compound index name by combining the artist type, artist name, and "year" and joining these elements with a period. The value for the index is set to the "year" value of 2023.
+In this example, we have created a compound index name by joining the artist type, artist name, and "year" with a period. The `value` for the `index` is set to the "year" value of 2023.
 
 Using compound index names, you can easily query records by artist type, artist name, or release year.
 
-For example, you can query all albums by a band using the following code:
+For example, you can query all albums performed by a band using the following code:
 
 ```js
 skapi.getRecords({
@@ -348,7 +386,7 @@ skapi.getRecords({
 })
 ```
 
-In this example, the query includes a period at the end of the index name, 'Band.'. This allows you to query the next hierarchy of the compound index name as a string value. Since the value is an empty string and the condition is set to "more than", this will retrieve all records that fall under the index name of 'Band.'.
+In this example, the query includes a period at the end of the index `name`, 'Band.'. This allows you to query the following index of the compound index name as a `string` value. Since the `value` is an empty string and the condition is set to "more than", this will retrieve all records where the index `name` begins with 'Band.'.
 
 You can also query albums by artist name. For example, you can query all albums by artist names starting with "Asian" like this:
 
@@ -361,13 +399,13 @@ skapi.getRecords({
         condition: '>='
     }
 }).then(response=>{
-    console.log(response.list); // All albums by a band name starting with 'Asian'
+    console.log(response.list); // All albums by bands with a name starting with 'Asian'
 })
 ```
 
-In this example, the value of the index is set to "Asian" and the condition is set to "more than or equal". This allows you to query all artist names starting with "Asian" under the "Band." category.
+In this example, the `value` of the index is set to "Asian" and the `condition` is set to "more than or equal". This allows you to query all artist names starting with "Asian" where the index `name` begins with "Band."
 
-Lastly, you can query the band Asian Spice House albums by release year as follows:
+Finally, you can query the band Asian Spice House albums by release year as follows:
 
 ```js
 skapi.getRecords({
@@ -382,5 +420,5 @@ skapi.getRecords({
 ```
 
 :::warning Note
-It is important to note that when querying the records with a compound index, you need to specify the full hierarchy of the index in order to obtain the desired results. In the example you provided, you cannot simply query all the albums that were released in a certain year without specifying the band name, which is the second hierarchy of the compound index name. In order to achieve that, you would need to restructure your index.
+It is important to note that when querying the records with a compound index, you need to specify the index respecting the hierarchy of the compound index name. In the example provided, you cannot simply use `Band.year` as an index name. You must provide the full `Band.AsianSpiceHouse.year` index.
 :::
