@@ -43,15 +43,31 @@ type configuration {
     table: string | { name: string, };
 }
 ```
-The table property in the config object is required and specifies the name of the table where you want to store the data.
-If the table does not exist, it will be created automatically when you post the record.
-If a table has no records, it will be automatically deleted.
-You can name your tables however you'd like, and use the table name to query the records you've posted.
+The `table` property in the `config` object is **required**. It specifies the name of the table where data will be stored. If the table does not exist, it will be automatically created when you create the record. *It is important to note that table names are case-sensitive when fetching records*.
+<!-- If a table has no records, it will be automatically deleted. -->
+<!-- You can name your tables however you'd like, and use the table name to query the records you've posted. -->
 
+
+## Uploading Files
+
+The `postRecord()` method can accept `SubmitEvent` as data. **This is the recommended way to upload files**. The `name` attribute of the input fields will become the key name.
+
+Here is an example of how you can upload files with skapi:
+```html
+<form onsubmit="skapi.postRecord(event, { table: 'Photos', response: record => console.log(record) })">
+    <input name="description" />
+    <input name="picture" multiple type="file" />
+    <input type="submit" value="Submit" />
+</form>
+```
+
+The `postRecord()` method will upload your file(s) for you under the key name `picture`.
+
+See [Working with forms](/the-basics/#working-with-forms) for more information.
 
 ## Updating a Record
 
-The postRecord() method can also be used to update an existing record by specifying the record ID in the config.record_id field.
+The `postRecord()` method can also be used to update an existing record by providing `record_id` in the `config` object. Records can only be updated by the original creater of the record.
 
 ```js
 let updatedRecord = {
@@ -79,58 +95,65 @@ skapi.postRecord(updatedRecord, config).then(record=>{
 });
 ```
 
-Note that if you don't specify any additional configuration parameters, the previous configurations of the record will be maintained. Only the creator of the record will have the ability to edit it.
+:::warning Note
+When updating existing records using the `postRecord()` method, you only need to include the parameters you want to updateand the required `table` and `record_id` parameters. All other fields in the record will be left unchanged unless they are explicitly included in the method call.
+:::
 
-Also, for the record data, if you give undefined you can only upload record config with out touching the previous record data.
+Any data provided in the first argument of `postRecord()` will overwrite its current value. Provide `null` to delete the current value. If you do not wish to update or delete the value, pass `undefined`.
 
 Example:
 
 ```js
+/**
+ * original data
+ * {
+ *  country: South Korea
+ *  favorite_food: Kimchi
+ * }
+*/
+
 let config = {
-    record_id: 'record_id_to_edit',
+    record_id: 'record_id_to_edit', // record /*record/*
     table: 'NewTableName'
 }
 
 skapi.postRecord(undefined, config).then(record=>{
     console.log(record); // Table name is changed.
 });
+
+/**
+ * original data
+ * {
+ *  country: South Korea
+ *  favorite_food: Kimchi
+ * }
+*/
 ```
-
-## Submitting Forms
-
-The `skapi.postRecord()` method can also accept form submissions as data. This is particularly useful when you want to upload binary files. The names of the input fields in the form will serve as the key names for the corresponding values.
-
-In case you do not use the action attribute to redirect users after a successful submission, you can include an additional response callback in the configuration to receive the response.
-
-Here's an example of how you can use skapi with a form:
-```html
-<form onsubmit='skapi.postRecord(event, { table: "Collection", response: record => console.log(record) })'>
-    <input name='description' />
-    <input name='picture' type='file' />
-    <input type='submit' value='Submit' />
-</form>
-```
-
-In this example, a form is created with two input fields: `description` and `picture`. When the form is submitted, the `skapi.postRecord()` method is called with an event object and a configuration object that specifies the name of the table where the record should be stored (`Collection`) and a response callback function that logs the response to the console.
-
-The `postRecord()` method will automatically retrieve the data from the form inputs and upload it to the specified table in the database.
 
 ## Fetching Records
 
-The `getRecords()` method allows you to fetch records stored in the database. The example below retrieves an array of records stored in a table named 'Collection':
+The `getRecords()` method allows you to fetch records from the database. 
+
+The example below retrieves records stored in a table named 'Collection':
 
 ```js
-let query = {
+let config = {
     table: 'Collection'
 }
-skapi.getRecords(query).then(response=>{
-    console.log(response.list); // Array of records in table 'Collection'
-    console.log(response.endOfList); // true if there are no more records to retrieve
-    console.log(response.startKey); // startKey for the next set of records to retrieve
+
+skapi.getRecords(config).then(response=>{
+    // response
+    /**
+     * endOfList: true,
+     * list: [
+     *  ...
+     * ],
+     * startKey: 'end'
+     */
 });
 ```
 
-By default, `getRecords()` retrieves up to 50 records per call. The config object passed to `getRecords()` is used to specify query parameters such as the table name to retrieve records from. The response from `getRecords()` includes the array of records, `endOfList` which is a boolean indicating if there are no more records to retrieve, and `startKey` which is the key for the next set of records to retrieve.
+By default, `getRecords()` retrieves up to 50 records per call. The `config` object is used to specify query parameters such as the table name to retrieve records from. The response from `getRecords()` includes the array of records, `endOfList` which is a boolean indicating if there are no more records to retrieve, and `startKey` which is the key for the next set of records to retrieve.
 
 ### Fetching More Records
 
@@ -154,8 +177,8 @@ skapi.getRecords(query, config).then(response=>{
 });
 ```
 
-:::warning NOTE
-When using the `fetchMore` parameter, it is the developer's responsibility to check if the returned list is the last batch of data. The method will continue to fetch the next batch of data until the end of the list is reached. Once the end of the list is reached, the method will return an empty list, indicating that there are no more items to fetch.
+:::danger WARNING
+When using the `fetchMore` parameter, you must check if the response's `endOfList` is `true` before making the next call. `getUsers()` will continue making API calls even if there are no more results resulting in significantly higher costs.
 :::
 
 ### Fetching Record by ID
@@ -169,83 +192,21 @@ let query = {
 };
 
 skapi.getRecords(query).then(response => {
-    console.log(response.list[0]); // The result will be an array with a single item.
-    console.log(response.endOfList); // This will be true, as the result set is limited to the record with the specified ID.
-    console.log(response.startKey); // This will be null, as no more records can be retrieved beyond the specified ID.
+    
+    // response
+    /**
+     * endOfList: true,
+     * list: [{
+     *  ... // only 1 result
+     * }],
+     * startKey: null // startKey is null as no more records can be retrieved
+     */
 });
 ```
 
 :::warning NOTE
 When fetching a record by its ID, no other configuration parameters are necessary.
 :::
-
-
-## Deleting Records
-
-The `skapi.deleteRecords()` method allows users to delete records in their tables. It accepts the following parameters:
-
-`skapi.deleteRecords()` takes an argument as below.
-```ts
-type Params = {
-    /** Record ID, or an array of record IDs to delete. */
-    record_id?: string | string[];
-
-    /** The name of the table to delete records from. If the `record_id` parameter is provided, this parameter is ignored. */
-    table?: {
-        /** The name of the table. */
-        name: string;
-        /** The access group of the table. */
-        access_group?: number | 'private' | 'public' | 'authorized';
-        /** The subscription group number (1~99) of the table. If specified, only the records posted in that group will be deleted.*/
-        subscription_group?: number;
-    };
-}
-```
-
-Here is an example of deleting records by record ID:
-
-```js
-let query = {
-    record_id: ['record_A','record_B']
-};
-
-skapi.deleteRecords(query).then(response => {
-    console.log(response); // 'SUCCESS: records are being deleted. please give some time to finish the process.'
-});
-```
-
-Users can delete up to 100 records at once. When deleting more than one record, the process will take some time to finish even after the user receives the response.
-
-Users can also delete all records they posted in certain tables. Here is an example of deleting all records posted by the user in table 'A':
-
-
-```js
-let query = {
-    table: {
-        name: 'A'
-    }
-};
-
-skapi.deleteRecords(query).then(response => {
-    console.log(response); // 'SUCCESS: records are being deleted. please give some time to finish the process.'
-});
-```
-
-Users can also delete all records they posted in certain tables with more specific targeting. Here is an example of a user deleting all records in table 'A' under access group 3 and subscription group 4.
-Learn more about [Subscription](/database-advanced/#subscription) in the [Database Advanced](/database-advanced) section.
-
-```js
-let query = {
-    table: {
-        name: 'A'
-    }
-};
-
-skapi.deleteRecords(query).then(response => {
-    console.log(response); // 'SUCCESS: records are being deleted. please give some time to finish the process.'
-});
-```
-
 
 ## Indexing
 
@@ -570,3 +531,79 @@ skapi.postRecord(publicRecord, publicConfig).then(record => {
     console.log(record); // Anyone can access this record.
 });
 ```
+
+## Deleting Records
+
+The `deleteRecords()` method allows users to delete records in their tables.
+
+`deleteRecords()` accepts the following `config` object:
+```ts
+type Params = {
+    /** Record ID, or an array of record IDs to delete. */
+    record_id?: string | string[];
+
+    /** The name of the table to delete records from. If the `record_id` parameter is provided, this parameter is ignored. */
+    table?: {
+        /** The name of the table. */
+        name: string;
+        /** The access group of the table. */
+        access_group?: number | 'private' | 'public' | 'authorized';
+        /** The subscription group number (1~99) of the table. If specified, only the records posted in that group will be deleted.*/
+        subscription_group?: number;
+    };
+}
+```
+
+Here is an example showing how to delete multiple records using an array of record IDs:
+
+```js
+let query = {
+    record_id: ['record_A','record_B']
+};
+
+skapi.deleteRecords(query).then(response => {
+    console.log(response); // 'SUCCESS: records are being deleted. please give some time to finish the process.'
+});
+```
+
+:::warning Note
+You can only delete up to 100 records at a go when using an array of record IDs.
+:::
+
+You can also delete all of a user's records from a table within an access group. 
+Here is an example of deleting all records created by the user in table 'A' in a public access group:
+
+```js
+let query = {
+    table: {
+        name: 'A',
+        access_group: 'public'
+    }
+};
+
+skapi.deleteRecords(query).then(response => {
+    console.log(response); // 'SUCCESS: records are being deleted. please give some time to finish the process.'
+});
+```
+
+You can also pass `subscription_group` as an additional filter for which records to delete. Here is an example of a user deleting all records in table 'A' in a public access group and only records in subscription group 4.
+
+Learn more about [Subscription](/database-advanced/#subscription) in the [Database Advanced](/database-advanced) section.
+
+```js
+let query = {
+    table: {
+        name: 'A',
+        access_group: 'public',
+        subscription_group: 4
+    }
+};
+
+skapi.deleteRecords(query).then(response => {
+    console.log(response); // 'SUCCESS: records are being deleted. please give some time to finish the process.'
+});
+```
+
+:::warning Note
+Note that when deleting multiple records, the promise will return with success immediately, but the deleted records may take some time to be reflected in the database.
+:::
