@@ -1,16 +1,16 @@
 # Full Example: User profile page
-This example demonstrates how to build a user page where user can retrieve or edit their profiles.
-It includes four separate files:
+The examples here show you how to build a user's profile page where users can retrieve or edit their profiles.
+There are four separate files:
 
-- profile.html: a page for viewing user account profile.
-- edit_profile.html: a page for editing user profile.
-- change_password.html: a page for changing user password.
-- bye.html: a page shown when user disables their account.
+- profile.html: a page for viewing the user's profile.
+- edit_profile.html: a page for editing the user's profile.
+- change_password.html: a page for changing the user's password.
+- bye.html: a page shown when users disable their account.
 
 
 ## profile.html
 
-This page will retrive and display user's account profile.
+This page will retrieve and display users' profiles.
 
 In the &lt;body&gt; section, there is a &lt;div&gt; element with an id of "user_profile" that will be used to display the user's profile information.
 There are also two hyperlinks, one to "Edit user profile" and the other to "Change password".
