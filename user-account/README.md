@@ -94,7 +94,7 @@ skapi.updateProfile(updates)
 </form>
 <script>
     function requestCode() {
-        skapi.verifyEmail('email')
+        skapi.verifyEmail()
           .then((res) => console.log({res}))
           .catch(err => console.log({err}));
     }
@@ -289,6 +289,6 @@ skapi.getUsers(null, options).then(u=>{
 
 ```
 
-:::warning NOTE
-When using the `fetchMore` parameter, you must check if the response's `endOfList` is `true` before making the next call. `getUsers()` will continue making API calls and return an empty array even if there are no more results.
+:::danger WARNING
+When using the `fetchMore` parameter, you must check if the response's `endOfList` is `true` before making the next call. `getUsers()` will continue making API calls even if there are no more results resulting in significantly higher costs.
 :::
