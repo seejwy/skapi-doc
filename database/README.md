@@ -324,6 +324,37 @@ When using `range` parameter, the `value` and `range` parameter value should be 
 Range and condition parameter cannot be used simultaneously.
 :::
 
+### Query Index with Reserved Keywords
+
+skapi has reserved a few keywords to help with querying your records. 
+They are `$uploaded`, `$updated`, `$referenced_count`, and `$user_id`.
+
+- `$uploaded`: The timestamp at which the record was created.
+- `$updated`: The timestamp at which the record was last updated.
+- `$referenced_count`: The number of records that references this record.
+- `$user_id`: The owner of the record.
+
+Other than `$user_id`, all of these reserved keywords can be queried with `condition` and `range` like any other index values.
+
+For example, here is how you can query a record that was created after 2021.
+
+```js
+skapi.getRecords({
+    table: "Albums",
+    index: {
+        name: '$uploaded'
+        value: '1609459200', // this timestamp is 2021 January 1,
+        condition: '>'
+    }
+}).then(response => {
+    console.log(response.list); // List of albums released after 2021.
+});
+ 
+ ```
+
+:::warning NOTE
+`$user_id` cannot be queried with `condition` or `range`.
+:::
 
 ## Fetching Index
 
