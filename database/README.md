@@ -210,10 +210,19 @@ When fetching a record by its ID, no other configuration parameters are necessar
 
 ## Indexing
 
-When uploading records, you can set additional configurations for indexing.
-For example, you can upload album data and set the released year as an index.
-The index parameters include the name of the index and its value.
-The name is the category to be used for indexing, and the value is the value to be searched.
+When working with records, you can set additional configurations in the ` index`. Indexing allows you to categorize and search for records based on specific criteria. The `index` object consists of the category's `name` used for indexing and its `value` that is searchable. 
+
+```ts
+config: {
+    ...
+    index: {
+        name: string;
+        value: string | boolean | number;
+    }
+    ...
+}
+```
+For example, suppose you have a table of music albums. You can create an index for the `name` 'year' and its corresponding `value` release year to search for music albums by release year more easily.
 
 ```js
 let album = {
@@ -232,9 +241,9 @@ let config = {
 
 skapi.postRecord(album, config);
 ```
+### Query with Index
 
-You can then query albums by the released year in the "Albums" table.
-Note that when fetching records, the table parameter is always required.
+You can fetch records based on the year `index` in the "Albums" table.
 
 ```js
 skapi.getRecords({
@@ -249,28 +258,8 @@ skapi.getRecords({
 ```
 
 ### Query Index with Conditions
-In addition to querying based on a specific index value, you can also specify conditions for your query.
-To do this, we first need to upload another record to our database.
 
-```js
-let record = {
-    title: "Shot Shot Shot",
-    artist: "Raffina",
-    tracks: 1
-};
-
-let config = {
-    table: "Albums",
-    index: {
-        name: "year",
-        value: 2022
-    }
-};
-
-skapi.postRecord(record, config);
-```
-
-With this additional record, we can now query for albums released after the year 2020 by including a condition parameter in the index.
+You can further narrow your search with the `condition` parameter in `index`.
 
 ```js
 skapi.getRecords({
@@ -282,7 +271,6 @@ skapi.getRecords({
     }
 }).then(response => {
     console.log(response.list); // List of albums released after the year 2020.
-    console.log(response.list[0].artist); // Raffina
 });
 ```
 
@@ -293,24 +281,23 @@ The condition parameter can take the following string values:
 - '<': Less than the given value
 - '<=': Less than or equal to the given value
 
-You can also use the equivalent string values of 'gt' | 'gte' | 'eq' | 'lt' | 'lte'.
+You can also use the equivalent string values of '**gt**', '**gte**', '**eq**', '**lt**' and, '**lte**' respectively.
 
-The index value can be of various types such as number, string, or boolean.
-The index condition works as expected with numbers and booleans,
-while for strings, it uses lexicographical order to compare values.
+The index value can be a `number`, `string`, or `boolean`.
+The index condition is pretty straightforward with `numbers` and `booleans`. However for `strings`, it uses lexicographical order to compare values.
 
 :::warning Note
-The condition '>=' (more than or equal to) acts as a 'starts with' operation for string values.
+The `condition` '>=' (more than or equal to) acts as a 'starts with' operation when searching for `string` values.
 :::
 
 :::warning Note
-When querying an index, it will only return records with the same value type.
+When querying an index, it will only return records with the same value type. '2' and 2 are different values.
 :::
 
 
 ### Query Index with Range
 In addition to conditions, you can also retrieve records based on a range of values in the index.
-To do so, simply specify the range parameter in the index object in the getRecords method.
+To do so, specify the `range` parameter in the `index` object in the `getRecords()` method.
 
 For instance, consider the following example:
 
@@ -324,33 +311,36 @@ skapi.getRecords({
     }
 }).then(response => {
     console.log(response.list); // List of albums released from 2015 to 2020.
-    console.log(response.list[0].artist); // DIA
 });
 ```
 
-In this example, the getRecords method will retrieve all records in the Albums table that have a "year" index value between 2015 and 2020 (inclusive). The returned records are stored in the list property of the response object.
+In the example above, the `getRecords()` method will retrieve all records in the Albums table that have a "year" index value between 2015 and 2020 (inclusive).
 
 :::warning NOTE
-When using range parameter, the value and range parameter value should be of the same type.
+When using `range` parameter, the `value` and `range` parameter value should be of the same type.
 :::
 
 :::warning NOTE
-Range can condition parameter cannot be used simultaneously.
+Range and condition parameter cannot be used simultaneously.
 :::
 
 
 ## Fetching Index
 
-The skapi.getIndex() method can be used to retrieve information about an index, including its sum, average, and total count of records.
+You can use the `getIndex()` method to retrieve information about the records stored with an index, such as:
+- Sum of all index values of by type
+- Average of all index values by type
+- total number of records by type
+- total number of records.
 
-Here's an example of how to use skapi.getIndex():
+Here's an example of how to use `getIndex()`:
 
 ```js
 skapi.getIndex({
     table: 'Poll',
     index: 'Vote.Beer'
 }).then(response => {
-    console.log(response.list[0]); // Information of VoteForBeer
+    console.log(response.list[0]); // Information of Vote.Beer
     /*
     {
         table: String, // Table name of the index.
@@ -368,11 +358,11 @@ skapi.getIndex({
 });
 ```
 
-With this example, you can fetch information about the "Vote.Beer" index of the "Poll" table, and access the various statistics about the index.
+With this example, you can fetch information about the "Vote.Beer" index of the "Poll" table and get statistical information on the records.
 
 ### Querying index values
 
-If you want to list all the indexes in a table and order them in a specific order, you can use the order.by parameter in the query. For example, to list all indexes in the "Poll" table ordered by "average_bool", you can do the following:
+Suppose you want to list all the indexes in a table and order them in a specific order. In that case, you can use the `order.by` parameter in the `query`. For example, to list all indexes in the "Poll" table ordered by "average_bool", you can do the following:
 
 ```js
 let config = {
@@ -391,9 +381,9 @@ skapi.getIndex(query, config).then(response => {
 });
 ```
 
-Note that in the config object, the ascending value is set to false, so the list will be ordered from higher votes to lower votes.
+Note that in the `config` object, the ascending value is set to false, so the list will be ordered in *descending* order from higher votes to lower votes.
 
-If the index name is a compound index name, you can fetch only certain indexes and order them. For example, to list all indexes under "Vote." that has higher votes then 50% and order them by average_bool, you can do the following:
+If the index name is a [compound index name](/database-advanced/#compound-index-names), you can only fetch certain indexes and order them. For example, to list all indexes under "Vote." that has higher votes then 50% and order them by average_bool, you can do the following:
 
 ```js
 let config = {
@@ -417,12 +407,12 @@ skapi.getIndex(query, config).then(response => {
 
 ## Tags
 
-Tags are additional pieces of information that you can associate with a record.
-They can help to provide a more specific search criteria in conjunction with index-based queries.
-Unlike index, tags cannot be queried with conditional operators.
+Tags are additional information that you can associate with a record.
+They provide additional search criteria that, by itself or with indexes, perform a more detailed query.
+Unlike indexes, tags cannot be queried with conditional operators.
 
-To add tags to a record, you can use the config.tags parameter in your postRecord call.
-This parameter accepts either string or an array of strings, allowing you to add multiple tags to a single record.
+You can use the `config.tags` parameter in your `postRecord()` call to add tags to a record.
+This parameter accepts a string or an array of strings, allowing you to add multiple tags to a single record.
 
 Here's an example of how to add tags to a record:
 
@@ -487,18 +477,18 @@ This limitation is intentional in the design of the skapi database, as it priori
 
 
 ## Access Restrictions
-You can set additional table settings by using object instead of string in the the config.table parameter.
-You can set restrictions on access to the records by giving additional settings to the config.table.access_group parameter in your postRecord call.
-The value of this parameter determines who can access the record.
-The following values can be set for config.table.access_group:
+You can add additional settings to your `table` parameter using an object instead of a string in your `config`.
+You can set access restrictions to records using `table.access_group`.
 
-- "private": Only the user who uploaded the record will be able to access it.
+The following values can be set for `table.access_group`:
+
+- "private": Only owners of the record will be able to access it.
 - "public": The record will be accessible to everyone.
-- "authorized": The record will be accessible only to users who are logged into your service.
+- "authorized": The record will only be accessible to users who are logged into your service.
 
-If the config.table.access_group parameter is not set, its default value is "public".
+The default value of `table.access_group` is "public" if not set.
 
-Here's an example of uploading both a private and a public record:
+Here is how you can upload a private and a public record:
 
 ```js
 let privateRecord = {
