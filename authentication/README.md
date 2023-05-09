@@ -113,8 +113,7 @@ If `options.login` is not set or is set to `false`, the method returns one of th
 ```ts
 {
   code: 'EXISTS';
-  message: "User's signup confirmation is required.";
-  name: 'SkapiError';
+  message: "user already exists.";
 }
 ```
 
@@ -223,7 +222,6 @@ Returns a [User profile](/data-types/#user-profile) object when log in is succes
 {
   code: "SIGNUP_CONFIRMATION_NEEDED";
   message: "User's signup confirmation is required.";
-;
 }
 |
 {
