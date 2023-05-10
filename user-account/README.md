@@ -216,7 +216,7 @@ skapi.getUsers(params).then(u=>{
 });
 ```
 
-The following attributes can be used to search for users:
+The following attributes can be used in `searchFor` to search for users:
 
 - 'user_id': unique user identifier, string
 - 'email': user's email address, string
