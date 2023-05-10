@@ -96,7 +96,7 @@ skapi.postRecord(updatedRecord, config).then(record=>{
 ```
 
 :::warning Note
-When updating existing records using the `postRecord()` method, you only need to include the parameters you want to updateand the required `table` and `record_id` parameters. All other fields in the record will be left unchanged unless they are explicitly included in the method call.
+When updating existing records using the `postRecord()` method, you only need to include the parameters you want to update and the required `table` and `record_id` parameters. All other fields in the record will be left unchanged unless they are explicitly included in the method call.
 :::
 
 Any data provided in the first argument of `postRecord()` will overwrite its current value. Provide `null` to delete the current value. If you do not wish to update or delete the value, pass `undefined`.

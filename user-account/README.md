@@ -231,9 +231,9 @@ The following attributes can be used to search for users:
 
 The `condition` parameter allows you to specify the search criteria when searching with user attributes. 
 
-```
-Available options include '>', '>=', '=', '<', '<='. Default condition is '='. When searching for a string attribute, '>' and '<' will search for strings that are higher or lower in lexicographical order, respectively. '>=' will search for strings that start with the given value, '<=' will work like '='.
-```
+The operaters that can be used with `condition` include `>`, `>=`, `=`, `<`, and `<=`. If `condition` is not defined, it will compare with `=`. 
+
+When searching for a `string` attribute, `>` and `<` will search for strings that are higher or lower in the lexicographical order, respectively. To search using 'starts with', use the `>=` operator.
 
 :::warning NOTE
 - `user_id`, `email`, `phone_number`, and `address` must be searched with the '=' condition.

@@ -40,6 +40,8 @@ This is what it should look like
 </html>
 ```
 
+The `Skapi` constructor accepts a third argument which is `{autologin: true}`. If `autologin` is `true`, it keeps users logged in until `logout()` is called.
+
 ### Using NPM and build tools such as webpack
 
 To use skapi in a webpack-based project (such as Vue, React, or Angular), first install skapi-js using npm:
