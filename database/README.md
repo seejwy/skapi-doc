@@ -283,8 +283,10 @@ The condition parameter can take the following string values:
 
 You can also use the equivalent string values of '**gt**', '**gte**', '**eq**', '**lt**' and, '**lte**' respectively.
 
-The index value can be a `number`, `string`, or `boolean`.
-The index condition is pretty straightforward with `numbers` and `booleans`. However for `strings`, it uses lexicographical order to compare values.
+The index value can be of type `number`, `string`, or `boolean`.
+If your index value type is a `number` or `boolean`, conditions work as they do on numbers. However for `strings`, it uses a lexicographical order to compare values.
+
+`boolean` is represented as `1` for `true` and `0` for `false`. 
 
 :::warning Note
 The `condition` '>=' (more than or equal to) acts as a 'starts with' operation when searching for `string` values.
@@ -362,16 +364,16 @@ You can use the `getIndex()` method to retrieve information about the records st
 - Sum of all index values of by type
 - Average of all index values by type
 - total number of records by type
-- total number of records.
+- total number of records
 
 Here's an example of how to use `getIndex()`:
 
 ```js
 skapi.getIndex({
     table: 'Poll',
-    index: 'Vote.Beer'
+    index: 'Beer' // index name goes here
 }).then(response => {
-    console.log(response.list[0]); // Information of Vote.Beer
+    console.log(response.list[0]); // Information of Beer
     /*
     {
         table: String, // Table name of the index.
@@ -389,7 +391,7 @@ skapi.getIndex({
 });
 ```
 
-With this example, you can fetch information about the "Vote.Beer" index of the "Poll" table and get statistical information on the records.
+With this example, you can fetch information about the "Beer" index of the "Poll" table and get statistical information on the records.
 
 ### Querying index values
 
