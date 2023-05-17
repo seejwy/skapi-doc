@@ -15,6 +15,8 @@ It takes two arguments:
 - `data` (required): The data to be saved in key-value pairs. It can be an object literal, `null` or a form `SubmitEvent`.
 - `config` (required): Configuration for the record to be uploaded.
 
+### Example: Creating a Record in the Database
+
 ```js
 let data = { // Data to be saved in key:value pairs
     myData: "Hello World"
@@ -48,6 +50,8 @@ If the specified table does not exist, it will be automatically created when you
 
  skapi is designed to simplify file uploading. To upload files using the `postRecord()` method, it is *recommended* to use the `SubmitEvent` in the `data` parameter. The `name` attribute of the input fields will serve as the key name for the uploaded files.
 
+### Example: Uploading Files using HTML Form
+
 Here's an example demonstrating how you can upload files using skapi:
 
 ```html
@@ -67,6 +71,9 @@ The `postRecord()` method can also be used to update an existing record. You can
 
 When using the `postRecord()` method to update existing records, you only need to include the parameters you want to update, along with the required `table` and `record_id` parameters. All other fields in the record will remain unchanged unless explicitly included in the method call.
 
+
+### Example: Updating a Record
+
 Here's an example that demonstrates how to update an existing record's table name using `postRecord()`:
 
 ```js
@@ -84,7 +91,8 @@ When using the `postRecord()` method, any data provided in the `data` argument w
 
 Here's an explanation of how to handle record data updates using the postRecord() method:
 
-#### Retaining Data
+### Example: Retaining Data in a Record
+
 If you do not want to change the data in any way, you can pass `undefined` as the `data` argument.
 ```js
 let config = {
@@ -96,7 +104,8 @@ skapi.postRecord(undefined, config).then(record => {
 });
 ```
 
-#### Changing Data
+### Example: Changing Data in a Record
+
 To overwrite the current data with new data, pass the updated data as the `data` argument:
 ```js
 let updatedData = {
@@ -112,7 +121,7 @@ skapi.postRecord(updatedData, config).then(record => {
 });
 ```
 
-#### Deleting Data
+### Example: Deleting Data in a Record
 To delete the data in the record, provide `null` as the new value in the `data` argument:
 ```js
 let config = {
@@ -133,6 +142,8 @@ Please note that only the owner of the record can update a record.
 The `getRecords()` method allows you to fetch records from the database. It retrieves records based on the specified query parameters and returns a promise that resolves to the response containing the [DatabaseResponse](/data-types/#DatabaseResponse/) object. It takes two arguments:
 - `query` (Object): Specifies the query parameters for fetching records.
 - `config` (Object, optional): Specifies additional configuration options for fetching records.
+
+### Example: Fetching Records from a Table
 
 The following example demonstrates how to use the `getRecords()` method to retrieve records from a table named 'Collection':
 
@@ -159,6 +170,8 @@ In this example, the `config` object specifies the table name as 'Collection'. T
 
 To fetch more records than the default limit (50), you can set the `fetchMore` parameter to `true` in the `config` object. This allows you to retrieve records in batches until the end of the list is reached.
 
+### Example: Fetching More Records in Batches
+
 The following example demonstrates fetching 100 records per call:
 
 ``` js
@@ -184,6 +197,8 @@ When using the `fetchMore` parameter, it is important to check the `endOfList` p
 ### Fetching Record by ID
 
 You can fetch a record by its unique ID using the `getRecords()` method. When fetching a record by ID, you don't need to provide any additional configuration parameters.
+
+### Example: Fetching a Record by ID
 
 Here is an example of how to retrieve a record using its ID:
 
@@ -213,16 +228,8 @@ When fetching a record by its ID, no other configuration parameters are necessar
 
 When working with records, you can set additional configurations in the `index` property. Indexing allows you to categorize and search for records based on specific criteria. The `index` object consists of the index's `name`, used for indexing, and its corresponding `value`, which is searchable.
 
-```ts
-config: {
-    ...
-    index: {
-        name: string;
-        value: string | boolean | number;
-    }
-    ...
-}
-```
+### Example: Configuring Indexing for Records
+
 For example, let's consider a table of music albums. You can create an index for the `name` "year" and its corresponding `value` as the release year. This enables easier searching for music albums by release year.
 
 ```js
@@ -369,6 +376,8 @@ You can use the `getIndex()` method to retrieve information about the records st
 - `string_count`: The total number of records with string as the index value.
 - `index_name`: The name of the index.
 
+### Example: Fetching Index Information
+
 Here's an example of how to use `getIndex()` with a [compound index name](/database-advanced/#compound-index-names):
 
 ```js
@@ -433,6 +442,8 @@ Tags are additional information that can be associated with a record. They provi
 
 To add tags to a record, you can use the `config.tags` parameter in the `postRecord()` method. This parameter accepts a string or an array of strings, allowing you to add multiple tags to a single record.
 
+### Example: Adding Tags to a Record
+
 Here's an example of how to add tags to a record:
 
 ```js
@@ -454,6 +465,7 @@ let config = {
 skapi.postRecord(record, config);
 ```
 
+### Example: Querying Records by Tag
 You can also utilize tags in your queries. Here's an example:
 
 ```js
@@ -505,6 +517,8 @@ The following values can be set for `table.access_group`:
 - `authorized`: The record will only be accessible to users who are logged into your service.
 
 If `access_group` is not set, the default value is `public`.
+
+### Example: Setting Access Restrictions
 
 Here's an example that demonstrates uploading both a `private` and a `public` record:
 
