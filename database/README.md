@@ -5,7 +5,7 @@ In this guide, we will cover the basics of querying and manipulating data in ska
 
 ## Creating a Record
 
-### `postRecord(data, config):Promise<RecordData>` [api&nbsp;reference](/api-reference/database/#postrecord)
+### [`postRecord(data, config):Promise<RecordData>`](/api-reference/database/#postrecord)
 
 The `postRecord()` method is used to effortlessly **create a new record** or **update existing records** in the database.
 <!-- When using this method, you need to provide `data` as the first argument, which can be an object literal, `null` or a form `SubmitEvent`. -->
@@ -89,9 +89,9 @@ skapi.postRecord(undefined, config).then(record=>{
 
 When using the `postRecord()` method, any data provided in the `data` argument will overwrite the current data of the record.
 
-Here's an explanation of how to handle record data updates using the postRecord() method:
-
 ### Example: Retaining Data in a Record
+
+Here's an explanation of how to handle record data updates using the postRecord() method:
 
 If you do not want to change the data in any way, you can pass `undefined` as the `data` argument.
 ```js
@@ -346,6 +346,7 @@ The reserved keywords are:
 
 With the exception of `$user_id`, all of these reserved keywords can be queried with `condition` and `range` just like any other index values. $user_id cannot be queried with condition or range.
 
+### Example: Querying Index with Reserved Keywords
 For example, let's query records created after 2021:
 
 ```js
@@ -581,8 +582,10 @@ skapi.deleteRecords(query).then(response => {
 You can only delete up to 100 records at a time.
 :::
 
+You can delete all records belonging to a user from a table within an access group. 
+
 ### Example: Deleting User's Records from a Table
-You can delete all records belonging to a user from a table within an access group. Here's an example of deleting all records created by the user in the "A" table with a public access group:
+Here's an example of deleting all records created by the user in the "A" table with a public access group:
 
 ```js
 let query = {
@@ -597,9 +600,11 @@ skapi.deleteRecords(query).then(response => {
 });
 ```
 
+You can pass the `subscription_group` property as an additional filter to delete specific records. 
+
 ### Example: Deleting Records with Subscription Group Filter
 
-You can pass the `subscription_group` property as an additional filter to delete specific records. Here's an example of a user deleting all records in the "A" table with a public access group and only records in subscription group 4.
+Here's an example of a user deleting all records in the "A" table with a public access group and only records in subscription group 4.
 
 Learn more about [Subscription](/database-advanced/#subscription) in the [Database Advanced](/database-advanced) section.
 

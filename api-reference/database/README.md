@@ -139,5 +139,3 @@ type DatabaseResponse = {
 };
 ```
 
-See [List](/data-types/#list)
-

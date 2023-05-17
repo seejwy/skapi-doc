@@ -40,7 +40,8 @@ module.exports = {
                 sidebarDepth: 1,
                 collapsable: false,
                 children: [
-                    ['/api-reference/database/', 'Database']
+                    ['/api-reference/database/', 'Database'],
+                    ['/api-reference/user/', 'User']
                 ]
             }
         ]
