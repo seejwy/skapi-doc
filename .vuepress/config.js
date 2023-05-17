@@ -8,6 +8,11 @@ module.exports = {
             staticIcon: true
         }]
     ],
+    markdown: {
+        plugins: [        
+            [require('markdown-it-custom-header-link')]
+        ]
+    },
     themeConfig: {
         // nav: [
         //     {
@@ -28,7 +33,16 @@ module.exports = {
             '/user-account-tutorial/',
             '/database/',
             '/database-advanced/',
-            '/data-types/'
+            '/data-types/',
+            {
+                title: 'API Reference',
+                path: '/api-reference/',
+                sidebarDepth: 1,
+                collapsable: false,
+                children: [
+                    ['/api-reference/database/', 'Database']
+                ]
+            }
         ]
     }
 };
