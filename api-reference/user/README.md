@@ -203,7 +203,7 @@ resetPassword(
         code: string | number;
         new_password: string;
     } | SubmitEvent;
-    options: {
+    options?: {
         response?(response: any): any; // callback if success
         onerror?(error: Error): any; // callback if error
     };
@@ -213,4 +213,151 @@ resetPassword(
 
 ```ts
 'SUCCESS: New password has been set.'
+```
+
+## recoverAccount
+
+### `recoverAccount(redirect: boolean | string): Promise<string>`
+
+```ts
+recoverAccount(redirect: boolean | string);
+```
+
+#### Returns
+
+```ts
+'SUCCESS: Recovery e-mail has been sent.'
+```
+
+## changePassword
+
+### `changePassword(params): Promise<string>`
+
+```ts
+recoverAccount(params: {
+    new_password: string;
+    current_password: string;
+});
+```
+
+#### Returns
+
+```ts
+`SUCCESS: Password has been changed.`
+```
+
+## updateProfile
+
+### `updateProfile(params. options?): Promise<UserProfile>`
+
+```ts
+updateProfile({
+    params: {
+        service: string;
+        owner?: string;
+        access_group?: number;
+        user_id: string;
+        locale: string;
+        email_verified?: boolean;
+        phone_number_verified?: boolean;
+        signup_ticket?: string;
+        name?: string;
+        email?: string;
+        phone_number?: string;
+        address?: string | {
+            formatted: string;
+            locality: string;
+            region: string;
+            postal_code: string;
+            country: string;
+        };
+        gender?: string;
+        birthdate?: string;
+        email_public?: boolean;
+        phone_number_public?: boolean;
+        address_public?: boolean;
+        gender_public?: boolean;
+        birthdate_public?: boolean;
+        misc: string;
+    } | SubmitEvent;
+    options?: {
+        response?(response: any): any; // callback if success
+        onerror?(error: Error): any; // callback if error
+    }
+})
+```
+
+#### Returns [User Profile](/data-types/#user-profile)
+
+## verifyEmail
+
+### `verifyEmail(params?): Promise()`
+
+```ts
+verifyEmail(params?: {
+    code: string;
+} | SubmitEvent)
+```
+
+#### Returns
+
+```ts
+what
+```
+
+## disableAccount
+
+### `disableAccount()`
+
+```ts
+disableAccount();
+```
+
+#### Returns
+
+## getUsers
+
+### `getUsers(params?, fetchOptions?): Promise<DatabaseResponse>`
+
+```ts
+getUsers({ 
+    params?: {
+        searchFor: string;
+        value: string | number | boolean;
+        condition?: '>' | '>=' | '=' | '<' | '<=' | '!=' | 'gt' | 'gte' | 'eq' | 'lt' | 'lte' | 'ne';
+        range?: string | number | boolean;
+    } | null;
+    fetchOptions?: FetchOptions
+});
+
+```
+
+#### Returns
+
+```ts
+type DatabaseResponse = {
+    list: {
+        name?: string;
+        email?: string;
+        phone_number?: string;
+        address?: string | {
+            formatted: string;
+            locality: string;
+            region: string;
+            postal_code: string;
+            country: string;
+        };
+        gender?: string;
+        birthdate?: string;
+        email_public?: boolean;
+        phone_number_public?: boolean;
+        address_public?: boolean;
+        gender_public?: boolean;
+        birthdate_public?: boolean;
+        misc: string;
+    }[];
+    startKey: string;
+    endOfList: boolean;
+    startKeyHistory: string[];
+};
 ```

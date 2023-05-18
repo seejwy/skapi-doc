@@ -284,26 +284,24 @@ If a user's email is not verified, they will not be able to receive a verificati
 It is highly recommended to encourage users to verify their email addresses.
 :::
 
-
-
-
-
-
-
-
 ## Recovering a Disabled Account
 
-Disabled accounts can be reactivated within 3 months using the `skapi.recoverAccount()` method. To recover accounts, the following criteria must be met:
+### [`recoverAccount(redirect: boolean | string): Promise<string>`](/api-reference/user/#recoverAccount)
 
-- account email must be verified.
-- have at least one sign-in attempt using the disabled account 
+Disabled accounts can be reactivated within 3 months using the `recoverAccount()` method. This method allows users to reactivate their disabled accounts under the following conditions:
+
+- The account email must be verified.
+- The recoverAccount() method must be called from the catch block of a failed login attempt using the disabled account.
  
-
+ :::danger
 **If the account is unverified, it cannot be recovered**.
+ :::
 
-The `recoverAccount()` method sends the account owner an email containing a confirmation link. In addition, the `recoverAccount()` method accepts an optional `URL: string` argument, redirecting the user to the URL upon successful account recovery.
+The `recoverAccount()` method sends an email to the account owner, containing a confirmation link for account recovery. Additionally, you can provide an optional URL `string` argument to the `recoverAccount()` method, which will redirect the user to the specified URL upon successful account recovery.
 
-Here is an example of how to use the `recoverAccount()` method:
+### Example: Recovering a Disabled Account
+
+Here's an example demonstrating how to use the recoverAccount() method:
 
 ```js
 try {
@@ -318,3 +316,5 @@ try {
   }
 }
 ```
+
+In the example above, the `recoverAccount()` method is called from the catch block of a failed login attempt using a disabled account. If the login attempt fails with the error code "USER_IS_DISABLED," the `recoverAccount()` method is called to send a recovery email to the user. The recovery email contains a link, and when the user clicks on the link, they will be redirected to the specified URL ("http://mywebsite.com/welcome-back") upon successful account recovery.
