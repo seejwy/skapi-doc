@@ -9,33 +9,20 @@ signup(
         email: string; // Max 64 characters.
         password: string; // At least 6 characters and a maximum of 60 characters.
         phone_number?: string; // Must be in "+0012341234" format.
-        address?: string | {
-            // Full mailing address, formatted for display or use on a mailing label. This field MAY contain multiple lines, separated by newlines. Newlines can be represented either as a carriage return/line feed pair ("\r\n") or as a single line feed character ("\n").
-            // street_address
-            // Full street address component, which MAY include house number, street name, Post Office Box, and multi-line extended street address information. This field MAY contain multiple lines, separated by newlines. Newlines can be represented either as a carriage return/line feed pair ("\r\n") or as a single line feed character ("\n").
-            formatted: string;
-            // City or locality component.
-            locality: string;
-            // State, province, prefecture, or region component.
-            region: string;
-            // Zip code or postal code component.
-            postal_code: string;
-            // Country name component.
-            country: string;
-        };
+        address?: string; // or you can use OpenID Standard Claims https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims
         gender?: string;
         birthdate?: string; // Must be in YYYY-MM-DD format
-        email_public?: boolean;
-        phone_number_public?: boolean;
-        address_public?: boolean;
-        gender_public?: boolean;
-        birthdate_public?: boolean;
+        email_public?: boolean; // Default = false
+        phone_number_public?: boolean; // Default = false
+        address_public?: boolean; // Default = false
+        gender_public?: boolean; // Default = false
+        birthdate_public?: boolean; // Default = false
         misc: string; // Additional string value that can be used freely.
     } | SubmitEvent;
     options: {
-        signup_confirmation?: boolean | string; // set to true to force email verification. Give a url to set redirect
-        email_subscription?: boolean; // Set to true to receive service email
-        login?: boolean; // Set to true to login immediately. Cannot be used with signup_confirmation.
+        signup_confirmation?: boolean | string; // Default = false
+        email_subscription?: boolean; // Default = false
+        login?: boolean; // Cannot be true with signup_confirmation. // Default = false
         response?(response: any): any; // callback if success
         onerror?(error: Error): any; // callback if error
     };
@@ -45,21 +32,12 @@ signup(
 
 ```ts
 // when options.login is true, return User
-type User = {
-    service: string;
-    owner?: string;
-    access_group?: number;
-    user_id: string;
-    locale: string;
-    email_verified?: boolean;
-    phone_number_verified?: boolean;
-    signup_ticket?: string;
-    subscribers: number;
-    timestamp: number;
-}
+User
 | "SUCCESS: The account has been created. User's signup confirmation is required." 
 | "SUCCESS: The account has been created."
 ```
+
+See [User](/data-types/#user)
 
 ### Errors
 ```ts
@@ -85,23 +63,7 @@ login(
     };
 )
 ```
-#### Returns
-
-```ts
-// when options.login is true, return User
-type User = {
-    service: string;
-    owner?: string;
-    access_group?: number;
-    user_id: string;
-    locale: string;
-    email_verified?: boolean;
-    phone_number_verified?: boolean;
-    signup_ticket?: string;
-    subscribers: number;
-    timestamp: number;
-}
-```
+#### Returns [User](/data-types/#user)
 
 ### Errors
 ```ts
@@ -126,47 +88,13 @@ type User = {
 
 ### `getProfile(): Promise<User | null>`
 
-#### Returns
-
-```ts
-// when options.login is true, return User
-type User = {
-    service: string;
-    owner?: string;
-    access_group?: number;
-    user_id: string;
-    locale: string;
-    email_verified?: boolean;
-    phone_number_verified?: boolean;
-    signup_ticket?: string;
-    subscribers: number;
-    timestamp: number;
-}
-```
-
-### Errors
-```ts
-{
-  code: "SIGNUP_CONFIRMATION_NEEDED";
-  message: "User's signup confirmation is required.";
-}
-|
-{
-  code: 'USER_IS_DISABLED';
-  message: 'This account is disabled.';
-}
-|
-{
-  code: 'INCORRECT_USERNAME_OR_PASSWORD';
-  message: 'Incorrect username or password.';
-}
-```
+#### Returns [User](/data-types/#user)
 
 ## logout
 
 ### `logout(): Promise<string>`
 
-### Returns
+#### Returns
 ```ts
 'SUCCESS: The user has been logged out.'
 ```
@@ -201,7 +129,7 @@ resetPassword(
     params: { 
         email: string;
         code: string | number;
-        new_password: string;
+        new_password: string; // At least 6 characters and a maximum of 60 characters.
     } | SubmitEvent;
     options?: {
         response?(response: any): any; // callback if success
@@ -235,7 +163,7 @@ recoverAccount(redirect: boolean | string);
 
 ```ts
 recoverAccount(params: {
-    new_password: string;
+    new_password: string; // At least 6 characters and a maximum of 60 characters.
     current_password: string;
 });
 ```
@@ -262,23 +190,17 @@ updateProfile({
         phone_number_verified?: boolean;
         signup_ticket?: string;
         name?: string;
-        email?: string;
-        phone_number?: string;
-        address?: string | {
-            formatted: string;
-            locality: string;
-            region: string;
-            postal_code: string;
-            country: string;
-        };
+        email?: string; // Max 64 characters.
+        phone_number?: string; // Must be in "+0012341234" format.
+        address?: string; // or you can use OpenID Standard Claims https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims
         gender?: string;
-        birthdate?: string;
+        birthdate?: string; // Must be in YYYY-MM-DD format
         email_public?: boolean;
         phone_number_public?: boolean;
         address_public?: boolean;
         gender_public?: boolean;
         birthdate_public?: boolean;
-        misc: string;
+        misc: string; // Additional string value that can be used freely.
     } | SubmitEvent;
     options?: {
         response?(response: any): any; // callback if success
@@ -291,7 +213,7 @@ updateProfile({
 
 ## verifyEmail
 
-### `verifyEmail(params?): Promise()`
+### `verifyEmail(params?): Promise(string)`
 
 ```ts
 verifyEmail(params?: {
@@ -302,18 +224,23 @@ verifyEmail(params?: {
 #### Returns
 
 ```ts
-what
+'SUCCESS: Verification code has been sent.' 
+| 
+'SUCCESS: "email" is verified.'
 ```
 
 ## disableAccount
 
-### `disableAccount()`
+### `disableAccount(): Promise(string)`
 
 ```ts
 disableAccount();
 ```
 
-#### Returns
+#### Returns 
+```ts
+'SUCCESS: account has been disabled.'
+```
 
 ## getUsers
 
@@ -324,13 +251,16 @@ getUsers({
     params?: {
         searchFor: string;
         value: string | number | boolean;
-        condition?: '>' | '>=' | '=' | '<' | '<=' | '!=' | 'gt' | 'gte' | 'eq' | 'lt' | 'lte' | 'ne';
-        range?: string | number | boolean;
+        condition?: '>' | '>=' | '=' | '<' | '<=' | '!=' | 'gt' | 'gte' | 'eq' | 'lt' | 'lte' | 'ne'; // Cannot be used with range. Default = '='
+        range?: string | number | boolean; // Cannot be used with condition.
     } | null;
     fetchOptions?: FetchOptions
 });
 
 ```
+
+See [FetchOptions](/data-types/#fetch-options)
+
 
 #### Returns
 
@@ -340,13 +270,7 @@ type DatabaseResponse = {
         name?: string;
         email?: string;
         phone_number?: string;
-        address?: string | {
-            formatted: string;
-            locality: string;
-            region: string;
-            postal_code: string;
-            country: string;
-        };
+        address?: string; // or OpenID Standard Claims object https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims
         gender?: string;
         birthdate?: string;
         email_public?: boolean;

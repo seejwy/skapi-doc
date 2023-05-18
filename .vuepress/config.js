@@ -36,12 +36,13 @@ module.exports = {
             '/data-types/',
             {
                 title: 'API Reference',
-                path: '/api-reference/',
                 sidebarDepth: 1,
                 collapsable: false,
+                disabled: true,
                 children: [
                     ['/api-reference/database/', 'Database'],
-                    ['/api-reference/user/', 'User']
+                    ['/api-reference/user/', 'User'],
+                    ['/api-reference/subscription/', 'Subscription']
                 ]
             }
         ]

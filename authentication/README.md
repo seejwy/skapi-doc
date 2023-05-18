@@ -129,8 +129,6 @@ users will not be able to log in until they have confirmed their account.
 <CodeSwitcher :languages="{js:'Using JavaScript',form:'Using Forms'}">
 <template v-slot:js>
 
-In this example, the `login()` method is used to log in a user with the specified email and password. The response will contain the user information upon successful login.
-
 ```js
 let parameters = {
   email: 'user@email.com',
@@ -142,10 +140,10 @@ skapi.login(parameters)
   .catch(err => console.log({err}));
 ```
 
+In this example, the `login()` method is used to log in a user with the specified email and password. The response will contain the user information upon successful login.
+
 </template>
 <template v-slot:form>
-
-This example demonstrates a login form that uses the `login()` method to handle the form submission. The `response` callback function is executed upon successful login, and the `onerror` callback function is executed if the login fails.
 
 ```html
 <form onsubmit="skapi.login(event, 
@@ -160,6 +158,8 @@ This example demonstrates a login form that uses the `login()` method to handle 
     <input type="submit" value="Login">
 </form>
 ```
+
+This example demonstrates a login form that uses the `login()` method to handle the form submission. The `response` callback function is executed upon successful login, and the `onerror` callback function is executed if the login fails.
 
 </template>
 </CodeSwitcher>
@@ -210,16 +210,15 @@ Use the `forgotPassword()` method to request a verification code.
 <CodeSwitcher :languages="{js:'Using JavaScript',form:'Using Forms'}">
 <template v-slot:js>
 
-In this example, the `forgotPassword()` method is called with the user's email as a parameter. The user will receive an email containing a verification code that they can use to reset their password.
-
 ```js
 skapi.forgotPassword({email: 'someone@gmail.com'});
 // User receives an e-mail with a verification code.
 ```
+
+In this example, the `forgotPassword()` method is called with the user's email as a parameter. The user will receive an email containing a verification code that they can use to reset their password.
+
 </template>
 <template v-slot:form>
-
-In this example, a form is used to submit the email address. When the form is submitted, the `forgotPassword()` method is called with the email parameter.
 
 ```html
 <form onsubmit="skapi.forgotPassword(event, 
@@ -232,6 +231,8 @@ In this example, a form is used to submit the email address. When the form is su
     <input type="submit" value="Request Verification Code">
 </form>
 ```
+
+In this example, a form is used to submit the email address. When the form is submitted, the `forgotPassword()` method is called with the email parameter.
 
 </template>
 </CodeSwitcher>

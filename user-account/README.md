@@ -15,8 +15,6 @@ Password should be at least 6 characters and no more than 60 characters.
 <CodeSwitcher :languages="{js:'Using JavaScript',form:'Using Forms'}">
 <template v-slot:js>
 
-In this example, the `changePassword()` method is called with the user's current password and the new password.
-
 ``` js
 let params = {
     current_password: 'current password',
@@ -32,10 +30,10 @@ skapi.changePassword(params)
   });
 ```
 
+In this example, the `changePassword()` method is called with the user's current password and the new password.
+
 </template>
 <template v-slot:form>
-
-In the example above, a form is used to capture the user's current password and new password. The `changePassword()` method is called when the form is submitted.
 
 ```html
 <form onsubmit="skapi.changePassword(event, 
@@ -50,6 +48,8 @@ In the example above, a form is used to capture the user's current password and 
     <input type="submit" value="Change Password">
 </form>
 ```
+
+In the example above, a form is used to capture the user's current password and new password. The `changePassword()` method is called when the form is submitted.
 
 </template>
 </CodeSwitcher>
@@ -135,8 +135,6 @@ This method needs to be called twice to complete the verification.
 <CodeSwitcher :languages="{js:'Using JavaScript',form:'Using Forms'}">
 <template v-slot:js>
 
-In this example, the `verifyEmail()` function is used to initiate the email verification process. The first call to `verifyEmail()` sends a verification code to the user's email address. The second call provides the verification code to complete the verification process.
-
 ``` js
 async function verifyEmail() {
   // Send verification code to user's E-Mail
@@ -152,10 +150,11 @@ async function verifyEmail() {
   console.log('E-Mail verified');
 }
 ```
+
+In this example, the `verifyEmail()` function is used to initiate the email verification process. The first call to `verifyEmail()` sends a verification code to the user's email address. The second call provides the verification code to complete the verification process.
+
 </template>
 <template v-slot:form>
-
-In this example a form is used to complete the email verification. You need to call the `verifyEmail()` seperately to send the verification code to the user. 
 
 ```html
 <form onsubmit="skapi.verifyEmail(event, 
@@ -168,6 +167,8 @@ In this example a form is used to complete the email verification. You need to c
     <input type="submit" value="Verify Email">
 </form>
 ```
+
+In this example a form is used to complete the email verification. You need to call the `verifyEmail()` seperately to send the verification code to the user. 
 
 </template>
 </CodeSwitcher>

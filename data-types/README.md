@@ -1,5 +1,22 @@
 # Data Types
 
+## User
+
+```ts
+type User = {
+    service: string;
+    owner?: string;
+    access_group?: number;
+    user_id: string;
+    locale: string;
+    email_verified?: boolean;
+    phone_number_verified?: boolean;
+    signup_ticket?: string;
+    subscribers: number;
+    timestamp: number;
+}
+```
+
 ## User Profile
 
 ```ts
