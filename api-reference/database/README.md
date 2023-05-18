@@ -88,10 +88,10 @@ type Params = {
 
 ## getIndex
 
-### `getIndex(query): Promise<DatabaseResponse>`
+### `getIndexes(query): Promise<DatabaseResponse>`
 
 ```ts
-getIndex(
+getIndexes(
     query: {
         table: string;
         index?: string;
@@ -131,14 +131,14 @@ type DatabaseResponse = {
 
 ## getTable
 
-### `getTable(query, fetchOptions?): Promise<DatabaseResponse>`
+### `getTables(query, fetchOptions?): Promise<DatabaseResponse>`
 
 ```ts
-getTable({
+getTables({
     query:  {
         table?: string;
         condition?: 'gt' | 'gte' | 'lt' | 'lte' | 'eq' | 'ne' | '>' | '>=' | '<' | '<=' | '=' | '!=';
-    } | null;
+    } | null; // pass null to get all tables
     fetchOptions?: FetchOptions;
 })
 ```
@@ -162,10 +162,10 @@ type DatabaseResponse = {
 
 ## getTag
 
-### `getTag(query, fetchOptions?): Promise<DatabaseResponse>`
+### `getTags(query, fetchOptions?): Promise<DatabaseResponse>`
 
 ```ts
-getTag({
+getTags({
     query:  {
         table: string;
         tag?: string;

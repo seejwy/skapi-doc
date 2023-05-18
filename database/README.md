@@ -365,9 +365,9 @@ skapi.getRecords({
 
 ## Fetching Index
 
-### `getIndex(query, fetchOptions?): Promise<DatabaseResponse>` [api&nbsp;reference](/api-reference/database/#getindex)
+### `getIndexes(query, fetchOptions?): Promise<DatabaseResponse>` [api&nbsp;reference](/api-reference/database/#getindex)
 
-You can use the `getIndex()` method to retrieve information about the records stored with an index. This information includes:
+You can use the `getIndexes()` method to retrieve information about the records stored with an index. This information includes:
 - `average_number`: The average of the number type values.
 - `total_number`: The total sum of the number values.
 - `number_count`: The total number of records with number as the index value.
@@ -379,10 +379,10 @@ You can use the `getIndex()` method to retrieve information about the records st
 
 ### Example: Fetching Index Information
 
-Here's an example of how to use `getIndex()` with a [compound index name](/database-advanced/#compound-index-names):
+Here's an example of how to use `getIndexes()` with a [compound index name](/database-advanced/#compound-index-names):
 
 ```js
-skapi.getIndex({
+skapi.getIndexes({
     table: 'Poll',
     index: 'Vote.Beer' // index name goes here
 }).then(response => {
@@ -408,7 +408,7 @@ let query = {
     }
 };
 
-skapi.getIndex(query, config).then(response => {
+skapi.getIndexes(query, config).then(response => {
     console.log(response.list); // List of indexes ordered from high votes.
 });
 ```
@@ -432,7 +432,7 @@ let query = {
     }
 };
 
-skapi.getIndex(query, config).then(response => {
+skapi.getIndexes(query, config).then(response => {
     console.log(response.list); // List of votes that rates higher then 50%, ordered from high votes.
 });
 ```

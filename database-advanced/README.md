@@ -4,12 +4,12 @@ In this section, we will cover advanced features for skapi database.
 
 ## Fetching Tables
 
-### [`getTable(query, fetchOptions?): Promise<DatabaseResponse>`](/api-reference/database/#gettable)
+### [`getTables(query, fetchOptions?): Promise<DatabaseResponse>`](/api-reference/database/#gettable)
 
-You can fetch a list of table using the `getTable()` method.
+You can fetch a list of table using the `getTables()` method.
 
 ```js
-skapi.getTable().then(response=>{
+skapi.getTables().then(response=>{
     console.log(response.limit); // List of all tables in the database
 })
 ```
@@ -19,7 +19,7 @@ skapi.getTable().then(response=>{
 You can query table names that meet a `condition`.
 
 ```js
-skapi.getTable({
+skapi.getTables({
     table: 'C',
     condition: '>'
 }).then(response => {
@@ -27,16 +27,16 @@ skapi.getTable({
 })
 ```
 
-In this example, the query object is passed as an argument to the getTable() method. The condition property is set to '>', and the table property is set to 'C'.  This query will return the table names that come after table 'C' in alphabetical order, such as 'D', 'E', 'F', 'G', and so on.
+In this example, the query object is passed as an argument to the getTables() method. The condition property is set to '>', and the table property is set to 'C'.  This query will return the table names that come after table 'C' in alphabetical order, such as 'D', 'E', 'F', 'G', and so on.
 
 ## Fetching Tags
 
-### [`getTag(query, fetchOptions?): Promise<DatabaseResponse>`](/api-reference/database/#gettag)
+### [`getTags(query, fetchOptions?): Promise<DatabaseResponse>`](/api-reference/database/#gettag)
 
-You can fetch all tags used in a table with `getTag()`.
+You can fetch all tags used in a table with `getTags()`.
 
 ```js
-skapi.getTag({
+skapi.getTags({
     table: 'MyTable'
 }).then(response=>{
     console.log(response.limit); // List of all tags in table named 'MyTable'
@@ -48,7 +48,7 @@ skapi.getTag({
 You can also query tags that meet a `condition`.
 
 ```js
-skapi.getTag({
+skapi.getTags({
     table: 'MyTable',
     tag: 'A',
     condition: '>'
