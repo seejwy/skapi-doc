@@ -47,6 +47,31 @@ See [User](/data-types/#user)
 }
 ```
 
+## resendSignupConfirmation
+
+### `resendSignupConfirmation(redirect?): Promise<string>`
+
+```ts
+resendSignupConfirmation(
+    redirect?: string;
+)
+```
+#### Returns
+
+```ts
+'SUCCESS: Signup confirmation E-Mail has been sent.'
+```
+
+See [User](/data-types/#user)
+
+### Errors
+```ts
+{
+  code: 'INVALID_REQUEST',
+  message: 'Least one login attempt is required.' | '"Url" is an invalid url.'
+}
+```
+
 ## login
 
 ### `login(params, options?): Promise<User>`

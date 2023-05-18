@@ -4,7 +4,7 @@ Methods related to authentication.
 
 ## Creating an Account
 
-### `signup(params, options?): Promise<User | string>` [api&nbsp;reference](/api-reference/user/#signup)
+### [`signup(params, options?): Promise<User | string>`](/api-reference/user/#signup)
 
 To create a new account (user) in your service, you can use the `signup()` method.
 
@@ -66,6 +66,8 @@ You should always use the `signup_confirmation` option to prevent automated sign
 
 ## Signup Confirmation
 
+### [`resendSignupConfirmation(redirect?): Promise<string>`](/api-reference/user/#resendSignupConfirmation)
+
 When an account is created with `options.signup_confirmation` set to `true`, users must verify their email before logging into your service. If you need to resend the confirmation email, use the `resendSignupConfirmation()` method. 
 
 ### Example: Resending Signup Confirmation Email
@@ -73,7 +75,7 @@ When an account is created with `options.signup_confirmation` set to `true`, use
 ```js
 // user tries to login
 try {
-  let user = await skapi.login('user@email.com', 'password');
+  let user = await skapi.login({email: 'user@email.com', password: 'password'});
 } catch(err) {
   /**
    * {
@@ -99,22 +101,6 @@ In this example, when a user tries to log in and receives a `SIGNUP_CONFIRMATION
 ::: warning Note
 To resend signup confirmation emails, users must have at least one login or signup attempt to the service.
 :::
-
-### redirectUrl (optional)
-When a URL string is provided as an argument, users will be redirected to the URL when they click on the confirmation email link.
-
-### Return
-```ts
-'SUCCESS: Signup confirmation E-Mail has been sent.'
-```
-
-### Errors
-```ts
-{
-  code: 'INVALID_REQUEST',
-  message: 'Least one login attempt is required.' | '"Url" is an invalid url.'
-}
-```
 
 ## Login
 
@@ -159,7 +145,7 @@ In this example, the `login()` method is used to log in a user with the specifie
 </form>
 ```
 
-This example demonstrates a login form that uses the `login()` method to handle the form submission. The `response` callback function is executed upon successful login, and the `onerror` callback function is executed if the login fails.
+This example demonstrates a login form that uses the `login()` method to handle the form submission. The `response` callback will return the user information upon successful login.
 
 </template>
 </CodeSwitcher>
@@ -168,7 +154,7 @@ This example demonstrates a login form that uses the `login()` method to handle 
 
 ### [`getProfile(): Promise<User | null>`](/api-reference/user/#getProfile)
 
-The `getProfile(?)` method allows you to retrieve the user's profile once they have been logged in. It returns the [User's Profile](/data-types/#user-profile) object.
+The `getProfile()` method allows you to retrieve the profile of a user that is logged in. It returns the [User's Profile](/data-types/#user-profile) object.
 If a user is not logged in, `getProfile()` returns `null`.
 
 ### Example: Retrieving User's Profile
@@ -279,7 +265,7 @@ In this example, a form is used to submit the email, verification code, and new 
 </template>
 </CodeSwitcher>
 
-::: warning WARNING
+:::danger WARNING
 If a user's email is not verified, they will not be able to receive a verification code and may lose access to their account permanently. 
 
 It is highly recommended to encourage users to verify their email addresses.
@@ -289,10 +275,10 @@ It is highly recommended to encourage users to verify their email addresses.
 
 ### [`recoverAccount(redirect: boolean | string): Promise<string>`](/api-reference/user/#recoverAccount)
 
-Disabled accounts can be reactivated within 3 months using the `recoverAccount()` method. This method allows users to reactivate their disabled accounts under the following conditions:
+Disabled accounts can be reactivated **within 3 months** using the `recoverAccount()` method. This method allows users to reactivate their disabled accounts under the following conditions:
 
 - The account email must be verified.
-- The recoverAccount() method must be called from the catch block of a failed login attempt using the disabled account.
+- The `recoverAccount()` method must be called from the catch block of a failed login attempt using the disabled account.
  
  :::danger
 **If the account is unverified, it cannot be recovered**.
@@ -306,7 +292,7 @@ Here's an example demonstrating how to use the recoverAccount() method:
 
 ```js
 try {
-  await skapi.signin('user@email.com','password'); // user attempt to login
+  await skapi.login({email: 'user@email.com', password: 'password'}); // user attempt to login
 } catch(failed) {
   console.log(failed.message); // This account is disabled.
   console.log(failed.code); // USER_IS_DISABLED
