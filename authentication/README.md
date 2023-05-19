@@ -299,9 +299,9 @@ try {
   if(failed.code === 'USER_IS_DISABLED') {
     // Send a recovery email to the user with a link.
     // When the user click on the link, the user will be redirected when account recovery is successful.
-    await skapi.recoverAccount("http://mywebsite.com/welcome-back");
+    await skapi.recoverAccount("https://www.skapi.com");
   }
 }
 ```
 
-In the example above, the `recoverAccount()` method is called from the catch block of a failed login attempt using a disabled account. If the login attempt fails with the error code "USER_IS_DISABLED," the `recoverAccount()` method is called to send a recovery email to the user. The recovery email contains a link, and when the user clicks on the link, they will be redirected to the specified URL ("http://mywebsite.com/welcome-back") upon successful account recovery.
+In the example above, the `recoverAccount()` method is called from the catch block of a failed login attempt using a disabled account. If the login attempt fails with the error code "USER_IS_DISABLED," the `recoverAccount()` method is called to send a recovery email to the user. The recovery email contains a link, and when the user clicks on the link, they will be redirected to the specified URL ("https://www.skapi.com") upon successful account recovery.
