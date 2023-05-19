@@ -56,9 +56,9 @@ In the example above, a form is used to capture the user's current password and 
 
 ## Updating account profile
 
-### [`updateProfile(params. options?): Promise<User>`](/api-reference/user/#updateProfile)
+### [`updateProfile(params, options?): Promise<User>`](/api-reference/user/#updateProfile)
 
-You can update your user's profile with `updateProfile()`. The user must be logged in to make this request.
+User's profile can be updated using `updateProfile()`. The user must be logged in to make this request.
 
 If the update is successful, the updated [User Profile](/data-types/#user-profile) object is returned if the update is successful. Please note that certain fields, such as email and phone number, will become unverified if changed.
 
@@ -102,17 +102,9 @@ skapi.updateProfile(params)
         onerror: err => console.log({err}) // onerror runs if fail
     })">
     <input type="text" name="name" placeholder="Name" required>
-    <span onclick="requestCode()" style="cursor: pointer; text-decoration: underline;">Request Code</span>
     <br>
     <input type="submit" value="Update Profile">
 </form>
-<script>
-    function requestCode() {
-        skapi.verifyEmail()
-          .then((res) => console.log({res}))
-          .catch(err => console.log({err}));
-    }
-</script>
 ```
 
 </template>
@@ -149,6 +141,8 @@ async function verifyEmail() {
   // E-Mail is now verified
   console.log('E-Mail verified');
 }
+
+verifyEmail();
 ```
 
 In this example, the `verifyEmail()` function is used to initiate the email verification process. The first call to `verifyEmail()` sends a verification code to the user's email address. The second call provides the verification code to complete the verification process.
@@ -174,7 +168,7 @@ In this example a form is used to complete the email verification. You need to c
 </CodeSwitcher>
 
 ::: tip
-You can customize the verification Email/SMS message's template from the skapi dashboard.
+You can customize the verification email's template from the skapi dashboard.
 
 Refer to [Setting up E-Mail templates]()
 :::
@@ -229,24 +223,24 @@ skapi.getUsers(params).then(u=>{
 });
 
 // Search for users who joined before 2023 jan 1
-let params = {
+let timestampParams = {
   searchFor: 'timestamp',
   condition: '<',
   value: 1672498800000
 }
 
-skapi.getUsers(params).then(u=>{
+skapi.getUsers(timestampParams).then(u=>{
   console.log(u.list); // List of users who joined before 2023 jan 1
 });
 
 // Search for users whose birthday is between 1985 ~ 1990
-let params = {
+let birthdateParams = {
   searchFor: 'birthdate',
   value: '1985-01-01',
   range: '1990-12-31'
 }
 
-skapi.getUsers(params).then(u=>{
+skapi.getUsers(birthdateParams).then(u=>{
   console.log(u.list); // List of users whose birthday is between 1985 ~ 1990
 });
 ```

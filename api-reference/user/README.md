@@ -201,19 +201,11 @@ recoverAccount(params: {
 
 ## updateProfile
 
-### `updateProfile(params. options?): Promise<UserProfile>`
+### `updateProfile(params, options?): Promise<UserProfile>`
 
 ```ts
-updateProfile({
+updateProfile(
     params: {
-        service: string;
-        owner?: string;
-        access_group?: number;
-        user_id: string;
-        locale: string;
-        email_verified?: boolean;
-        phone_number_verified?: boolean;
-        signup_ticket?: string;
         name?: string;
         email?: string; // Max 64 characters.
         phone_number?: string; // Must be in "+0012341234" format.
@@ -231,7 +223,7 @@ updateProfile({
         response?(response: any): any; // callback if success
         onerror?(error: Error): any; // callback if error
     }
-})
+)
 ```
 
 #### Returns [User Profile](/data-types/#user-profile)
