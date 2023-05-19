@@ -83,7 +83,7 @@ You should only call `new Skapi()` once.
 
 ### Optional parameters
 
-The Skapi constructor accepts an optional options object as the third argument. Use this object to customize Skapi's behavior.
+The skapi constructor accepts an optional options object as the third argument. Use this object to customize Skapi's behavior.
 
 ```javascript
 const options = {

@@ -33,7 +33,6 @@ module.exports = {
             '/user-account-tutorial/',
             '/database/',
             '/database-advanced/',
-            '/data-types/',
             {
                 title: 'API Reference',
                 sidebarDepth: 1,
@@ -42,7 +41,8 @@ module.exports = {
                 children: [
                     ['/api-reference/database/', 'Database'],
                     ['/api-reference/user/', 'User'],
-                    ['/api-reference/subscription/', 'Subscription']
+                    ['/api-reference/subscription/', 'Subscription'],
+                    ['/api-reference/data-types/', 'Data Types']
                 ]
             }
         ]
