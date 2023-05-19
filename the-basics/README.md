@@ -1,6 +1,6 @@
 # The Basics
 
-Learn how to connect to your service, work with promises, and interact with forms using skapi. This section will guide you through the essentials of using skapi in your application.
+Learn how to work with promises, and interact with forms using skapi. This section will guide you through the essentials of using skapi in your application.
 
 ## Working with promises
 

@@ -10,11 +10,11 @@ You can fetch a list of table using the `getTables()` method.
 
 ```js
 skapi.getTables().then(response=>{
-    console.log(response.limit); // List of all tables in the database
+    console.log(response); // List of all tables in the database
 })
 ```
 
-### Quering tables
+### Querying tables
 
 You can query table names that meet a `condition`.
 
@@ -23,11 +23,11 @@ skapi.getTables({
     table: 'C',
     condition: '>'
 }).then(response => {
-    console.log(response.limit); // Table names starting from 'A'
+    console.log(response); // Table names starting from 'A'
 })
 ```
 
-In this example, the query object is passed as an argument to the getTables() method. The condition property is set to '>', and the table property is set to 'C'.  This query will return the table names that come after table 'C' in alphabetical order, such as 'D', 'E', 'F', 'G', and so on.
+In this example, the condition property is set to `>`, and `table` is set to `C`.  This query will return the table names that come after table 'C' in lexographic order, such as 'D', 'E', 'F', 'G', and so on.
 
 ## Fetching Tags
 
@@ -39,11 +39,11 @@ You can fetch all tags used in a table with `getTags()`.
 skapi.getTags({
     table: 'MyTable'
 }).then(response=>{
-    console.log(response.limit); // List of all tags in table named 'MyTable'
+    console.log(response); // List of all tags in table named 'MyTable'
 })
 ```
 
-### Quering tags
+### Querying tags
 
 You can also query tags that meet a `condition`.
 
@@ -53,9 +53,10 @@ skapi.getTags({
     tag: 'A',
     condition: '>'
 }).then(response=>{
-    console.log(response.limit); // List of all tags starting from 'A' in table named 'MyTable'
+    console.log(response); // List of all tags starting from 'A' in table named 'MyTable'
 })
 ```
+In this example, the condition property is set to `>`, and `table` is set to `A`.  This query will return the table names that come after table 'A' in lexographic order, such as 'Ab', 'B', 'C', 'D' and so on.
 
 ## Referencing
 
@@ -95,7 +96,7 @@ skapi.postRecord(referencedRecord, referencedConfig).then(response => {
 Now you can query all the records that references the original record by passing the record ID:
 
 ```js
-skapi.getRecord({
+skapi.getRecords({
     table: 'Comments',
     reference: 'record_id_of_the_original_post'
 }).then(response => {
@@ -106,7 +107,7 @@ skapi.getRecord({
 You can even query all the records posted by a user using the user's ID.
 
 ```js
-skapi.getRecord({
+skapi.getRecords({
     table: 'Comments',
     reference: 'user_id_whose_post_you_want'
 }).then(response => {
@@ -143,17 +144,17 @@ When uploading records, you can set restrictions on referencing using the follow
 {
     ...
     reference: {
-        allowed_references: number;
+        reference_limit: number;
         allow_multiple_reference: boolean;
     }
     ...
 }
 
 ```
-`allowed_references`: The maximum number of references that can be created for a given record. If this parameter is set to null, the number of references is unlimited. The default value is `null`.
+`reference_limit`: The maximum number of references that can be created for a given record. If this parameter is set to null, the number of references is unlimited. The default value is `null`.
 
 :::tip Hint
-Set `allowed_references` to `0` to prevent referencing.
+Set `reference_limit` to `0` to prevent referencing.
  :::
 
 `allow_multiple_reference`: If set to `false`, a user will be able to post only one reference to the same record. If set to `true`, a user will be able to post multiple references. The default value is `true`.
@@ -170,7 +171,7 @@ skapi.postRecord({
     table: 'Poll',
     reference: {
         allow_multiple_reference: false,
-        allowed_references: 10
+        reference_limit: 10
     }
 }).then(record => {
     console.log(record);
@@ -266,6 +267,10 @@ skapi.unsubscribe({
     group: '*'
 })
 ```
+
+:::warning Note
+When unsubscribing, subscription information takes some time to take effect.
+:::
 
 ## Blocking and Unblocking Subscribers
 

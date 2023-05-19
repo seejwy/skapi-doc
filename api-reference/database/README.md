@@ -29,7 +29,7 @@ postRecord(
 ```
 #### Returns [RecordData](/data-types/#recorddata)
 
-## getRecord
+## getRecords
 
 ### `getRecords(query, fetchOptions?): Promise<DatabaseResponse>`
 
@@ -134,13 +134,13 @@ type DatabaseResponse = {
 ### `getTables(query, fetchOptions?): Promise<DatabaseResponse>`
 
 ```ts
-getTables({
-    query:  {
-        table?: string;
+getTables(
+    query: {
+        table: string;
         condition?: 'gt' | 'gte' | 'lt' | 'lte' | 'eq' | 'ne' | '>' | '>=' | '<' | '<=' | '=' | '!=';
     } | null; // pass null to get all tables
     fetchOptions?: FetchOptions;
-})
+)
 ```
 
 See [FetchOptions](/data-types/#fetch-options)

@@ -70,7 +70,7 @@ There is also a link to the forgot password page, where users can reset their fo
 <a href="forgot_password.html">Forgot Password?</a>
 <div id="recovery" style="display: none;">
     <p>This account is disabled.</p>
-    <button onclick="skapi.recoverAccount('http://mywebsite.com/welcome-back').then(r => alert(r))">Send Recovery E-Mail</button>
+    <button onclick="skapi.recoverAccount('https://www.skapi.com').then(r => alert(r))">Send Recovery E-Mail</button>
 </div>
 <script>
     let skapi = new Skapi('service_id', 'owners_id');

@@ -17,6 +17,9 @@ It takes two arguments:
 
 ### Example: Creating a Record in the Database
 
+<CodeSwitcher :languages="{js:'Using JavaScript',form:'Using Forms'}">
+<template v-slot:js>
+
 ```js
 let data = { // Data to be saved in key:value pairs
     myData: "Hello World"
@@ -38,6 +41,22 @@ skapi.postRecord(data, config).then(record=>{
     */
 });
 ```
+
+</template>
+<template v-slot:form>
+
+```html
+<form onsubmit="skapi.postRecord(event, { table: 'myTable', response: record => console.log(record) })">
+    <input type="text" name="myData"/>
+    <input type="submit" value="Submit" />
+</form>
+```
+
+This example demonstrates a login form that uses the `login()` method to handle the form submission. The `response` callback will return the user information upon successful login.
+
+</template>
+</CodeSwitcher>
+
 In this example, we are creating a record within the `myTable` table.
 
 See [postRecord()](/api-reference/database/#postrecord) for more information on the parameters and return values.
@@ -76,6 +95,9 @@ When using the `postRecord()` method to update existing records, you only need t
 
 Here's an example that demonstrates how to update an existing record's table name using `postRecord()`:
 
+<CodeSwitcher :languages="{js:'Using JavaScript',form:'Using Forms'}">
+<template v-slot:js>
+
 ```js
 let config = {
     record_id: 'uploaded_record_id'
@@ -86,6 +108,20 @@ skapi.postRecord(undefined, config).then(record=>{
     console.log(record);
 });
 ```
+
+</template>
+<template v-slot:form>
+
+```html
+<form onsubmit="skapi.postRecord(event, { record_id: 'uploaded_record_id', table: 'myNewTable', response: record => console.log(record) })">
+    <input type="submit" value="Submit" />
+</form>
+```
+
+This example demonstrates a login form that uses the `login()` method to handle the form submission. The `response` callback will return the user information upon successful login.
+
+</template>
+</CodeSwitcher>
 
 When using the `postRecord()` method, any data provided in the `data` argument will overwrite the current data of the record.
 
@@ -107,6 +143,10 @@ skapi.postRecord(undefined, config).then(record => {
 ### Example: Changing Data in a Record
 
 To overwrite the current data with new data, pass the updated data as the `data` argument:
+
+<CodeSwitcher :languages="{js:'Using JavaScript',form:'Using Forms'}">
+<template v-slot:js>
+
 ```js
 let updatedData = {
   newData: "Overwritten with new data."
@@ -120,6 +160,21 @@ skapi.postRecord(updatedData, config).then(record => {
   console.log(record);
 });
 ```
+
+</template>
+<template v-slot:form>
+
+```html
+<form onsubmit="skapi.postRecord(event, { record_id: 'uploaded_record_id', table: 'myNewTable', response: record => console.log(record) })">
+    <input name="newData" type="text">
+    <input type="submit" value="Submit" />
+</form>
+```
+
+This example demonstrates a login form that uses the `login()` method to handle the form submission. The `response` callback will return the user information upon successful login.
+
+</template>
+</CodeSwitcher>
 
 ### Example: Deleting Data in a Record
 To delete the data in the record, provide `null` as the new value in the `data` argument:
@@ -137,22 +192,22 @@ Please note that only the owner of the record can update a record.
 :::
 
 ## Fetching Records
-### `getRecords(query, fetchOptions?): Promise<DatabaseResponse>` [api&nbsp;reference](/api-reference/database/#getrecords)
+### [`getRecords(query, fetchOptions?): Promise<DatabaseResponse>`](/api-reference/database/#getrecords)
 
 The `getRecords()` method allows you to fetch records from the database. It retrieves records based on the specified query parameters and returns a promise that resolves to the response containing the [DatabaseResponse](/data-types/#DatabaseResponse/) object. It takes two arguments:
 - `query` (Object): Specifies the query parameters for fetching records.
-- `config` (Object, optional): Specifies additional configuration options for fetching records.
+- `fetchOptionsno` (Object, optional): Specifies additional configuration options for fetching records.
 
 ### Example: Fetching Records from a Table
 
 The following example demonstrates how to use the `getRecords()` method to retrieve records from a table named 'Collection':
 
 ```js
-let config = {
+let query = {
     table: 'Collection'
 }
 
-skapi.getRecords(config).then(response=>{
+skapi.getRecords(query).then(response=>{
     // response
     /**
      * endOfList: true,
@@ -179,12 +234,12 @@ let query = {
     table: 'Collection'
 }
 
-let config = {
+let fetchOptions = {
     fetchMore: true,
     limit: 100
 }
 
-skapi.getRecords(query, config).then(response=>{
+skapi.getRecords(query, fetchOptions).then(response=>{
     console.log(response.list);
 });
 ```
@@ -353,8 +408,8 @@ For example, let's query records created after 2021:
 skapi.getRecords({
     table: "Albums",
     index: {
-        name: '$uploaded'
-        value: '1609459200', // this timestamp is 2021 January 1,
+        name: '$uploaded',
+        value: 1609459200, // this timestamp is 2021 January 1,
         condition: '>'
     }
 }).then(response => {
@@ -365,7 +420,7 @@ skapi.getRecords({
 
 ## Fetching Index
 
-### `getIndexes(query, fetchOptions?): Promise<DatabaseResponse>` [api&nbsp;reference](/api-reference/database/#getindex)
+### [`getIndexes(query, fetchOptions?): Promise<DatabaseResponse>`](/api-reference/database/#getindex)
 
 You can use the `getIndexes()` method to retrieve information about the records stored with an index. This information includes:
 - `average_number`: The average of the number type values.
@@ -470,7 +525,7 @@ skapi.postRecord(record, config);
 You can also utilize tags in your queries. Here's an example:
 
 ```js
-skapi.getRecord({
+skapi.getRecords({
     table: "Albums",
     index: {
         name: "year",
@@ -480,23 +535,23 @@ skapi.getRecord({
     tag: 'Experimental'
 }).then(response=>{
     console.log(response.list); // List of albums released after 2020, that have the tag 'Experimental'.
-    console.log(response.list[0].artist); // "Asian Spice House"
+    console.log(response.list[0].data.artist); // "Asian Spice House"
 });
 ```
 
 :::warning NOTE
 It's not possible to query multiple tags in a single call. If you need to query multiple tags, you should fetch them individually using separate API calls. This limitation is intentional to prioritize scalability in the design of the skapi database.
 
-For example, to query albums with the tag 'Experimental', you can use the `getRecord()` method as follows:
+For example, to query albums with the tag 'Experimental', you can use the `getRecords()` method as follows:
 ```js
-let experimental = skapi.getRecord({
+let experimental = skapi.getRecords({
     table: "Albums",
     tag: 'Experimental'
 }).then(response=>{
     console.log(response.list); // List of albums that have the tag 'Experimental'.
 });
 
-let indie = skapi.getRecord({
+let indie = skapi.getRecords({
     table: "Albums",
     tag: 'Indie'
 }).then(response=>{
@@ -557,7 +612,7 @@ skapi.postRecord(publicRecord, publicConfig).then(record => {
 
 ## Deleting Records
 
-### `deleteRecords(params): Promise<string>` [api&nbsp;reference](/api-reference/database/#deleterecords)
+### [`deleteRecords(params): Promise<string>`](/api-reference/database/#deleterecords)
 
 The `deleteRecords()` method allows users to delete records from their tables.
 

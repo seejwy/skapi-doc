@@ -6,7 +6,7 @@ Follow these steps to get started with skapi:
 
 ## Creating a service
 
-1. Register for an account at [skapi.com](https://www.skapi.com).
+1. Register for an account at [skapi.com](https://www.skapi.com/signup).
 2. Log in and create a new service from your dashboard.
 
 ## Initializing the skapi library
