@@ -1,6 +1,9 @@
 module.exports = {
     title: 'skapi',
     description: 'skapi API documentation',
+    head: [
+        ['link', { rel: 'icon', href: '/favicon.ico' }]
+    ],
     plugins: [
         'code-switcher',
         ['vuepress-plugin-code-copy', {
@@ -9,7 +12,7 @@ module.exports = {
         }]
     ],
     markdown: {
-        plugins: [        
+        plugins: [
             [require('markdown-it-custom-header-link')]
         ]
     },
