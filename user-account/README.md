@@ -196,7 +196,7 @@ skapi.disableAccount().then(()=>{
 
 ## Retrieving Other User Profiles
 
-### [`getUsers(params?, fetchOptions?): Promise<DatabaseResponse>`](/api-reference/user/getusers)
+### [`getUsers(params?, fetchOptions?): Promise<DatabaseResponse>`](/api-reference/user/#getusers)
 
 You can retrieve information of other users in your service using the `getUsers()` method. By default, `getUsers()` will return all users chronologically from the most recent sign-up. The user account using this method has to be logged in.
 
@@ -303,5 +303,5 @@ skapi.getUsers(null, options).then(u=>{
 In this example, the `fetchOptions` object includes `fetchMore: true` and `limit: 100`. This allows the `getUsers()` method to fetch the next batch of 100 users on each execution until the end of the list is reached.
 
 :::danger WARNING
-When using the `fetchMore` parameter, you must check if the response's `endOfList` is `true` before making the next call. `getUsers()` will continue making API calls even if there are no more results resulting in significantly higher costs.
+When using the `fetchMore` parameter, you must check if the response's `endOfList` is `true` before making the next call. `getUsers()` will return an empty list if there are no results.
 :::

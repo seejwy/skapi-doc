@@ -281,7 +281,7 @@ Disabled accounts can be reactivated **within 3 months** using the `recoverAccou
 - The `recoverAccount()` method must be called from the catch block of a failed login attempt using the disabled account.
  
  :::danger
-**If the account is unverified, it cannot be recovered**.
+If the account is unverified, it cannot be recovered.
  :::
 
 The `recoverAccount()` method sends an email to the account owner, containing a confirmation link for account recovery. Additionally, you can provide an optional URL `string` argument to the `recoverAccount()` method, which will redirect the user to the specified URL upon successful account recovery.

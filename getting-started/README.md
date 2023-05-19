@@ -9,6 +9,7 @@ Follow these steps to get started with skapi:
 1. Register for an account at [skapi.com](https://www.skapi.com/signup).
 2. Log in and create a new service from your dashboard.
 
+
 ## Initializing the skapi library
 
 skapi is compatible with both vanilla and webpack-based projects. You need to import the library using the `<script>` tag or with npm.
@@ -61,6 +62,7 @@ import { Skapi } from 'skapi-js'; // imports the library
 const skapi = new Skapi('service_id', 'owner_id');
 
 ```
+![Get your owner's ID and service ID](../assets/service.jpg)
 ::: warning NOTE
 Don't forget to replace `service_id` and `owner_id` with the values provided in your skapi dashboard.
 :::
