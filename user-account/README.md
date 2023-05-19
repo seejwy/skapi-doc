@@ -167,11 +167,11 @@ In this example a form is used to complete the email verification. You need to c
 </template>
 </CodeSwitcher>
 
-::: tip
+<!-- ::: tip
 You can customize the verification email's template from the skapi dashboard.
 
 Refer to [Setting up E-Mail templates]()
-:::
+::: -->
 
 
 ## Disabling account

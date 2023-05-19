@@ -4,9 +4,9 @@ Learn how to connect to your service, work with promises, and interact with form
 
 ## Working with promises
 
-All skapi methods return a promise, which means you need to resolve these methods to retrieve the desired data from the backend.
+All skapi methods return a `Promise`. That means you need to resolve these methods to retrieve the data from the backend.
 
-For this example, we will use `skapi.mock()`, which calls your server and pings your data back to you.
+For this example, we will use a mock method, `skapi.mock()`, which calls your server and returns the function argument back to you.
 
 Here's an example:
 
@@ -15,7 +15,9 @@ const data = skapi.mock({ msg: 'Hello' });
 console.log(data); // Promise { <pending> }
 ```
 
-When you run `mock()`, it returns a promise. To resolve the actual data you're fetching, do the following:
+The `mock()` method returns a `Promise`. To see the data you are trying to fetch, you need to wait for the promise to resolve.
+
+Here is an example demonstrating how you can resolve a promise using `then`.
 
 ```javascript
 skapi
@@ -25,55 +27,90 @@ skapi
   });
 ```
 
+:::tip Note
+You could also resolve a promise using async/await.
+:::
+
 Keep in mind that promises run synchronously, so you need to be careful when chaining multiple skapi methods. For example:
 
 ```javascript
-let my_data = '';
+let my_data = 'Result: ';
 skapi
   .mock({ msg: 'This is the first ping. ' })
   .then((data) => {
+    console.log("This runs first");
     my_data += data.msg;
   });
 skapi
   .mock({ msg: 'This is the second ping.' })
   .then((data) => {
+    console.log("This runs second");
     my_data += data.msg;
   });
+  
+  console.log(my_data);
+
+  // 
+```
+**Result**
+```js
+Result:
+This runs second
+This runs first
 ```
 
-In the code above, we are trying to run first 'skapi.mock()', and then append the data to myData. After that, we run the second 'skapi.mock()' to add more data. However, since JavaScript promises run synchronously (meaning they run at the same time), the above code will run both 'skapi.mock()' immediately. The data will not always be resolved in the order specified.
 
-To ensure that the methods are run in the desired order, you can do the following:
+In the example above, we run `mock()` twice in succession. We are waiting for the promise to resolve with `then` and adding the response into `my_data`. However, since JavaScript promises run synchronously (meaning each statement is executed one after another in a sequential manner), the second call to `mock()` will execute before `then` for the first `mock()` executes. The data will not always be resolved in the order specified. `my_data` also does not have any of the content from the `then` blocks because it is logged right after calling the two `mock()` methods. That is also why `my_data` is printed first.
+
+To ensure that the methods are run in the desired order, you can nest your calls in the `then` blocks. For example:
 
 ```javascript
-let my_data = '';
+let my_data = 'Result: ';
 skapi
   .mock({ msg: 'This is the first ping. ' })
   .then((data) => {
+    console.log("This runs first");
     my_data += data.msg;
     skapi
       .mock({ msg: 'This is the second ping.' })
       .then((data) => {
+        console.log("This runs second");
         my_data += data.msg; // 'This is the first ping. This is the second ping.'
       });
   });
 ```
+**Result**
+```js
+This runs first
+This runs second
+Result: This is the first ping. This is the second ping.
+```
 
-Alternatively, you can wrap the process in an async function and use the await syntax:
+Alternatively, you can use the `async/await` to resolve your promises. To do so, you can wrap the process in an `async` function and use the `await` syntax:
 
 ```javascript
 async function run_in_order() {
-  let my_data = '';
+  let my_data = 'Result: ';
   let m1 = await skapi.mock({ msg: 'This is the first ping. ' });
   let m2 = await skapi.mock({ msg: 'This is the second ping.' });
   my_data = m1.msg + m2.msg;
 }
 run_in_order();
 ```
+**Result**
+```js
+Result: This is the first ping. This is the second ping.
+```
+
+:::warning Note
+ The `Promise` represents the eventual completion or failure of that operation, and it allows you to handle the result or error once it becomes available.
+ :::
 
 ## Working with forms
 
-skapi allows you to pass an HTML form SubmitEvent as an argument for methods that accept a form parameter. The input element names will be used as the parameter names for the method. You can also specify callback functions for the response and error in the second argument.
+skapi allows you to pass an HTML form `SubmitEvent` as an argument for methods that accept `SubmitEvent` in the parameter. The input element `name` attribute will be used as the parameter names for the method. 
+
+You can also specify callback functions using `response` and `onerror` to handle the response and error in the second argument.
 
 Here is an example of how to use a form with skapi:
 
@@ -110,7 +147,7 @@ This is equivalent to the following code:
 </script>
 ```
 
-If you specify a URL in the action property of the form element, the user will be redirected to that page upon a successful request. On the new page, you can use the skapi.getFormResponse() method to retrieve the resolved data from the previous request. However, if you specify a response callback in the second argument, the form will not redirect to a new page.
+If you specify a URL in the `action` of the form element, the user will be redirected to that page upon a successful request. On the new page, you can use the `skapi.getFormResponse()` method to retrieve the resolved data from the previous request. However, if you specify a `response` callback in the second argument, the form will not redirect to a new page.
 
 (index.html)
 ```html
