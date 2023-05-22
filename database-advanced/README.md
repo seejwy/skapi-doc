@@ -4,7 +4,7 @@ In this section, we will cover advanced features for skapi database.
 
 ## Fetching Tables
 
-### [`getTables(query, fetchOptions?): Promise<DatabaseResponse>`](/api-reference/database/#gettable)
+### [`getTables(query, fetchOptions?): Promise<DatabaseResponse>`](/api-reference/database/#gettables)
 
 You can fetch a list of table using the `getTables()` method.
 
@@ -31,7 +31,7 @@ In this example, the condition property is set to `>`, and `table` is set to `C`
 
 ## Fetching Tags
 
-### [`getTags(query, fetchOptions?): Promise<DatabaseResponse>`](/api-reference/database/#gettag)
+### [`getTags(query, fetchOptions?): Promise<DatabaseResponse>`](/api-reference/database/#gettags)
 
 You can fetch all tags used in a table with `getTags()`.
 
@@ -274,8 +274,8 @@ When unsubscribing, subscription information takes some time to take effect.
 
 ## Blocking and Unblocking Subscribers
 
-### [`blockSubscriber(option): Promise<string>`](/api-reference/subscription/#blockSubscriber)
-### [`unblockSubscriber(option): Promise<string>`](/api-reference/subscription/#unblockSubscriber)
+### [`blockSubscriber(option): Promise<string>`](/api-reference/subscription/#blocksubscriber)
+### [`unblockSubscriber(option): Promise<string>`](/api-reference/subscription/#unblocksubscriber)
 
 Users can block certain users from their subscription groups. If a user is blocked from a subscription group, they will not have access to the records in that group.
 

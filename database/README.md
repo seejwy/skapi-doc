@@ -52,7 +52,7 @@ skapi.postRecord(data, config).then(record=>{
 </form>
 ```
 
-This example demonstrates a login form that uses the `login()` method to handle the form submission. The `response` callback will return the user information upon successful login.
+This example demonstrates a login form that uses the `login()` method to handle the form submission. The `response` callback will return the user information upon successful login. See [Working with forms](/the-basics/#working-with-forms) on how to use submit forms.
 
 </template>
 </CodeSwitcher>
@@ -221,33 +221,9 @@ skapi.getRecords(query).then(response=>{
 
 In this example, the `config` object specifies the table name as 'Collection'. The retrieved records are accessed through the response.list property.
 
-### Fetching More Records
+You can adjust the the number of records to be returned per API call and fetching the next batch of results using `fetchOptions`.
 
-To fetch more records than the default limit (50), you can set the `fetchMore` parameter to `true` in the `config` object. This allows you to retrieve records in batches until the end of the list is reached.
-
-### Example: Fetching More Records in Batches
-
-The following example demonstrates fetching 100 records per call:
-
-``` js
-let query = {
-    table: 'Collection'
-}
-
-let fetchOptions = {
-    fetchMore: true,
-    limit: 100
-}
-
-skapi.getRecords(query, fetchOptions).then(response=>{
-    console.log(response.list);
-});
-```
-In this example, the `config` object includes `fetchMore: true` and `limit: 100`. This enables the method to fetch the next batch of 100 records on each execution until the end of the list is reached.
-
-:::danger WARNING
-When using the `fetchMore` parameter, it is important to check the `endOfList` property in the response before making the next call. If `endOfList` is `true`, it indicates that there are no more records to retrieve. Failing to check this condition can result in unnecessary API calls and increased costs.
-:::
+See [FetchOptions Additional Parameters](/user-account/#fetchoptions-additional-parameters-optional) on how to use `limit` and `fetchMore`.
 
 ### Fetching Record by ID
 
@@ -492,6 +468,8 @@ skapi.getIndexes(query, config).then(response => {
 });
 ```
 
+See [FetchOptions Additional Parameters](/user-account/#fetchoptions-addition-parameters-optional) on how to use `limit` and `fetchMore`.
+
 ## Tags
 
 Tags are additional information that can be associated with a record. They provide additional search criteria to perform more detailed queries, either on their own or in combination with indexes. Unlike indexes, tags cannot be queried with conditional operators.
@@ -661,7 +639,7 @@ You can pass the `subscription_group` property as an additional filter to delete
 
 Here's an example of a user deleting all records in the "A" table with a public access group and only records in subscription group 4.
 
-Learn more about [Subscription](/database-advanced/#subscription) in the [Database Advanced](/database-advanced) section.
+Learn more about [Subscription](/database-advanced/#subscription) in the [Database Advanced](/database-advanced/#database-advanced) section.
 
 ```js
 let query = {

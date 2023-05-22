@@ -22,7 +22,7 @@ let parameters = {
 };
 
 let options = {
-  signup_confirmation: true // If set to true, users must confirm their email to complete signup.
+  login: true // If set to true, users will be automatically logged in on signup.
 };
 
 skapi.signup(parameters, options)
@@ -52,10 +52,18 @@ skapi.signup(parameters, options)
 </form>
 ```
 
+The `signup()` method accepts `SubmitEvent` as its parameter. See [Working with forms](/the-basics/#working-with-forms) for more information.
+
 </template>
 </CodeSwitcher>
 
-The `signup` accepts `SubmitEvent` as its parameter. See [Working with forms](/the-basics/#working-with-forms) for more information.
+### Additional Parameters (Optional)
+
+- `options`(Type: `Object`, optional):
+  - `login`(`boolean`): If `true`, the user will be automatically logged in to the service upon successful signup. (default: `true`)
+  - `signup_confirmation`(`boolean`): If `true` users must verify their email before they can login. (default: `false`). See [Signup Confirmation](/authentication/#signup-confirmation)
+
+See [full list of parameters](/api-reference/user/#signup)
 
 ::: warning NOTE
 If the user fails to confirm within a day, their signup will be invalidated, and they will need to sign up again. 
@@ -68,7 +76,7 @@ You should always use the `signup_confirmation` option to prevent automated sign
 
 ### [`resendSignupConfirmation(redirect?): Promise<string>`](/api-reference/user/#resendSignupConfirmation)
 
-When an account is created with `options.signup_confirmation` set to `true`, users must verify their email before logging into your service. If you need to resend the confirmation email, use the `resendSignupConfirmation()` method. 
+When an account is created with `signup_confirmation` set to `true`, users must verify their email before logging into your service. If you need to resend the confirmation email, use the `resendSignupConfirmation()` method. 
 
 ### Example: Resending Signup Confirmation Email
 
@@ -152,9 +160,9 @@ This example demonstrates a login form that uses the `login()` method to handle 
 
 ## User's Profile
 
-### [`getProfile(): Promise<User | null>`](/api-reference/user/#getProfile)
+### [`getProfile(options?): Promise<User | null>`](/api-reference/user/#getprofile)
 
-The `getProfile()` method allows you to retrieve the profile of a user that is logged in. It returns the [User's Profile](/data-types/#user-profile) object.
+The `getProfile()` method allows you to retrieve the profile of a user that is logged in. It returns the [User's Profile](/api-reference/data-types/#user-profile) object.
 If a user is not logged in, `getProfile()` returns `null`.
 
 ### Example: Retrieving User's Profile
@@ -183,9 +191,9 @@ skapi.logout();
 
 ## Forgot password
 
-### [`forgotPassword(params, options?): Promise<string>`](/api-reference/user/#forgotPassword)
+### [`forgotPassword(params, options?): Promise<string>`](/api-reference/user/#forgotpassword)
 
-### [`resetPassword(params, options?): Promise<string>`](/api-reference/user/#resetPassword)
+### [`resetPassword(params, options?): Promise<string>`](/api-reference/user/#resetpassword)
 
 To reset a forgotten password, you can use the following methods:
 
@@ -273,16 +281,12 @@ It is highly recommended to encourage users to verify their email addresses.
 
 ## Recovering a Disabled Account
 
-### [`recoverAccount(redirect: boolean | string): Promise<string>`](/api-reference/user/#recoverAccount)
+### [`recoverAccount(redirect: boolean | string): Promise<string>`](/api-reference/user/#recoveraccount)
 
 Disabled accounts can be reactivated **within 3 months** using the `recoverAccount()` method. This method allows users to reactivate their disabled accounts under the following conditions:
 
 - The account email must be verified.
-- The `recoverAccount()` method must be called from the catch block of a failed login attempt using the disabled account.
- 
- :::danger
-If the account is unverified, it cannot be recovered.
- :::
+- The `recoverAccount()` method must be called from the `catch` block of a failed `login()` attempt using the disabled account.
 
 The `recoverAccount()` method sends an email to the account owner, containing a confirmation link for account recovery. Additionally, you can provide an optional URL `string` argument to the `recoverAccount()` method, which will redirect the user to the specified URL upon successful account recovery.
 
@@ -305,3 +309,7 @@ try {
 ```
 
 In the example above, the `recoverAccount()` method is called from the catch block of a failed login attempt using a disabled account. If the login attempt fails with the error code "USER_IS_DISABLED," the `recoverAccount()` method is called to send a recovery email to the user. The recovery email contains a link, and when the user clicks on the link, they will be redirected to the specified URL ("https://example.com") upon successful account recovery.
+ 
+ :::danger WARNING
+If the account is unverified, it cannot be recovered.
+ :::

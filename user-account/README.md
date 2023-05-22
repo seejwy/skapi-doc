@@ -56,11 +56,11 @@ In the example above, a form is used to capture the user's current password and 
 
 ## Updating account profile
 
-### [`updateProfile(params, options?): Promise<User>`](/api-reference/user/#updateProfile)
+### [`updateProfile(params, options?): Promise<User>`](/api-reference/user/#updateprofile)
 
 User's profile can be updated using `updateProfile()`. The user must be logged in to make this request.
 
-If the update is successful, the updated [User Profile](/data-types/#user-profile) object is returned if the update is successful. Please note that certain fields, such as email and phone number, will become unverified if changed.
+If the update is successful, the updated [User Profile](/api-reference/data-types/#user-profile) object is returned if the update is successful. Please note that certain fields, such as email and phone number, will become unverified if changed.
 
 ### Example: Updating the User's Name
 
@@ -112,7 +112,7 @@ skapi.updateProfile(params)
 
 ## E-Mail Verification
 
-### [`verifyEmail(params?): Promise()`](/api-reference/user/#verifyemail)
+### [`verifyEmail(params?): Promise(string)`](/api-reference/user/#verifyemail)
 
 You can verify your user's email addresses with `verifyEmail()`. The user must be logged in to make this request.
 
@@ -176,7 +176,7 @@ Refer to [Setting up E-Mail templates]()
 
 ## Disabling account
 
-### [`disableAccount()`](/api-reference/user/#disableaccount)
+### [`disableAccount(): Promise(string)`](/api-reference/user/#disableaccount)
 
 You can disable your user's account using the `disableAccount()` method. **All data related to the account will be deleted after 3 months**. It's important to note that the user will be automatically logged out once their account has been disabled.
 
@@ -267,7 +267,7 @@ When searching for a `string` attribute, `>` and `<` will search for strings tha
 
 :::warning NOTE
 - `user_id`, `email`, `phone_number`, and `address` must be searched with the '=' condition.
-- Users cannot search for attributes that are not set to public. Refer to [User Profile](/data-types/#user-profile)
+- Users cannot search for attributes that are not set to public. Refer to [User Profile](/api-reference/data-types/#user-profile)
 :::
 
 The `range` parameter enables searching for users based on a specific attribute value within a given range. For example, if searching by `timestamp` with a range of 1651748526 to 1651143726, only users created between the two timestamps will be returned. 
@@ -276,24 +276,35 @@ The `range` parameter enables searching for users based on a specific attribute 
 The `range` parameter cannot be used with the `condition` parameter.
 :::
 
-#### Fetching More Users
+### FetchOptions Additional Parameters (Optional)
 
-To fetch more user, you can set the `fetchMore` parameter to `true` in the `fetchOptions` object. This allows you to retrieve users in batches until the end of the list is reached.
+`FetchOptions` helps you to specify the number of records to return per API call and fetching the next batch of records. This is used globally for all `FetchOptions` in `skapi`.
 
-### Example: Fetching More Users in Batches
+See full list of [FetchOptions](/api-reference/data-types/#fetch-options)
+
+
+### Limit Results with `fetchOptions.limit`
+
+By default, 50 rows will be fetched per call. You can adjust the limit to your preference, allowing up to **1000 rows**, by using the `limit` key.
+
+### Fetch More Results with `fetchOptions.fetchMore`
+
+To fetch more results, you can set the `fetchMore` parameter to `true` in the `fetchOptions` object. This allows you to retrieve results in batches until the end of the list is reached.
+
+### Example: Fetching 100 More Results
 
 ``` js
-let options = {
+let fetchOptions = {
   limit: 100,
   fetchMore: true
 }
 // Retrieve a list of up to 100 users in your service, sorted by most recent sign-up date.
-skapi.getUsers(null, options).then(u=>{
+skapi.getUsers(null, fetchOptions).then(u=>{
   console.log(u.list); // List of up to 100 users in your service, sorted by most recent sign-up date.
 
   // If there is more users to fetch, retrieve the next batch of 100 users
   if(!u.endOfList) {
-    skapi.getUsers(null, options).then(u=>{
+    skapi.getUsers(null, fetchOptions).then(u=>{
       console.log(u.list); // List of the next 100 users from the database.
     });
   }

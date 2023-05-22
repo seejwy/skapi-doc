@@ -7,27 +7,27 @@ postRecord(
     data: SubmitEvent | { [key: string] : any } | null;
     config: {
         table: {
-            name: string;
+            name: string; // other than space and period, special characters are not allowed 
             access_group?: number | 'private' | 'public' | 'authorized';  // 0 to 99 if using number. Default: 'public'
             subscription_group?: number;
         } | string;
         record_id?: string; // only used when updating records
         index?: {
-            name: string; 
-            value: string | number | boolean;
+            name: string; // Only alphanumeric and period allowed.
+            value: string | number | boolean; // Only alphanumeric and spaces allowed.
         };
-        tags: string | <string>[];
+        tags: string | <string>[]; // other than space and period, special characters are not allowed 
         reference?: {
             allow_multiple_reference?: boolean; // default: true
             record_id?: string;
-            reference_limit?: number | null;
+            reference_limit?: number | null; // set to 0 to block referencing
         };
         response?(response: any): any; // callback if success
         onerror?(error: Error): any; // callback if error
     };
 )
 ```
-#### Returns [RecordData](/data-types/#recorddata)
+#### Returns [RecordData](/api-reference/data-types/#recorddata)
 
 ## getRecords
 
@@ -57,7 +57,7 @@ getRecords(
 )
 ```
 
-See [FetchOptions](/data-types/#fetch-options)
+See [FetchOptions](/api-reference/data-types/#fetch-options)
 
 #### Returns <!-- DatabaseResponse -->
 
@@ -69,7 +69,7 @@ type DatabaseResponse = {
     startKeyHistory: string[];
 };
 ```
-See [RecordData](/data-types/#recorddata)
+See [RecordData](/api-reference/data-types/#recorddata)
 
 ## deleteRecords
 
@@ -105,7 +105,7 @@ getIndexes(
 }
 ```
 
-See [FetchOptions](/data-types/#fetch-options)
+See [FetchOptions](/api-reference/data-types/#fetch-options)
 
 #### Returns
 
@@ -129,7 +129,7 @@ type DatabaseResponse = {
 };
 ```
 
-## getTable
+## getTables
 
 ### `getTables(query, fetchOptions?): Promise<DatabaseResponse>`
 
@@ -143,7 +143,7 @@ getTables(
 )
 ```
 
-See [FetchOptions](/data-types/#fetch-options)
+See [FetchOptions](/api-reference/data-types/#fetch-options)
 
 #### Returns
 
@@ -160,7 +160,7 @@ type DatabaseResponse = {
 };
 ```
 
-## getTag
+## getTags
 
 ### `getTags(query, fetchOptions?): Promise<DatabaseResponse>`
 
@@ -175,7 +175,7 @@ getTags({
 })
 ```
 
-See [FetchOptions](/data-types/#fetch-options)
+See [FetchOptions](/api-reference/data-types/#fetch-options)
 
 #### Returns
 

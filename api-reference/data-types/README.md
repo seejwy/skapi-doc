@@ -66,6 +66,8 @@ type FetchOptions = {
     startKey?: string;
 }
 ```
+See [FetchOptions Additional Parameters](/user-account/#fetchoptions-additional-parameters-optional) on how to use `limit` and `fetchmore`.
+
 ## RecordData
 
 ```ts

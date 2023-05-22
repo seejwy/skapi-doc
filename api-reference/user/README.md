@@ -19,7 +19,7 @@ signup(
         birthdate_public?: boolean; // Default = false
         misc: string; // Additional string value that can be used freely.
     } | SubmitEvent;
-    options: {
+    options?: {
         signup_confirmation?: boolean | string; // Default = false
         email_subscription?: boolean; // Default = false
         login?: boolean; // Cannot be true with signup_confirmation. // Default = false
@@ -37,7 +37,7 @@ User
 | "SUCCESS: The account has been created."
 ```
 
-See [User](/data-types/#user)
+See [User](/api-reference/data-types/#user)
 
 ### Errors
 ```ts
@@ -62,7 +62,7 @@ resendSignupConfirmation(
 'SUCCESS: Signup confirmation E-Mail has been sent.'
 ```
 
-See [User](/data-types/#user)
+See [User](/api-reference/data-types/#user)
 
 ### Errors
 ```ts
@@ -82,13 +82,13 @@ login(
         email: string; 
         password: string;
     } | SubmitEvent;
-    options: {
+    options?: {
         response?(response: any): any; // callback if success
         onerror?(error: Error): any; // callback if error
     };
 )
 ```
-#### Returns [User](/data-types/#user)
+#### Returns [User](/api-reference/data-types/#user)
 
 ### Errors
 ```ts
@@ -111,9 +111,17 @@ login(
 
 ## getProfile
 
-### `getProfile(): Promise<User | null>`
+### `getProfile(options?): Promise<User | null>`
 
-#### Returns [User](/data-types/#user)
+```ts
+getProfile(
+    options?: {
+        refreshToken: boolean;
+    }
+)
+```
+
+#### Returns [User](/api-reference/data-types/#user)
 
 ## logout
 
@@ -133,7 +141,7 @@ forgotPassword(
     params: { 
         email: string; 
     } | SubmitEvent;
-    options: {
+    options?: {
         response?(response: any): any; // callback if success
         onerror?(error: Error): any; // callback if error
     };
@@ -226,7 +234,7 @@ updateProfile(
 )
 ```
 
-#### Returns [User Profile](/data-types/#user-profile)
+#### Returns [User Profile](/api-reference/data-types/#user-profile)
 
 ## verifyEmail
 
@@ -276,7 +284,7 @@ getUsers({
 
 ```
 
-See [FetchOptions](/data-types/#fetch-options)
+See [FetchOptions](/api-reference/data-types/#fetch-options)
 
 
 #### Returns

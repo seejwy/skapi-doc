@@ -21,7 +21,7 @@ The `<script>` block at the bottom of the page is where the we generate the user
 2. The `getProfile()` method is then called to retrieve the user's account information.
 3. For each profile key in the `array`, if the user object has it, is inserted into the page using innerHtml.
 
-For more information on [User Profile](/data-types/#user-profile)
+For more information on [User Profile](/api-reference/data-types/#user-profile)
 
 ``` html
 <!DOCTYPE html>

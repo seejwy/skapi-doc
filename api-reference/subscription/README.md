@@ -88,7 +88,7 @@ getSubscriptions(
 )
 ```
 
-See [FetchOptions](/data-types/#fetch-options)
+See [FetchOptions](/api-reference/data-types/#fetch-options)
 
 #### Returns
 

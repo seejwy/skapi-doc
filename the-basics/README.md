@@ -6,7 +6,7 @@ Learn how to work with promises, and interact with forms using skapi. This secti
 
 All skapi methods return a `Promise`. That means you need to resolve these methods to retrieve the data from the backend.
 
-For this example, we will use a mock method, `skapi.mock()`, which calls your server and returns the function argument back to you.
+For this example, we will use a `mock()` method within the `skapi` object, which calls your server and returns the function argument back to you.
 
 Here's an example:
 
@@ -17,7 +17,7 @@ console.log(data); // Promise { <pending> }
 
 The `mock()` method returns a `Promise`. To see the data you are trying to fetch, you need to wait for the promise to resolve.
 
-Here is an example demonstrating how you can resolve a promise using `then`.
+Here is an example demonstrating how you can resolve a promise using `then()`.
 
 ```javascript
 skapi
@@ -28,7 +28,7 @@ skapi
 ```
 
 :::tip Note
-You could also resolve a promise using async/await.
+You could also resolve a `Promise` using `async/await`.
 :::
 
 Keep in mind that promises run synchronously, so you need to be careful when chaining multiple skapi methods. For example:
@@ -49,8 +49,6 @@ skapi
   });
   
   console.log(my_data);
-
-  // 
 ```
 **Result**
 ```js
@@ -60,9 +58,9 @@ This runs first
 ```
 
 
-In the example above, we run `mock()` twice in succession. We are waiting for the promise to resolve with `then` and adding the response into `my_data`. However, since JavaScript promises run synchronously (meaning each statement is executed one after another in a sequential manner), the second call to `mock()` will execute before `then` for the first `mock()` executes. The data will not always be resolved in the order specified. `my_data` also does not have any of the content from the `then` blocks because it is logged right after calling the two `mock()` methods. That is also why `my_data` is printed first.
+In the example above, we run `mock()` twice in succession. We are waiting for the `Promise` to resolve with `then()` and adding the response into `my_data`. However, since JavaScript promises run synchronously (meaning each statement is executed one after another in a sequential manner) the second call to `mock()` will execute before the `then()` of the first `mock()` executes. The data will not always be resolved in the order it is written. `my_data` also does not have any of the content from the `then` blocks because it is logged right after calling the two `mock()` methods. That is why `my_data` is unchanged and printed first.
 
-To ensure that the methods are run in the desired order, you can nest your calls in the `then` blocks. For example:
+To ensure that your code runs in the desired order, you can nest your calls in the `then()` blocks. For example:
 
 ```javascript
 let my_data = 'Result: ';
