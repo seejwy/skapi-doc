@@ -278,38 +278,3 @@ If a user's email is not verified, they will not be able to receive a verificati
 
 It is highly recommended to encourage users to verify their email addresses.
 :::
-
-## Recovering a Disabled Account
-
-### [`recoverAccount(redirect: boolean | string): Promise<string>`](/api-reference/user/#recoveraccount)
-
-[Disabled](/user-account/#disabling-account) accounts can be reactivated **within 3 months** using the `recoverAccount()` method. This method allows users to reactivate their disabled accounts under the following conditions:
-
-- The account email must be verified.
-- The `recoverAccount()` method must be called from the `catch` block of a failed `login()` attempt using the disabled account.
-
-The `recoverAccount()` method sends an email to the account owner, containing a confirmation link for account recovery. Additionally, you can provide an optional URL `string` argument to the `recoverAccount()` method, which will redirect the user to the specified URL upon successful account recovery.
-
-### Example: Recovering a Disabled Account
-
-Here's an example demonstrating how to use the recoverAccount() method:
-
-```js
-try {
-  await skapi.login({email: 'user@email.com', password: 'password'}); // user attempt to login
-} catch(failed) {
-  console.log(failed.message); // This account is disabled.
-  console.log(failed.code); // USER_IS_DISABLED
-  if(failed.code === 'USER_IS_DISABLED') {
-    // Send a recovery email to the user with a link.
-    // When the user click on the link, the user will be redirected when account recovery is successful.
-    await skapi.recoverAccount("https://example.com");
-  }
-}
-```
-
-In the example above, the `recoverAccount()` method is called from the catch block of a failed login attempt using a disabled account. If the login attempt fails with the error code "USER_IS_DISABLED," the `recoverAccount()` method is called to send a recovery email to the user. The recovery email contains a link, and when the user clicks on the link, they will be redirected to the specified URL ("https://example.com") upon successful account recovery.
- 
- :::danger WARNING
-If the account is unverified, it cannot be recovered.
- :::
