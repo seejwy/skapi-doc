@@ -6,7 +6,7 @@ Methods related to authentication.
 
 ### [`signup(params, options?): Promise<User | string>`](/api-reference/user/#signup)
 
-To create a new account (user) in your service, you can use the `signup()` method.
+To create a new account (user) in your service, you can use the `signup()` method. Users will appear in your service's list of users after they have logged in for the first time.
 
 ### Example: Creating an Account
 Here's an example of how to use `signup()`:
@@ -262,11 +262,11 @@ In this example, a form is used to submit the email, verification code, and new 
     })">
     <input type="email" name="email" placeholder="E-Mail" required>
     <br>
-    <input type="text" name="code" required>
+    <input type="text" name="code" placeholder="Verification Code" required>
     <br>
-    <input type="password" name="new_password" required>
+    <input type="password" name="new_password" placeholder="New Password" required>
     <br>
-    <input type="submit" value="Change Password">
+    <input type="submit" placeholder="Confirm Password" value="Change Password">
 </form>
 ```
 
@@ -283,7 +283,7 @@ It is highly recommended to encourage users to verify their email addresses.
 
 ### [`recoverAccount(redirect: boolean | string): Promise<string>`](/api-reference/user/#recoveraccount)
 
-Disabled accounts can be reactivated **within 3 months** using the `recoverAccount()` method. This method allows users to reactivate their disabled accounts under the following conditions:
+[Disabled](/user-account/#disabling-account) accounts can be reactivated **within 3 months** using the `recoverAccount()` method. This method allows users to reactivate their disabled accounts under the following conditions:
 
 - The account email must be verified.
 - The `recoverAccount()` method must be called from the `catch` block of a failed `login()` attempt using the disabled account.
