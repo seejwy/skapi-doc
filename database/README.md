@@ -378,7 +378,7 @@ The reserved keywords are:
 - `$referenced_count`: Fetches the number of records that [references](/database-advanced/#referencing) this record.
 - `$user_id`: Fetches the creator of the record.
 
-With the exception of `$user_id`, all of these reserved keywords can be queried with `condition` and `range` just like any other index values. $user_id cannot be queried with condition or range.
+With the exception of `$user_id`, all of these reserved keywords can be queried with `condition` and `range` just like any other index values. `$user_id` cannot be queried with condition or range.
 
 ### Example: Querying Index with Reserved Keywords
 For example, let's query records created after 2021:
@@ -513,6 +513,23 @@ let publicConfig = {
 skapi.postRecord(publicRecord, publicConfig).then(record => {
     console.log(record); // Anyone can access this record.
 });
+```
+
+### Example: Fetching Records with Access Restrictions
+
+In order to fetch records with `access_group` that is not `public` or `0`, you need to specify the `access_group` you are trying to fetch from. In this example, we are trying to fetch records from the "Personal" table with `private` access.
+
+```js
+let privateConfig = {
+    table: {
+        name: 'Personal',
+        access_group: 'private'
+    }
+};
+
+skapi.getRecords(privateConfig)
+    .then(res => console.log(res))
+    .catch(err => console.log(err));
 ```
 
 ## Deleting Records
