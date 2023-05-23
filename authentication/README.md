@@ -36,7 +36,7 @@ skapi.signup(parameters, options)
 ```html
 <form onsubmit="skapi.signup(event, 
     { 
-        signup_confirmation: true, 
+        login: true, 
         response: (res) => {console.log({res})}, // response runs on successful signup
         onerror: err => console.log({err}) // onerror runs when signup fails 
     })">
