@@ -58,6 +58,169 @@ skapi.getTags({
 ```
 In this example, the condition property is set to `>`, and `table` is set to `A`.  This query will return the table names that come after table 'A' in lexographic order, such as 'Ab', 'B', 'C', 'D' and so on.
 
+
+## Compound Index Names
+
+When posting records, you can use compound index names to have more control over querying the records. This makes it easier to search and retrieve records.
+
+### Example: Uploading a Record with Compound Index Name
+
+In the example below, we are uploading a record with a compound index name:
+
+```js
+let album_data = {
+    title: "Daepa calling",
+    tracks: 5
+};
+
+skapi.postRecord(album_data, {
+    table: 'Album',
+    index: {
+        name: 'Band.AsianSpiceHouse.year',
+        value: 2023
+    }
+})
+```
+
+In this example, we have created a compound index name by joining the artist type, artist name, and "year" with a period. The `value` for the `index` is set to the "year" value of 2023.
+
+Using compound index names, you can easily query records by artist type, artist name, or release year.
+
+
+### Example: Querying Albums with Top Level Compound Index
+
+For example, you can query all albums performed by a band using the following code:
+
+```js
+skapi.getRecords({
+    table: 'Album',
+    index: {
+        name: 'Band.',
+        value: '',
+        condition: '>'
+    }
+}).then(response=>{
+    console.log(response.list); // All albums by a band.
+})
+```
+
+In this example, the query includes a period at the end of the index `name`, 'Band.'. This allows you to query the following index of the compound index name as a `string` value. Since the `value` is an empty string and the condition is set to "more than", this will retrieve all records where the index `name` begins with 'Band.'.
+
+### Example: Querying Albums with Child Level Compound Index Name
+
+You can also query albums by artist name. For example, you can query all albums by artist names starting with "Asian" like this:
+
+```js
+skapi.getRecords({
+    table: 'Album',
+    index: {
+        name: 'Band.',
+        value: 'Asian',
+        condition: '>='
+    }
+}).then(response=>{
+    console.log(response.list); // All albums by bands with a name starting with 'Asian'
+})
+```
+
+In this example, the `value` of the index is set to "Asian" and the `condition` is set to "more than or equal". This allows you to query all artist names starting with "Asian" where the index `name` begins with "Band."
+
+### Example: Querying Albums with Full Compound Index Name
+
+Finally, you can query the band Asian Spice House albums by release year as follows:
+
+```js
+skapi.getRecords({
+    table: 'Album',
+    index: {
+        name: 'Band.AsianSpiceHouse.year',
+        value: 2023
+    }
+}).then(response=>{
+    console.log(response.list); // All albums by Asian Spice House released in 2023.
+})
+```
+
+:::warning Note
+It is important to note that when querying the records with a compound index, you need to specify the index respecting the hierarchy of the compound index name. In the example provided, you cannot simply use `Band.year` as an index name. You must provide the full `Band.AsianSpiceHouse.year` index.
+:::
+
+## Fetching Index
+
+### [`getIndexes(query, fetchOptions?): Promise<DatabaseResponse>`](/api-reference/database/#getindex)
+
+You can use the `getIndexes()` method to retrieve information about the records stored with an index. This information includes:
+- `average_number`: The average of the number type values.
+- `total_number`: The total sum of the number values.
+- `number_count`: The total number of records with number as the index value.
+- `average_bool`: The rate of true values for booleans.
+- `total_bool`: The total number of true values for booleans.
+- `bool_count`: The total number of records with boolean as the index value.
+- `string_count`: The total number of records with string as the index value.
+- `index_name`: The name of the index.
+
+### Example: Fetching Index Information
+
+Here's an example of how to use `getIndexes()` with a [compound index name](/database-advanced/#compound-index-names):
+
+```js
+skapi.getIndexes({
+    table: 'Poll',
+    index: 'Vote.Beer' // index name goes here
+}).then(response => {
+    console.log(response.list[0]);
+});
+```
+
+With this example, you can fetch information about the "Vote.Beer" index in the "Poll" table and obtain statistical information about the records.
+
+### Querying index values
+
+Suppose you want to list all the indexes in a table and order them in a specific order. In that case, you can use the `order.by` parameter in the `query`. For example, to list all indexes in the "Poll" table ordered by `average_bool`, you can do the following:
+
+```js
+let config = {
+    ascending: false
+};
+
+let query = {
+    table: 'Poll',
+    order: {
+        by: 'average_bool'
+    }
+};
+
+skapi.getIndexes(query, config).then(response => {
+    console.log(response.list); // List of indexes ordered from high votes.
+});
+```
+
+Note that in the `config` object, the `ascending` value is set to `false`, so the list will be ordered in *descending* order from higher votes to lower votes.
+
+If the index name is a [compound index name](/database-advanced/#compound-index-names), you can only fetch certain indexes and order them. For example, to list all indexes under "Vote." that has higher votes then 50% and order them by `average_bool`, you can do the following:
+
+```js
+let config = {
+    ascending: false
+};
+
+let query = {
+    table: 'Poll',
+    index: 'Vote.',
+    order: {
+        by: 'average_bool',
+        value: 0.5,
+        condition: '>'
+    }
+};
+
+skapi.getIndexes(query, config).then(response => {
+    console.log(response.list); // List of votes that rates higher then 50%, ordered from high votes.
+});
+```
+
+See [FetchOptions Additional Parameters](/user-account/#fetchoptions-addition-parameters-optional) on how to use `limit` and `fetchMore`.
+
 ## Referencing
 
 You can reference another record in your records. Referencing is useful when you want to point your record to an existing record. Think of it as a "1 : many" relationship in a relational database. To reference a record, you'll need to specify the `record_id` of the record you want to reference in the `reference` parameter in the `config` object.
@@ -372,90 +535,4 @@ skapi.getSubscriptions({
 
 :::warning Note
 Either the subscriber or subscription parameter must be provided in the Params object. If neither is provided, an error will occur.
-:::
-
-## Compound Index Names
-
-When posting records, you can use compound index names to have more control over querying the records. This makes it easier to search and retrieve records.
-
-### Example: Uploading a Record with Compound Index Name
-
-In the example below, we are uploading a record with a compound index name:
-
-```js
-let album_data = {
-    title: "Daepa calling",
-    tracks: 5
-};
-
-skapi.postRecord(album_data, {
-    table: 'Album',
-    index: {
-        name: 'Band.AsianSpiceHouse.year',
-        value: 2023
-    }
-})
-```
-
-In this example, we have created a compound index name by joining the artist type, artist name, and "year" with a period. The `value` for the `index` is set to the "year" value of 2023.
-
-Using compound index names, you can easily query records by artist type, artist name, or release year.
-
-
-### Example: Querying Albums with Top Level Compound Index
-
-For example, you can query all albums performed by a band using the following code:
-
-```js
-skapi.getRecords({
-    table: 'Album',
-    index: {
-        name: 'Band.',
-        value: '',
-        condition: '>'
-    }
-}).then(response=>{
-    console.log(response.list); // All albums by a band.
-})
-```
-
-In this example, the query includes a period at the end of the index `name`, 'Band.'. This allows you to query the following index of the compound index name as a `string` value. Since the `value` is an empty string and the condition is set to "more than", this will retrieve all records where the index `name` begins with 'Band.'.
-
-### Example: Querying Albums with Child Level Compound Index Name
-
-You can also query albums by artist name. For example, you can query all albums by artist names starting with "Asian" like this:
-
-```js
-skapi.getRecords({
-    table: 'Album',
-    index: {
-        name: 'Band.',
-        value: 'Asian',
-        condition: '>='
-    }
-}).then(response=>{
-    console.log(response.list); // All albums by bands with a name starting with 'Asian'
-})
-```
-
-In this example, the `value` of the index is set to "Asian" and the `condition` is set to "more than or equal". This allows you to query all artist names starting with "Asian" where the index `name` begins with "Band."
-
-### Example: Querying Albums with Full Compound Index Name
-
-Finally, you can query the band Asian Spice House albums by release year as follows:
-
-```js
-skapi.getRecords({
-    table: 'Album',
-    index: {
-        name: 'Band.AsianSpiceHouse.year',
-        value: 2023
-    }
-}).then(response=>{
-    console.log(response.list); // All albums by Asian Spice House released in 2023.
-})
-```
-
-:::warning Note
-It is important to note that when querying the records with a compound index, you need to specify the index respecting the hierarchy of the compound index name. In the example provided, you cannot simply use `Band.year` as an index name. You must provide the full `Band.AsianSpiceHouse.year` index.
 :::

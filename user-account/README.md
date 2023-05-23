@@ -278,7 +278,7 @@ The `range` parameter cannot be used with the `condition` parameter.
 
 ### FetchOptions Additional Parameters (Optional)
 
-`FetchOptions` helps you to specify the number of records to return per API call and fetching the next batch of records. This is used globally for all `FetchOptions` in `skapi`.
+`FetchOptions` helps you to specify the number of results to return per API call and fetching the next batch of records. This is used globally for all database related methods that allows optional `fetchOptions` argument.
 
 See full list of [FetchOptions](/api-reference/data-types/#fetch-options)
 

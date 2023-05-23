@@ -207,6 +207,11 @@ let query = {
     table: 'Collection'
 }
 
+let fetchOptions = {
+    limit: 200,
+    fetchMore: true
+}
+
 skapi.getRecords(query).then(response=>{
     // response
     /**
@@ -219,9 +224,7 @@ skapi.getRecords(query).then(response=>{
 });
 ```
 
-In this example, the `config` object specifies the table name as 'Collection'. The retrieved records are accessed through the response.list property.
-
-You can adjust the the number of records to be returned per API call and fetching the next batch of results using `fetchOptions`.
+In this example, the `query` object specifies the table name as 'Collection'. The retrieved records are accessed through the `response.list` property. `limit` is used to increase the number of records returned to 200 and `fetchMore` is used to fetch the next batch of records.
 
 See [FetchOptions Additional Parameters](/user-account/#fetchoptions-additional-parameters-optional) on how to use `limit` and `fetchMore`.
 
@@ -393,82 +396,6 @@ skapi.getRecords({
 });
  
  ```
-
-## Fetching Index
-
-### [`getIndexes(query, fetchOptions?): Promise<DatabaseResponse>`](/api-reference/database/#getindex)
-
-You can use the `getIndexes()` method to retrieve information about the records stored with an index. This information includes:
-- `average_number`: The average of the number type values.
-- `total_number`: The total sum of the number values.
-- `number_count`: The total number of records with number as the index value.
-- `average_bool`: The rate of true values for booleans.
-- `total_bool`: The total number of true values for booleans.
-- `bool_count`: The total number of records with boolean as the index value.
-- `string_count`: The total number of records with string as the index value.
-- `index_name`: The name of the index.
-
-### Example: Fetching Index Information
-
-Here's an example of how to use `getIndexes()` with a [compound index name](/database-advanced/#compound-index-names):
-
-```js
-skapi.getIndexes({
-    table: 'Poll',
-    index: 'Vote.Beer' // index name goes here
-}).then(response => {
-    console.log(response.list[0]);
-});
-```
-
-With this example, you can fetch information about the "Vote.Beer" index in the "Poll" table and obtain statistical information about the records.
-
-### Querying index values
-
-Suppose you want to list all the indexes in a table and order them in a specific order. In that case, you can use the `order.by` parameter in the `query`. For example, to list all indexes in the "Poll" table ordered by `average_bool`, you can do the following:
-
-```js
-let config = {
-    ascending: false
-};
-
-let query = {
-    table: 'Poll',
-    order: {
-        by: 'average_bool'
-    }
-};
-
-skapi.getIndexes(query, config).then(response => {
-    console.log(response.list); // List of indexes ordered from high votes.
-});
-```
-
-Note that in the `config` object, the `ascending` value is set to `false`, so the list will be ordered in *descending* order from higher votes to lower votes.
-
-If the index name is a [compound index name](/database-advanced/#compound-index-names), you can only fetch certain indexes and order them. For example, to list all indexes under "Vote." that has higher votes then 50% and order them by `average_bool`, you can do the following:
-
-```js
-let config = {
-    ascending: false
-};
-
-let query = {
-    table: 'Poll',
-    index: 'Vote.',
-    order: {
-        by: 'average_bool',
-        value: 0.5,
-        condition: '>'
-    }
-};
-
-skapi.getIndexes(query, config).then(response => {
-    console.log(response.list); // List of votes that rates higher then 50%, ordered from high votes.
-});
-```
-
-See [FetchOptions Additional Parameters](/user-account/#fetchoptions-addition-parameters-optional) on how to use `limit` and `fetchMore`.
 
 ## Tags
 
