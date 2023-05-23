@@ -123,7 +123,7 @@ This example demonstrates a login form that uses the `login()` method to handle 
 </template>
 </CodeSwitcher>
 
-When using the `postRecord()` method, any data provided in the `data` argument will overwrite the current data of the record.
+When using the `postRecord()` method, **any data provided in the `data` argument will overwrite the current data of the record**.
 
 ### Example: Retaining Data in a Record
 
@@ -212,7 +212,7 @@ let fetchOptions = {
     fetchMore: true
 }
 
-skapi.getRecords(query).then(response=>{
+skapi.getRecords(query, fetchOptions).then(response=>{
     // response
     /**
      * endOfList: true,
