@@ -373,10 +373,10 @@ The`range` and `condition` parameter cannot be used simultaneously.
 skapi has reserved a few keywords to help with querying your records. 
 The reserved keywords are:
 
-- `$uploaded`: The timestamp at which the record was created.
-- `$updated`: The timestamp at which the record was last updated.
-- `$referenced_count`: The number of records that references this record.
-- `$user_id`: The owner of the record.
+- `$uploaded`: Fetches the timestamp at which the record was created.
+- `$updated`: Fetches the timestamp at which the record was last updated.
+- `$referenced_count`: Fetches the number of records that [references](/database-advanced/#referencing) this record.
+- `$user_id`: Fetches the creator of the record.
 
 With the exception of `$user_id`, all of these reserved keywords can be queried with `condition` and `range` just like any other index values. $user_id cannot be queried with condition or range.
 
