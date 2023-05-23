@@ -86,6 +86,10 @@ In this example, we have created a compound index name by joining the artist typ
 
 Using compound index names, you can easily query records by artist type, artist name, or release year.
 
+::: warning
+Note that the order in which you use the index is important to how you can retrieve your data. In the example above, your index cannot begin with "year" when querying records as "year" comes last.
+:::
+
 
 ### Example: Querying Albums with Top Level Compound Index
 
