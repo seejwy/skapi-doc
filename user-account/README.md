@@ -174,6 +174,27 @@ Refer to [Setting up E-Mail templates]()
 ::: -->
 
 
+## Disabling account
+
+### [`disableAccount(): Promise(string)`](/api-reference/user/#disableaccount)
+
+You can disable your user's account using the `disableAccount()` method. **All data related to the account will be deleted after 3 months**. It's important to note that the user will be automatically logged out once their account has been disabled.
+
+::: danger Warning
+Please ensure your users account have a verified email before you disable it. **Accounts with no verified email addresses cannot be recovered and will be lost**.
+:::
+
+Refer to [Recovering a Disabled Account](/authentication/#recovering-a-disabled-account) on how to recover the account.
+
+### Example: Disabling User Account
+
+``` js
+skapi.disableAccount().then(()=>{
+  // Account is disabled and user is logged out.
+});
+```
+
+
 ## Recovering a Disabled Account
 
 ### [`recoverAccount(redirect: boolean | string): Promise<string>`](/api-reference/user/#recoveraccount)
@@ -208,27 +229,6 @@ In the example above, the `recoverAccount()` method is called from the catch blo
  :::danger WARNING
 If the account is unverified, it cannot be recovered.
  :::
-
-
-## Disabling account
-
-### [`disableAccount(): Promise(string)`](/api-reference/user/#disableaccount)
-
-You can disable your user's account using the `disableAccount()` method. **All data related to the account will be deleted after 3 months**. It's important to note that the user will be automatically logged out once their account has been disabled.
-
-::: danger Warning
-Please ensure your users account have a verified email before you disable it. **Accounts with no verified email addresses cannot be recovered and will be lost**.
-:::
-
-Refer to [Recovering a Disabled Account](/authentication/#recovering-a-disabled-account) on how to recover the account.
-
-### Example: Disabling User Account
-
-``` js
-skapi.disableAccount().then(()=>{
-  // Account is disabled and user is logged out.
-});
-```
 
 ## Retrieving Other User Profiles
 
