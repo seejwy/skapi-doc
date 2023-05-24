@@ -56,6 +56,11 @@ import { Skapi } from 'skapi-js'; // imports the library
 // Initialize Skapi
 // Replace 'service_id' and 'owner_id' with the values from your skapi dashboard.
 const skapi = new Skapi('service_id', 'owner_id');
+
+// export the initialized skapi instance.
+export { skapi }
+
+// Now you can import skapi from anywhere in your project.
 ```
 
 ![Get your owner's ID and service ID](/images/service.jpg)
