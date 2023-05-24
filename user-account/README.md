@@ -1,6 +1,6 @@
 # User Account
 
-Methods related to user account management.
+In this section, we'll explore the various methods that enable users to effectively manage their own accounts.
 
 ## Changing Password
 
@@ -60,7 +60,11 @@ In the example above, a form is used to capture the user's current password and 
 
 User's profile can be updated using `updateProfile()`. The user must be logged in to make this request.
 
-If the update is successful, the updated [User Profile](/api-reference/data-types/#user-profile) object is returned if the update is successful. Please note that certain fields, such as email and phone number, will become unverified if changed.
+If the update is successful, the updated [User Profile](/api-reference/data-types/#user-profile) object is returned if the request was successful. Please note that certain fields, such as email and phone number, will become unverified if changed.
+
+:::danger Important
+When the user change their email, They will be also changing their login email as well.
+:::
 
 ### Example: Updating the User's Name
 
@@ -96,10 +100,9 @@ skapi.updateProfile(params)
 <template v-slot:form>
 
 ```html
-<form onsubmit="skapi.updateProfile(event, 
-    { 
-        response: (res) => {console.log({res})}, // response runs if successful
-        onerror: err => console.log({err}) // onerror runs if fail
+<form onsubmit="skapi.updateProfile(event, { 
+        response: res => console.log(res), // response runs if successful
+        onerror: err => alert(err.message) // onerror runs if fail
     })">
     <input type="text" name="name" placeholder="Name" required>
     <br>
@@ -181,10 +184,10 @@ Refer to [Setting up E-Mail templates]()
 You can disable your user's account using the `disableAccount()` method. **All data related to the account will be deleted after 3 months**. It's important to note that the user will be automatically logged out once their account has been disabled.
 
 ::: danger Warning
-Please ensure your users account have a verified email before you disable it. **Accounts with no verified email addresses cannot be recovered and will be lost**.
-:::
+Please ensure your users account have a verified email before you disable it.
 
-Refer to [Recovering a Disabled Account](/authentication/#recovering-a-disabled-account) on how to recover the account.
+**Accounts with no verified email addresses cannot be recovered and will be lost**.
+:::
 
 ### Example: Disabling User Account
 
@@ -199,7 +202,7 @@ skapi.disableAccount().then(()=>{
 
 ### [`recoverAccount(redirect: boolean | string): Promise<string>`](/api-reference/user/#recoveraccount)
 
-[Disabled accounts](/user-account/#disabling-account) can be reactivated **within 3 months** using the `recoverAccount()` method. This method allows users to reactivate their disabled accounts under the following conditions:
+Disabled accounts can be reactivated **within 3 months** using the `recoverAccount()` method. This method allows users to reactivate their disabled accounts under the following conditions:
 
 - The account email must be verified.
 - The `recoverAccount()` method must be called from the `catch` block of a failed `login()` attempt using the disabled account.
@@ -211,23 +214,27 @@ The `recoverAccount()` method sends an email to the account owner, containing a 
 Here's an example demonstrating how to use the recoverAccount() method:
 
 ```js
-try {
-  await skapi.login({email: 'user@email.com', password: 'password'}); // user attempt to login
-} catch(failed) {
-  console.log(failed.message); // This account is disabled.
-  console.log(failed.code); // USER_IS_DISABLED
-  if(failed.code === 'USER_IS_DISABLED') {
-    // Send a recovery email to the user with a link.
-    // When the user click on the link, the user will be redirected when account recovery is successful.
-    await skapi.recoverAccount("https://example.com");
+async function recoverProcess(){
+  try {
+    await skapi.login({email: 'user@email.com', password: 'password'}); // user attempt to login
+  }
+  catch(failed) {
+    console.log(failed.message); // This account is disabled.
+    console.log(failed.code); // USER_IS_DISABLED
+    if(failed.code === 'USER_IS_DISABLED') {
+      // Send a recovery email to the user with a link.
+      // When the user click on the link, the user will be redirected when account recovery is successful.
+      await skapi.recoverAccount("https://example.com");
+    }
   }
 }
+recoverProcess();
 ```
 
 In the example above, the `recoverAccount()` method is called from the catch block of a failed login attempt using a disabled account. If the login attempt fails with the error code "USER_IS_DISABLED," the `recoverAccount()` method is called to send a recovery email to the user. The recovery email contains a link, and when the user clicks on the link, they will be redirected to the specified URL ("https://example.com") upon successful account recovery.
  
  :::danger WARNING
-If the account is unverified, it cannot be recovered.
+If the account email is not verified, it cannot be recovered.
  :::
 
 ## Retrieving Other User Profiles
@@ -245,7 +252,11 @@ skapi.getUsers().then(u=>{
 ```
 In the example above, the `getUsers()` method is called without any parameters. This retrieves a list of all user profiles in your service.
 
-You can also search for users using attributes such as name, email, and phone number. Attributes that the user has set to private will not be searchable.
+You can also search for users using attributes such as name, email, and phone number.
+
+:::warning Note
+Attributes that the user have not set to public will not be searchable.
+:::
 
 ```js
 // Search for users whose name starts with 'Baksa'
@@ -321,7 +332,7 @@ See full list of [FetchOptions](/api-reference/data-types/#fetch-options)
 
 ### Limit Results with `fetchOptions.limit`
 
-By default, 50 rows will be fetched per call. You can adjust the limit to your preference, allowing up to **1000 rows**, by using the `limit` key.
+By default, 50 sets of the data will be fetched per call. You can adjust the limit to your preference, allowing up to **1000 sets of data**, by using the `limit` key.
 
 ### Fetch More Results with `fetchOptions.fetchMore`
 
@@ -334,9 +345,10 @@ let fetchOptions = {
   limit: 100,
   fetchMore: true
 }
-// Retrieve a list of up to 100 users in your service, sorted by most recent sign-up date.
+// Retrieve a list of up to 100 users in your service,
+// sorted by most recent sign-up date.
 skapi.getUsers(null, fetchOptions).then(u=>{
-  console.log(u.list); // List of up to 100 users in your service, sorted by most recent sign-up date.
+  console.log(u.list); // List of up to 100 users in your service.
 
   // If there is more users to fetch, retrieve the next batch of 100 users
   if(!u.endOfList) {
@@ -345,10 +357,12 @@ skapi.getUsers(null, fetchOptions).then(u=>{
     });
   }
 });
-
 ```
+
 In this example, the `fetchOptions` object includes `fetchMore: true` and `limit: 100`. This allows the `getUsers()` method to fetch the next batch of 100 users on each execution until the end of the list is reached.
 
-:::danger WARNING
-When using the `fetchMore` parameter, you must check if the response's `endOfList` is `true` before making the next call. `getUsers()` will return an empty list if there are no results.
+:::warning Note
+When using the `fetchMore` parameter, you must check if the response's `endOfList` value is `true` before making the next call. `getUsers()` will always return an empty list if it had reached the end of list.
+
+You can however, Initialize your fetch and refetch from start by toggling `fetchMore` back to `false`.
 :::

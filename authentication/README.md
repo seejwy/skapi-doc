@@ -1,10 +1,11 @@
 # Authentication
 
-Methods related to authentication.
+Authentication is a crucial component in constructing secure web services for your customers.
+In this section, we'll delve into the processes of creating user accounts, as well as managing login and logout operations, among other key tasks.
 
 ## Creating an Account
 
-### [`signup(params, options?): Promise<User | string>`](/api-reference/user/#signup)
+### [`signup(params, options?): Promise<UserProfile | string>`](/api-reference/user/#signup)
 
 To create a new account (user) in your service, you can use the `signup()` method. Users will appear in your service's list of users after they have logged in for the first time.
 
@@ -37,8 +38,8 @@ skapi.signup(parameters, options)
 <form onsubmit="skapi.signup(event, 
     { 
         login: true, 
-        response: (res) => {console.log({res})}, // response runs on successful signup
-        onerror: err => console.log({err}) // onerror runs when signup fails 
+        response: res => console.log({res}), // response runs on successful signup
+        onerror: err => alert(err.message) // onerror runs when signup fails 
     })">
     <input type="email" name="email" placeholder="E-Mail" required>
     <br>
@@ -52,56 +53,69 @@ skapi.signup(parameters, options)
 </form>
 ```
 
-The `signup()` method accepts `SubmitEvent` as its parameter. See [Working with forms](/the-basics/#working-with-forms) for more information.
-
 </template>
 </CodeSwitcher>
 
+The `signup()` method accepts `SubmitEvent` as its parameter. See [Working with forms](/the-basics/#working-with-forms) for more information.
+
 ### Additional Parameters (Optional)
 
-- `options`(Type: `Object`, optional):
-  - `login`(`boolean`): If `true`, the user will be automatically logged in to the service upon successful signup. (default: `true`)
-  - `signup_confirmation`(`boolean`): If `true` users must verify their email before they can login. (default: `false`). See [Signup Confirmation](/authentication/#signup-confirmation)
+- `options`:
+  - `login`(`boolean`): default = `false`
+    
+    If `true`, the user will be automatically logged in to the service upon successful signup.
+    
+  - `signup_confirmation`(`boolean`): default = `false`
+  
+    If `true` users must verify their email before they can login.
+    See [Signup Confirmation](/authentication/#signup-confirmation)
 
 See [full list of parameters](/api-reference/user/#signup)
 
 ::: warning NOTE
 If the user fails to confirm within a day, their signup will be invalidated, and they will need to sign up again. 
 :::
+
 ::: warning NOTE
-You should always use the `signup_confirmation` option to prevent automated signup by bots.
+It is advised to use the `signup_confirmation` option to prevent automated signup by bots.
 :::
 
 ## Signup Confirmation
 
 ### [`resendSignupConfirmation(redirect?): Promise<string>`](/api-reference/user/#resendSignupConfirmation)
 
-When an account is created with `signup_confirmation` set to `true`, users must verify their email before logging into your service. If you need to resend the confirmation email, use the `resendSignupConfirmation()` method. 
+When an account is created with `signup_confirmation` option set to `true`, users must verify their email before logging into your service. If you need to resend the confirmation email, use the `resendSignupConfirmation()` method. 
 
 ### Example: Resending Signup Confirmation Email
 
 ```js
-// user tries to login
-try {
-  let user = await skapi.login({email: 'user@email.com', password: 'password'});
-} catch(err) {
-  /**
-   * {
-   *  code: 'SIGNUP_CONFIRMATION_NEEDED',
-   *  message: "User's signup confirmation is required.",
-   *  name: 'SkapiError'
-   * }
-   */
-  
-  if(err.code === 'SIGNUP_CONFIRMATION_NEEDED') {
-    // now you can resend signup confirmation E-Mail to user@email.com.
-    let redirectUrl = "/redirect/on/success"
-    await skapi.resendSignupConfirmation(redirectUrl);
+async function loginProcess() {
+  // user tries to login
+  try {
+    let user = await skapi.login({email: 'user@email.com', password: 'password'});
+    console.log(user); // login is successful
   }
+  catch(err) {
+    /**
+     * {
+     *  code: 'SIGNUP_CONFIRMATION_NEEDED',
+     *  message: "User's signup confirmation is required.",
+     *  name: 'SkapiError'
+     * }
+     */
+    
+    if(err.code === 'SIGNUP_CONFIRMATION_NEEDED') {
+      // now you can resend signup confirmation E-Mail to user@email.com.
+      let redirectUrl = "/redirect/on/success"
+      await skapi.resendSignupConfirmation(redirectUrl);
+    }
 
-  else
-    throw err;
+    else
+      throw err;
+  }
 }
+
+loginProcess();
 ```
 
 In this example, when a user tries to log in and receives a `SIGNUP_CONFIRMATION_NEEDED` error, you can use the `resendSignupConfirmation()` method to resend the confirmation email to the user's email address. Provide a `redirectUrl` parameter to specify the URL to redirect the user after successful confirmation.
@@ -112,10 +126,10 @@ To resend signup confirmation emails, users must have at least one login or sign
 
 ## Login
 
-### [`login(params, options?): Promise<User>`](/api-reference/user/#login)
+### [`login(params, options?): Promise<UserProfile>`](/api-reference/user/#login)
 
 Use the `login()` method to log a user into your service.
-If `signup_confirmation` was set to `true` during signup,
+If `signup_confirmation` option was set to `true` during signup,
 users will not be able to log in until they have confirmed their account.
 
 ### Example: Logging in a User
@@ -130,8 +144,8 @@ let parameters = {
 }
 
 skapi.login(parameters)
-  .then(res => console.log({res}))
-  .catch(err => console.log({err}));
+  .then(response => console.log(response))
+  .catch(err => alert(err.message));
 ```
 
 In this example, the `login()` method is used to log in a user with the specified email and password. The response will contain the user information upon successful login.
@@ -140,10 +154,9 @@ In this example, the `login()` method is used to log in a user with the specifie
 <template v-slot:form>
 
 ```html
-<form onsubmit="skapi.login(event, 
-    { 
-        response: (res) => {console.log({res})}, // response runs on successful signup
-        onerror: err => console.log({err}) // onerror runs when signup fails 
+<form onsubmit="skapi.login(event, { 
+      response: res => console.log(res), // response runs on successful signup
+      onerror: err => alert(err.message) // onerror runs when signup fails 
     })">
     <input type="email" name="email" placeholder="E-Mail" required>
     <br>
@@ -160,16 +173,18 @@ This example demonstrates a login form that uses the `login()` method to handle 
 
 ## User's Profile
 
-### [`getProfile(options?): Promise<User | null>`](/api-reference/user/#getprofile)
+### [`getProfile(options?): Promise<UserProfile | null>`](/api-reference/user/#getprofile)
 
-The `getProfile()` method allows you to retrieve the profile of a user that is logged in. It returns the [User's Profile](/api-reference/data-types/#user-profile) object.
-If a user is not logged in, `getProfile()` returns `null`.
+The `getProfile()` method allows you to retrieve the profile of a user that is logged in. It returns the [User's Profile](/api-reference/data-types/#user-profile) object. If a user is not logged in, `getProfile()` returns `null`.
 
 ### Example: Retrieving User's Profile
 
 ```js
 skapi.getProfile().then(profile=>{
   console.log(profile);
+  if(profile === null) {
+    // The user is not logged in
+  }
 })
 ```
 ## Logout
@@ -191,11 +206,12 @@ skapi.logout();
 
 ## Forgot password
 
+To reset a forgotten password, you can use the following methods:
+
 ### [`forgotPassword(params, options?): Promise<string>`](/api-reference/user/#forgotpassword)
 
 ### [`resetPassword(params, options?): Promise<string>`](/api-reference/user/#resetpassword)
 
-To reset a forgotten password, you can use the following methods:
 
 ### Step 1: Request Verification Code
 
@@ -255,12 +271,11 @@ skapi.resetPassword({
 In this example, a form is used to submit the email, verification code, and new password. When the form is submitted, the `resetPassword()` method is called with the corresponding parameters.
 
 ```html
-<form onsubmit="skapi.resetPassword(event, 
-    { 
-        response: (res) => {console.log({res})}, // response runs on successful signup
-        onerror: err => console.log({err}) // onerror runs when signup fails 
+<form onsubmit="skapi.resetPassword(event, {
+      response: res => console.log(res), // response runs on successful signup
+      onerror: err => alert(err.message) // onerror runs when signup fails 
     })">
-    <input type="email" name="email" placeholder="E-Mail" required>
+    <input type="email" name="email" placeholder="E-Mail" value="someone@gmail.com" hidden>
     <br>
     <input type="text" name="code" placeholder="Verification Code" required>
     <br>
