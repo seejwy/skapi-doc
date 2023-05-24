@@ -1,7 +1,22 @@
 module.exports = {
     title: 'skapi',
     description: 'skapi API documentation',
-    themeConfig:{
+    head: [
+        ['link', { rel: 'icon', href: '/favicon.ico' }]
+    ],
+    plugins: [
+        'code-switcher',
+        ['vuepress-plugin-code-copy', {
+            color: "#636569",
+            staticIcon: true
+        }]
+    ],
+    markdown: {
+        plugins: [
+            [require('markdown-it-custom-header-link')]
+        ]
+    },
+    themeConfig: {
         // nav: [
         //     {
         //         text: 'Home',
@@ -21,7 +36,18 @@ module.exports = {
             '/user-account-tutorial/',
             '/database/',
             '/database-advanced/',
-            '/data-types/'
+            {
+                title: 'API Reference',
+                sidebarDepth: 1,
+                collapsable: false,
+                disabled: true,
+                children: [
+                    ['/api-reference/database/', 'Database'],
+                    ['/api-reference/user/', 'User'],
+                    ['/api-reference/subscription/', 'Subscription'],
+                    ['/api-reference/data-types/', 'Data Types']
+                ]
+            }
         ]
     }
 };

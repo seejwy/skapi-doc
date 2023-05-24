@@ -9,24 +9,23 @@ actionLink: /getting-started/
 features:
 - title: Database
   details:
-    Auto indexed, scalable database.
-    skapi's database combines the best of both relational and nosql architectures.
+    Auto-indexed, scalable database.
+    skapi's database combines the best of both relational and NoSQL architectures.
 - title: Authentication
   details:
-    From general user login to complex verifications.
+    From basic user authentication to complex account verifications, 
     skapi provides the simplest way to set up authentication for your web services.
 - title: HTML Friendly
   details:
-    Compatible on both vanilla HTML projects and SPA frameworks.
-    skapi is focused on getting the basics right without any additional setup.
+    Usable with both vanilla HTML projects and SPA frameworks. 
+    skapi focuses on getting the basics right without any additional setup.
 - title: Cloud Storage
   details:
-    Highly accessible cloud storage.
-    Intergrated with Skapi's database,
-    indexing and security restrictions is provided by default.
+    Highly accessible cloud storage integrated with skapi's database provides 
+    default indexing and security restrictions.
 - title: E-Mail Service
   details:
-    skapi's e-mail endpoint addresses makes sending newsletters easier.
+    skapi's unique e-mail endpoint addresses simplify newsletter sending.
 
 footer: Apache-2.0 Licensed | Copyright © 2022-present broadway Inc.
 ---

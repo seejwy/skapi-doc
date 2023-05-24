@@ -5,156 +5,235 @@ In this guide, we will cover the basics of querying and manipulating data in ska
 
 ## Creating a Record
 
-The postRecord() method allows you to create a new record in the database.
+### [`postRecord(data, config):Promise<RecordData>`](/api-reference/database/#postrecord)
+
+The `postRecord()` method is used to effortlessly **create a new record** or **update existing records** in the database.
+<!-- When using this method, you need to provide `data` as the first argument, which can be an object literal, `null` or a form `SubmitEvent`. -->
+<!-- The `config` parameter serves as a configuration for the record to be uploaded. -->
+It takes two arguments:
+
+- `data` (required): The data to be saved in key-value pairs. It can be an object literal, `null` or a form `SubmitEvent`.
+- `config` (required): Configuration for the record to be uploaded.
+
+### Example: Creating a Record in the Database
+
+<CodeSwitcher :languages="{js:'Using JavaScript',form:'Using Forms'}">
+<template v-slot:js>
 
 ```js
-let newRecord = {
-    myData: "Hello, I'm your data"
+let data = { // Data to be saved in key:value pairs
+    myData: "Hello World"
 }
 
 let config = {
-    table: 'Collection'
+    table: 'myTable'
 }
 
-skapi.postRecord(newRecord, config).then(record=>{
+skapi.postRecord(data, config).then(record=>{
     console.log(record);
     /*
+    Returns:
     {
-        data: { myData: "Hello, I'm your data" }, // Data user had posted
-        ip: "uploaders.ip.address.xxx",
-        record_id: "uploaded_record_id",
-        reference: { reference_limit: null, allow_multiple_reference: true, referenced_count: 0 }, // Reference settings
-        table: { name: 'Host', access_group: 0 }, // Table information
-        updated: 0000000000000, // Updated time in milliseconds
-        uploaded: 0000000000000, // Uploaded time in milliseconds
-        user_id: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" // Uploaders UUID
+        data: { myData: "Hello World" },
+        table: { name: 'myTable', access_group: 0 },
+        ...
     }
     */
 });
 ```
 
-The postRecord method takes two arguments.
-The first argument is the data to be uploaded. It can be any type of object, including null or a form submit event.
-And the second argument takes a configuration object.
+</template>
+<template v-slot:form>
 
-The table property in the config object is required and specifies the name of the table where you want to store the data.
-If the table does not exist, it will be created automatically when you post the record.
-If a table has no records, it will be automatically deleted.
-You can name your tables however you'd like, and use the table name to query the records you've posted.
-
-
-## Updating a Record
-
-The postRecord() method can also be used to update an existing record by specifying the record ID in the config.record_id field.
-
-```js
-let updatedRecord = {
-    newData: "Overwritten with new data."
-}
-
-let config = {
-    record_id: 'uploaded_record_id'
-}
-
-skapi.postRecord(updatedRecord, config).then(record=>{
-    console.log(record);
-    /*
-    {
-        data: { newData: "Overwritten with new data." }, // Updated data
-        ip: "uploaders.ip.address.xxx",
-        record_id: "uploaded_record_id",
-        reference: { reference_limit: null, allow_multiple_reference: true, referenced_count: 0 }, // Reference settings
-        table: { name: 'Host', access_group: 0 }, // Table information
-        updated: 0000000000000, // Updated time in milliseconds
-        uploaded: 0000000000000, // Uploaded time in milliseconds
-        user_id: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" // Uploaders UUID
-    }
-    */
-});
-```
-
-Note that if you don't specify any additional configuration parameters, the previous configurations of the record will be maintained. Only the creator of the record will have the ability to edit it.
-
-Also, for the record data, if you give undefined you can only upload record config with out touching the previous record data.
-
-Example:
-
-```js
-let config = {
-    record_id: 'record_id_to_edit',
-    table: 'NewTableName'
-}
-
-skapi.postRecord(undefined, config).then(record=>{
-    console.log(record); // Table name is changed.
-});
-```
-
-## Submitting Forms
-
-The `skapi.postRecord()` method can also accept form submissions as data. This is particularly useful when you want to upload binary files. The names of the input fields in the form will serve as the key names for the corresponding values.
-
-In case you do not use the action attribute to redirect users after a successful submission, you can include an additional response callback in the configuration to receive the response.
-
-Here's an example of how you can use skapi with a form:
 ```html
-<form onsubmit='skapi.postRecord(event, { table: "Collection", response: record => console.log(record) })'>
-    <input name='description' />
-    <input name='picture' type='file' />
-    <input type='submit' value='Submit' />
+<form onsubmit="skapi.postRecord(event, { table: 'myTable', response: record => console.log(record) })">
+    <input type="text" name="myData"/>
+    <input type="submit" value="Submit" />
 </form>
 ```
 
-In this example, a form is created with two input fields: `description` and `picture`. When the form is submitted, the `skapi.postRecord()` method is called with an event object and a configuration object that specifies the name of the table where the record should be stored (`Collection`) and a response callback function that logs the response to the console.
+This example demonstrates a login form that uses the `login()` method to handle the form submission. The `response` callback will return the user information upon successful login. See [Working with forms](/the-basics/#working-with-forms) on how to use submit forms.
 
-The `postRecord()` method will automatically retrieve the data from the form inputs and upload it to the specified table in the database.
+</template>
+</CodeSwitcher>
+
+In this example, we are creating a record within the `myTable` table.
+
+See [postRecord()](/api-reference/database/#postrecord) for more information on the parameters and return values.
+
+:::warning Note
+If the specified table does not exist, it will be automatically created when you create the record. Conversely, if a table has no records, it will be automatically deleted.
+:::
+
+## Uploading Files
+
+ skapi is designed to simplify file uploading. To upload files using the `postRecord()` method, it is *recommended* to use the `SubmitEvent` in the `data` parameter. The `name` attribute of the input fields will serve as the key name for the uploaded files.
+
+### Example: Uploading Files using HTML Form
+
+Here's an example demonstrating how you can upload files using skapi:
+
+```html
+<form onsubmit="skapi.postRecord(event, { table: 'Photos', response: record => console.log(record) })">
+    <input name="description" />
+    <input name="picture" multiple type="file" />
+    <input type="submit" value="Submit" />
+</form>
+```
+By using the `postRecord()` method, your file(s) will be uploaded under the key name `picture`. This process is handled seamlessly without any complicated file handling required.
+
+See [Working with forms](/the-basics/#working-with-forms) for more information.
+
+## Updating a Record
+
+The `postRecord()` method can also be used to update an existing record. You can specify the `record_id` in the `config` object in order to do so. 
+
+When using the `postRecord()` method to update existing records, you only need to include the parameters you want to update, along with the required `table` and `record_id` parameters. All other fields in the record will remain unchanged unless explicitly included in the method call.
+
+
+### Example: Updating a Record
+
+Here's an example that demonstrates how to update an existing record's table name using `postRecord()`:
+
+<CodeSwitcher :languages="{js:'Using JavaScript',form:'Using Forms'}">
+<template v-slot:js>
+
+```js
+let config = {
+    record_id: 'uploaded_record_id'
+    table: 'myNewTable'
+}
+
+skapi.postRecord(undefined, config).then(record=>{
+    console.log(record);
+});
+```
+
+</template>
+<template v-slot:form>
+
+```html
+<form onsubmit="skapi.postRecord(event, { record_id: 'uploaded_record_id', table: 'myNewTable', response: record => console.log(record) })">
+    <input type="submit" value="Submit" />
+</form>
+```
+
+This example demonstrates a login form that uses the `login()` method to handle the form submission. The `response` callback will return the user information upon successful login.
+
+</template>
+</CodeSwitcher>
+
+When using the `postRecord()` method, **any data provided in the `data` argument will overwrite the current data of the record**.
+
+### Example: Retaining Data in a Record
+
+Here's an explanation of how to handle record data updates using the postRecord() method:
+
+If you do not want to change the data in any way, you can pass `undefined` as the `data` argument.
+```js
+let config = {
+  record_id: 'record_id_no_change'
+};
+
+skapi.postRecord(undefined, config).then(record => {
+  console.log(record);
+});
+```
+
+### Example: Changing Data in a Record
+
+To overwrite the current data with new data, pass the updated data as the `data` argument:
+
+<CodeSwitcher :languages="{js:'Using JavaScript',form:'Using Forms'}">
+<template v-slot:js>
+
+```js
+let updatedData = {
+  newData: "Overwritten with new data."
+};
+
+let config = {
+  record_id: 'record_id_to_update'
+};
+
+skapi.postRecord(updatedData, config).then(record => {
+  console.log(record);
+});
+```
+
+</template>
+<template v-slot:form>
+
+```html
+<form onsubmit="skapi.postRecord(event, { record_id: 'uploaded_record_id', table: 'myNewTable', response: record => console.log(record) })">
+    <input name="newData" type="text">
+    <input type="submit" value="Submit" />
+</form>
+```
+
+This example demonstrates a login form that uses the `login()` method to handle the form submission. The `response` callback will return the user information upon successful login.
+
+</template>
+</CodeSwitcher>
+
+### Example: Deleting Data in a Record
+To delete the data in the record, provide `null` as the new value in the `data` argument:
+```js
+let config = {
+  record_id: 'record_id_to_delete_data'
+};
+
+skapi.postRecord(null, config).then(record => {
+  console.log(record);
+});
+```
+:::warning Note
+Please note that only the owner of the record can update a record.
+:::
 
 ## Fetching Records
+### [`getRecords(query, fetchOptions?): Promise<DatabaseResponse>`](/api-reference/database/#getrecords)
 
-The `getRecords()` method allows you to fetch records stored in the database. The example below retrieves an array of records stored in a table named 'Collection':
+The `getRecords()` method allows you to fetch records from the database. It retrieves records based on the specified query parameters and returns a promise that resolves to the response containing the [DatabaseResponse](/data-types/#DatabaseResponse/) object. It takes two arguments:
+- `query` (Object): Specifies the query parameters for fetching records.
+- `fetchOptionsno` (Object, optional): Specifies additional configuration options for fetching records.
+
+### Example: Fetching Records from a Table
+
+The following example demonstrates how to use the `getRecords()` method to retrieve records from a table named 'Collection':
 
 ```js
 let query = {
     table: 'Collection'
 }
-skapi.getRecords(query).then(response=>{
-    console.log(response.list); // Array of records in table 'Collection'
-    console.log(response.endOfList); // true if there are no more records to retrieve
-    console.log(response.startKey); // startKey for the next set of records to retrieve
+
+let fetchOptions = {
+    limit: 200,
+    fetchMore: true
+}
+
+skapi.getRecords(query, fetchOptions).then(response=>{
+    // response
+    /**
+     * endOfList: true,
+     * list: [
+     *  ...
+     * ],
+     * startKey: 'end'
+     */
 });
 ```
 
-By default, `getRecords()` retrieves up to 50 records per call. The config object passed to `getRecords()` is used to specify query parameters such as the table name to retrieve records from. The response from `getRecords()` includes the array of records, `endOfList` which is a boolean indicating if there are no more records to retrieve, and `startKey` which is the key for the next set of records to retrieve.
+In this example, the `query` object specifies the table name as 'Collection'. The retrieved records are accessed through the `response.list` property. `limit` is used to increase the number of records returned to 200 and `fetchMore` is used to fetch the next batch of records.
 
-### Fetching More Records
-
-If you need to fetch more records than the default limit of 50, you can set the `fetchMore` parameter to `true` in the config parameter. The method will then fetch the next batch of records on every execution until it reaches the end of the list.
-
-Below is an example of fetching 100 records per call:
-
-``` js
-let query = {
-    table: 'Collection'
-}
-
-let config = {
-    fetchMore: true,
-    limit: 50
-}
-
-skapi.getRecords(query, config).then(response=>{
-    // every execution will fetch next batch of 100 records until end of list.
-    console.log(response.list);
-});
-```
-
-:::warning NOTE
-When using the `fetchMore` parameter, it is the developer's responsibility to check if the returned list is the last batch of data. The method will continue to fetch the next batch of data until the end of the list is reached. Once the end of the list is reached, the method will return an empty list, indicating that there are no more items to fetch.
-:::
+See [FetchOptions Additional Parameters](/user-account/#fetchoptions-additional-parameters-optional) on how to use `limit` and `fetchMore`.
 
 ### Fetching Record by ID
 
-You can fetch a record by its unique ID using the `getRecords` method.
+You can fetch a record by its unique ID using the `getRecords()` method. When fetching a record by ID, you don't need to provide any additional configuration parameters.
+
+### Example: Fetching a Record by ID
+
 Here is an example of how to retrieve a record using its ID:
 
 ```js
@@ -163,90 +242,29 @@ let query = {
 };
 
 skapi.getRecords(query).then(response => {
-    console.log(response.list[0]); // The result will be an array with a single item.
-    console.log(response.endOfList); // This will be true, as the result set is limited to the record with the specified ID.
-    console.log(response.startKey); // This will be null, as no more records can be retrieved beyond the specified ID.
+    // response
+    /**
+     * endOfList: true,
+     * list: [{
+     *  ... // only 1 result
+     * }],
+     * startKey: null // startKey is null as no more records can be retrieved
+     */
 });
 ```
+In this example, the `query` object includes the `record_id` property set to the ID of the record you want to fetch. The response will contain a **single** record object in the `list` property.
 
 :::warning NOTE
 When fetching a record by its ID, no other configuration parameters are necessary.
 :::
 
-
-## Deleting Records
-
-The `skapi.deleteRecords()` method allows users to delete records in their tables. It accepts the following parameters:
-
-`skapi.deleteRecords()` takes an argument as below.
-```ts
-type Params = {
-    /** Record ID, or an array of record IDs to delete. */
-    record_id?: string | string[];
-
-    /** The name of the table to delete records from. If the `record_id` parameter is provided, this parameter is ignored. */
-    table?: {
-        /** The name of the table. */
-        name: string;
-        /** The access group of the table. */
-        access_group?: number | 'private' | 'public' | 'authorized';
-        /** The subscription group number (1~99) of the table. If specified, only the records posted in that group will be deleted.*/
-        subscription_group?: number;
-    };
-}
-```
-
-Here is an example of deleting records by record ID:
-
-```js
-let query = {
-    record_id: ['record_A','record_B']
-};
-
-skapi.deleteRecords(query).then(response => {
-    console.log(response); // 'SUCCESS: records are being deleted. please give some time to finish the process.'
-});
-```
-
-Users can delete up to 100 records at once. When deleting more than one record, the process will take some time to finish even after the user receives the response.
-
-Users can also delete all records they posted in certain tables. Here is an example of deleting all records posted by the user in table 'A':
-
-
-```js
-let query = {
-    table: {
-        name: 'A'
-    }
-};
-
-skapi.deleteRecords(query).then(response => {
-    console.log(response); // 'SUCCESS: records are being deleted. please give some time to finish the process.'
-});
-```
-
-Users can also delete all records they posted in certain tables with more specific targeting. Here is an example of a user deleting all records in table 'A' under access group 3 and subscription group 4.
-Learn more about [Subscription](/database-advanced/#subscription) in the [Database Advanced](/database-advanced) section.
-
-```js
-let query = {
-    table: {
-        name: 'A'
-    }
-};
-
-skapi.deleteRecords(query).then(response => {
-    console.log(response); // 'SUCCESS: records are being deleted. please give some time to finish the process.'
-});
-```
-
-
 ## Indexing
 
-When uploading records, you can set additional configurations for indexing.
-For example, you can upload album data and set the released year as an index.
-The index parameters include the name of the index and its value.
-The name is the category to be used for indexing, and the value is the value to be searched.
+When working with records, you can set additional configurations in the `index` property. Indexing allows you to categorize and search for records based on specific criteria. The `index` object consists of the index's `name`, used for indexing, and its corresponding `value`, which is searchable.
+
+### Example: Configuring Indexing for Records
+
+For example, let's consider a table of music albums. You can create an index for the `name` "year" and its corresponding `value` as the release year. This enables easier searching for music albums by release year.
 
 ```js
 let album = {
@@ -265,9 +283,9 @@ let config = {
 
 skapi.postRecord(album, config);
 ```
+### Querying with Index
 
-You can then query albums by the released year in the "Albums" table.
-Note that when fetching records, the table parameter is always required.
+You can fetch records based on the year `index` in the "Albums" table.
 
 ```js
 skapi.getRecords({
@@ -281,29 +299,9 @@ skapi.getRecords({
 });
 ```
 
-### Query Index with Conditions
-In addition to querying based on a specific index value, you can also specify conditions for your query.
-To do this, we first need to upload another record to our database.
+### Querying Index with Conditions
 
-```js
-let record = {
-    title: "Shot Shot Shot",
-    artist: "Raffina",
-    tracks: 1
-};
-
-let config = {
-    table: "Albums",
-    index: {
-        name: "year",
-        value: 2022
-    }
-};
-
-skapi.postRecord(record, config);
-```
-
-With this additional record, we can now query for albums released after the year 2020 by including a condition parameter in the index.
+You can further narrow down your search using the `condition` parameter within the `index` object.
 
 ```js
 skapi.getRecords({
@@ -315,37 +313,37 @@ skapi.getRecords({
     }
 }).then(response => {
     console.log(response.list); // List of albums released after the year 2020.
-    console.log(response.list[0].artist); // Raffina
 });
 ```
 
-The condition parameter can take the following string values:
-- '>': More than the given value
-- '>=': More than or equal to the given value
-- '=': Equal to the given value (default)
-- '<': Less than the given value
-- '<=': Less than or equal to the given value
+The `condition` parameter can take the following string values:
+- `>`: Greater than the given value
+- `>=`: Greater than or equal to the given value
+- `=`: Equal to the given value (default)
+- `<`: Less than the given value
+- `<=`: Less than or equal to the given value
 
-You can also use the equivalent string values of 'gt' | 'gte' | 'eq' | 'lt' | 'lte'.
+You can also use the equivalent string values of `gt`, `gte`, `eq`, `lt` and, `lte`, respectively.
 
-The index value can be of various types such as number, string, or boolean.
-The index condition works as expected with numbers and booleans,
-while for strings, it uses lexicographical order to compare values.
+The index value can be of type `number`, `string`, or `boolean`.
+When the index value type is `number` or `boolean`, conditions work as they do with numbers. However, for `strings`, it uses lexicographical order to compare values.
+
+For `boolean` values, `true` is represented as `1` and `false` is represented as `0`.
 
 :::warning Note
-The condition '>=' (more than or equal to) acts as a 'starts with' operation for string values.
+The `condition` '>=' (more than or equal to) acts as a 'starts with' operation when searching for `string` values.
 :::
 
 :::warning Note
-When querying an index, it will only return records with the same value type.
+When querying an index, it will only return records with the same value type. '2' and 2 are different values.
 :::
 
 
 ### Query Index with Range
 In addition to conditions, you can also retrieve records based on a range of values in the index.
-To do so, simply specify the range parameter in the index object in the getRecords method.
+To do so, specify the `range` parameter in the `index` object within the `getRecords()` method.
 
-For instance, consider the following example:
+For example, consider the following scenario:
 
 ```js
 skapi.getRecords({
@@ -357,105 +355,55 @@ skapi.getRecords({
     }
 }).then(response => {
     console.log(response.list); // List of albums released from 2015 to 2020.
-    console.log(response.list[0].artist); // DIA
 });
 ```
 
-In this example, the getRecords method will retrieve all records in the Albums table that have a "year" index value between 2015 and 2020 (inclusive). The returned records are stored in the list property of the response object.
+In the example above, the `getRecords()` method will retrieve all records in the "Albums" table that have a "year" index value between 2015 and 2020 (inclusive).
 
 :::warning NOTE
-When using range parameter, the value and range parameter value should be of the same type.
+When using the `range` parameter, the `value` and `range` parameter values should be of the same type.
 :::
 
 :::warning NOTE
-Range can condition parameter cannot be used simultaneously.
+The`range` and `condition` parameter cannot be used simultaneously.
 :::
 
+### Query Index with Reserved Keywords
 
-## Fetching Index
+skapi has reserved a few keywords to help with querying your records. 
+The reserved keywords are:
 
-The skapi.getIndex() method can be used to retrieve information about an index, including its sum, average, and total count of records.
+- `$uploaded`: Fetches the timestamp at which the record was created.
+- `$updated`: Fetches the timestamp at which the record was last updated.
+- `$referenced_count`: Fetches the number of records that [references](/database-advanced/#referencing) this record.
+- `$user_id`: Fetches the creator of the record.
 
-Here's an example of how to use skapi.getIndex():
+With the exception of `$user_id`, all of these reserved keywords can be queried with `condition` and `range` just like any other index values. `$user_id` cannot be queried with condition or range.
 
-```js
-skapi.getIndex({
-    table: 'Poll',
-    index: 'Vote.Beer'
-}).then(response => {
-    console.log(response.list[0]); // Information of VoteForBeer
-    /*
-    {
-        table: String, // Table name of the index.
-        index: String, // Index name.
-        average_bool: Number, // Rate of the true values of booleans.
-        average_number: Number, // Average of the number type values.
-        total_bool: Number, // Total number of true values of booleans.
-        total_number: Number, // Total sum of the number values.
-        boolean_count: Number, // Total number of records that has boolean as index value.
-        number_count: Number, // Total number of record that has number as index value.
-        string_count: Number, // Total number of record that has string as index value.
-        number_of_records: Number, // Total number of records in the index.
-    }
-    */
-});
-```
-
-With this example, you can fetch information about the "Vote.Beer" index of the "Poll" table, and access the various statistics about the index.
-
-### Querying index values
-
-If you want to list all the indexes in a table and order them in a specific order, you can use the order.by parameter in the query. For example, to list all indexes in the "Poll" table ordered by "average_bool", you can do the following:
+### Example: Querying Index with Reserved Keywords
+For example, let's query records created after 2021:
 
 ```js
-let config = {
-    ascending: false
-};
-
-let query = {
-    table: 'Poll',
-    order: {
-        by: 'average_bool'
-    }
-};
-
-skapi.getIndex(query, config).then(response => {
-    console.log(response.list); // List of indexes ordered from high votes.
-});
-```
-
-Note that in the config object, the ascending value is set to false, so the list will be ordered from higher votes to lower votes.
-
-If the index name is a compound index name, you can fetch only certain indexes and order them. For example, to list all indexes under "Vote." that has higher votes then 50% and order them by average_bool, you can do the following:
-
-```js
-let config = {
-    ascending: false
-};
-
-let query = {
-    table: 'Poll',
-    index: 'Vote.',
-    order: {
-        by: 'average_bool',
-        value: 0.5,
+skapi.getRecords({
+    table: "Albums",
+    index: {
+        name: '$uploaded',
+        value: 1609459200, // this timestamp is 2021 January 1,
         condition: '>'
     }
-};
-
-skapi.getIndex(query, config).then(response => {
-    console.log(response.list); // List of votes that rates higher then 50%, ordered from high votes.
+}).then(response => {
+    console.log(response.list); // List of albums released after 2021.
 });
-```
+ 
+ ```
 
 ## Tags
 
-Tags are additional pieces of information that you can associate with a record.
-They can help to provide a more specific search criteria in conjunction with index-based queries.
-Unlike index, tags cannot be queried with conditional operators.
+Tags are additional information that can be associated with a record. They provide additional search criteria to perform more detailed queries, either on their own or in combination with indexes. Unlike indexes, tags cannot be queried with conditional operators.
 
-To add tags to a record, you can use the config.tags parameter in your postRecord call.
-This parameter accepts either string or an array of strings, allowing you to add multiple tags to a single record.
+To add tags to a record, you can use the `config.tags` parameter in the `postRecord()` method. This parameter accepts a string or an array of strings, allowing you to add multiple tags to a single record.
+
+### Example: Adding Tags to a Record
 
 Here's an example of how to add tags to a record:
 
@@ -478,10 +426,11 @@ let config = {
 skapi.postRecord(record, config);
 ```
 
-And here's an example of using tags in a query:
+### Example: Querying Records by Tag
+You can also utilize tags in your queries. Here's an example:
 
 ```js
-skapi.getRecord({
+skapi.getRecords({
     table: "Albums",
     index: {
         name: "year",
@@ -491,23 +440,23 @@ skapi.getRecord({
     tag: 'Experimental'
 }).then(response=>{
     console.log(response.list); // List of albums released after 2020, that have the tag 'Experimental'.
-    console.log(response.list[0].artist); // "Asian Spice House"
+    console.log(response.list[0].data.artist); // "Asian Spice House"
 });
 ```
 
 :::warning NOTE
-It is not possible to query multiple tags in a single call.
-If you need to query multiple tags, you should fetch them individually, as shown in this example:
+It's not possible to query multiple tags in a single call. If you need to query multiple tags, you should fetch them individually using separate API calls. This limitation is intentional to prioritize scalability in the design of the skapi database.
 
+For example, to query albums with the tag 'Experimental', you can use the `getRecords()` method as follows:
 ```js
-let experimental = skapi.getRecord({
+let experimental = skapi.getRecords({
     table: "Albums",
     tag: 'Experimental'
 }).then(response=>{
     console.log(response.list); // List of albums that have the tag 'Experimental'.
 });
 
-let indie = skapi.getRecord({
+let indie = skapi.getRecords({
     table: "Albums",
     tag: 'Indie'
 }).then(response=>{
@@ -515,23 +464,24 @@ let indie = skapi.getRecord({
 });
 ```
 
-This limitation is intentional in the design of the skapi database, as it prioritizes scalability.
+By fetching the tags individually, you can retrieve the desired albums based on different tags.
 :::
 
 
 ## Access Restrictions
-You can set additional table settings by using object instead of string in the the config.table parameter.
-You can set restrictions on access to the records by giving additional settings to the config.table.access_group parameter in your postRecord call.
-The value of this parameter determines who can access the record.
-The following values can be set for config.table.access_group:
+You can add additional settings to your `table` parameter using an object instead of a string in your `config`. This allows you to set access restrictions to records using the `access_group` parameter.
 
-- "private": Only the user who uploaded the record will be able to access it.
-- "public": The record will be accessible to everyone.
-- "authorized": The record will be accessible only to users who are logged into your service.
+The following values can be set for `table.access_group`:
 
-If the config.table.access_group parameter is not set, its default value is "public".
+- `private`: Only owners of the record will be able to access it.
+- `public`: The record will be accessible to everyone.
+- `authorized`: The record will only be accessible to users who are logged into your service.
 
-Here's an example of uploading both a private and a public record:
+If `access_group` is not set, the default value is `public`.
+
+### Example: Setting Access Restrictions
+
+Here's an example that demonstrates uploading both a `private` and a `public` record:
 
 ```js
 let privateRecord = {
@@ -564,3 +514,91 @@ skapi.postRecord(publicRecord, publicConfig).then(record => {
     console.log(record); // Anyone can access this record.
 });
 ```
+
+### Example: Fetching Records with Access Restrictions
+
+In order to fetch records with `access_group` that is not `public` or `0`, you need to specify the `access_group` you are trying to fetch from. In this example, we are trying to fetch records from the "Personal" table with `private` access.
+
+```js
+let privateConfig = {
+    table: {
+        name: 'Personal',
+        access_group: 'private'
+    }
+};
+
+skapi.getRecords(privateConfig)
+    .then(res => console.log(res))
+    .catch(err => console.log(err));
+```
+
+## Deleting Records
+
+### [`deleteRecords(params): Promise<string>`](/api-reference/database/#deleterecords)
+
+The `deleteRecords()` method allows users to delete records from their tables.
+
+The `params` object accepts the following properties:
+
+- `record_id` (optional): A string or an array of strings representing the record IDs to delete.
+- `table` (optional): An object specifying the table from which to delete records.
+
+### Example: Deleting Records by Record IDs
+Here's an example that demonstrates how to delete multiple records using an array of record IDs:
+```js
+let query = {
+    record_id: ['record_a_record_id','record_b_record_id']
+};
+
+skapi.deleteRecords(query).then(response => {
+    console.log(response); // 'SUCCESS: records are being deleted. please give some time to finish the process.'
+});
+```
+
+:::warning Note
+You can only delete up to 100 records at a time.
+:::
+
+You can delete all records belonging to a user from a table within an access group. 
+
+### Example: Deleting User's Records from a Table
+Here's an example of deleting all records created by the user in the "A" table with a public access group:
+
+```js
+let query = {
+    table: {
+        name: 'A',
+        access_group: 'public'
+    }
+};
+
+skapi.deleteRecords(query).then(response => {
+    console.log(response); // 'SUCCESS: records are being deleted. please give some time to finish the process.'
+});
+```
+
+You can pass the `subscription_group` property as an additional filter to delete specific records. 
+
+### Example: Deleting Records with Subscription Group Filter
+
+Here's an example of a user deleting all records in the "A" table with a public access group and only records in subscription group 4.
+
+Learn more about [Subscription](/database-advanced/#subscription) in the [Database Advanced](/database-advanced/#database-advanced) section.
+
+```js
+let query = {
+    table: {
+        name: 'A',
+        access_group: 'public',
+        subscription_group: 4
+    }
+};
+
+skapi.deleteRecords(query).then(response => {
+    console.log(response); // 'SUCCESS: records are being deleted. please give some time to finish the process.'
+});
+```
+
+:::warning Note
+When deleting multiple records, the promise will return success immediately, but it may take some time for the deleted records to be reflected in the database.
+:::

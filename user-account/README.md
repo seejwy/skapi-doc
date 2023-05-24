@@ -1,32 +1,76 @@
 # User Account
 
-Methods related to user managing their accounts.
+Methods related to user account management.
 
 ## Changing Password
 
-The changePassword() method allows a logged in user to change their password. It requires the user's current password and their desired new password as parameters. If the password change is successful, the method will return a success message.
+### [`changePassword(params): Promise<string>`](/api-reference/user/#changepassword)
 
-The password should be at least 6 characters and 60 characters maximum.
+The `changePassword()` method allows users who are logged-in to change their password. This method requires the user's current password and the new password as parameters. If the password change is successful, the method will return a success message.
+
+Password should be at least 6 characters and no more than 60 characters.
+
+### Example: Changing Password
+
+<CodeSwitcher :languages="{js:'Using JavaScript',form:'Using Forms'}">
+<template v-slot:js>
 
 ``` js
 let params = {
     current_password: 'current password',
     new_password: 'new password'
 }
-skapi.changePassword(params).then(r=>{
-  console.log(r); // SUCCESS: Password has been changed.
-});
+
+skapi.changePassword(params)
+  .then(res => {
+    console.log({res}); // SUCCESS: Password has been changed.
+  })
+  .catch(err => {
+    console.log({err});
+  });
 ```
+
+In this example, the `changePassword()` method is called with the user's current password and the new password.
+
+</template>
+<template v-slot:form>
+
+```html
+<form onsubmit="skapi.changePassword(event, 
+    { 
+        response: (res) => {console.log({res})}, // response runs if successful
+        onerror: err => console.log({err}) // onerror runs if fail
+    })">
+    <input id="password" type="password" name="current_password" placeholder="Current Password" required>
+    <br>
+    <input id="password" type="password" name="new_password" placeholder="New Password" required>
+    <br>
+    <input type="submit" value="Change Password">
+</form>
+```
+
+In the example above, a form is used to capture the user's current password and new password. The `changePassword()` method is called when the form is submitted.
+
+</template>
+</CodeSwitcher>
 
 ## Updating account profile
 
-User can update their account profile by calling skapi.updateProfile() and passing in an object with the desired updates. The user must be logged in to make this request.
+### [`updateProfile(params, options?): Promise<User>`](/api-reference/user/#updateprofile)
 
-The updated [User profile object](/data-types/#user-profile) will be returned if the update is successful. Note that certain fields, such as the email and phone number, will be unverified if they are changed.
+User's profile can be updated using `updateProfile()`. The user must be logged in to make this request.
 
+If the update is successful, the updated [User Profile](/api-reference/data-types/#user-profile) object is returned if the update is successful. Please note that certain fields, such as email and phone number, will become unverified if changed.
+
+### Example: Updating the User's Name
+
+In this example, the user's name is updated by providing a new name value in the `params` object. If the update is successful, the updated user profile is returned.
+
+<CodeSwitcher :languages="{js:'Using JavaScript',form:'Using Forms'}">
+<template v-slot:js>
 
 ``` js
-let updates = {
+let params = {
     name: 'New name',
     // email, // The user's login email address. The email will be unverified if it is changed.
     // address, // The user's address.
@@ -40,16 +84,48 @@ let updates = {
     // birthdate_public, // The user's birthdate is public if this is set to true.
 };
 
-skapi.updateProfile(updates).then(account => {
-    console.log(account); // User's name is updated.
-});
+skapi.updateProfile(params)
+  .then(res => {
+    console.log({res}); // User's name is updated.
+  })
+  .catch(err => {
+    console.log({err});
+  });
+```
+</template>
+<template v-slot:form>
+
+```html
+<form onsubmit="skapi.updateProfile(event, 
+    { 
+        response: (res) => {console.log({res})}, // response runs if successful
+        onerror: err => console.log({err}) // onerror runs if fail
+    })">
+    <input type="text" name="name" placeholder="Name" required>
+    <br>
+    <input type="submit" value="Update Profile">
+</form>
 ```
 
-## E-Mail verification
+</template>
+</CodeSwitcher>
 
-User can verify their E-Mail by calling the skapi.verifyEmail() method. The user needs to be signed in to the account.
+## E-Mail Verification
 
-The first time this method is called, the user will receive a verification code via E-Mail. To complete the verification process, the user needs to call the skapi.verifyEmail() method again, this time passing the verification code as an argument. If the code is valid, the user's E-Mail will be verified.
+### [`verifyEmail(params?): Promise(string)`](/api-reference/user/#verifyemail)
+
+You can verify your user's email addresses with `verifyEmail()`. The user must be logged in to make this request.
+
+This method needs to be called twice to complete the verification.
+
+1. The first call sends a verification code to the user's registered email without any arguments.
+2. The second call completes the verification process by passing the verification code in the argument.
+
+
+### Example: Verifying User's Email
+
+<CodeSwitcher :languages="{js:'Using JavaScript',form:'Using Forms'}">
+<template v-slot:js>
 
 ``` js
 async function verifyEmail() {
@@ -65,18 +141,52 @@ async function verifyEmail() {
   // E-Mail is now verified
   console.log('E-Mail verified');
 }
+
+verifyEmail();
 ```
 
-::: tip
-You can customize the verification E-Mail/SMS, template from the skapi dashboard.
+In this example, the `verifyEmail()` function is used to initiate the email verification process. The first call to `verifyEmail()` sends a verification code to the user's email address. The second call provides the verification code to complete the verification process.
 
-Refer: [Setting up E-Mail templates]()
-:::
+</template>
+<template v-slot:form>
+
+```html
+<form onsubmit="skapi.verifyEmail(event, 
+    { 
+        response: (res) => {console.log({res})}, // response runs if successful
+        onerror: err => console.log({err}) // onerror runs if fail
+    })">
+    <input type="text" name="code" required>
+    <br>
+    <input type="submit" value="Verify Email">
+</form>
+```
+
+In this example a form is used to complete the email verification. **You need to call the `verifyEmail()` seperately to send the verification code to the user**. 
+
+</template>
+</CodeSwitcher>
+
+<!-- ::: tip
+You can customize the verification email's template from the skapi dashboard.
+
+Refer to [Setting up E-Mail templates]()
+::: -->
 
 
 ## Disabling account
 
-User can remove their account from your service using the skapi.disableAccount() method. Upon successful request, all data related to the account will be deleted after 3 months. Within this period, the user can recover their account if they choose to do so. It's important to note that the user will be logged out after the request is successful.
+### [`disableAccount(): Promise(string)`](/api-reference/user/#disableaccount)
+
+You can disable your user's account using the `disableAccount()` method. **All data related to the account will be deleted after 3 months**. It's important to note that the user will be automatically logged out once their account has been disabled.
+
+::: danger Warning
+Please ensure your users account have a verified email before you disable it. **Accounts with no verified email addresses cannot be recovered and will be lost**.
+:::
+
+Refer to [Recovering a Disabled Account](/authentication/#recovering-a-disabled-account) on how to recover the account.
+
+### Example: Disabling User Account
 
 ``` js
 skapi.disableAccount().then(()=>{
@@ -84,39 +194,58 @@ skapi.disableAccount().then(()=>{
 });
 ```
 
+
+## Recovering a Disabled Account
+
+### [`recoverAccount(redirect: boolean | string): Promise<string>`](/api-reference/user/#recoveraccount)
+
+[Disabled accounts](/user-account/#disabling-account) can be reactivated **within 3 months** using the `recoverAccount()` method. This method allows users to reactivate their disabled accounts under the following conditions:
+
+- The account email must be verified.
+- The `recoverAccount()` method must be called from the `catch` block of a failed `login()` attempt using the disabled account.
+
+The `recoverAccount()` method sends an email to the account owner, containing a confirmation link for account recovery. Additionally, you can provide an optional URL `string` argument to the `recoverAccount()` method, which will redirect the user to the specified URL upon successful account recovery.
+
+### Example: Recovering a Disabled Account
+
+Here's an example demonstrating how to use the recoverAccount() method:
+
+```js
+try {
+  await skapi.login({email: 'user@email.com', password: 'password'}); // user attempt to login
+} catch(failed) {
+  console.log(failed.message); // This account is disabled.
+  console.log(failed.code); // USER_IS_DISABLED
+  if(failed.code === 'USER_IS_DISABLED') {
+    // Send a recovery email to the user with a link.
+    // When the user click on the link, the user will be redirected when account recovery is successful.
+    await skapi.recoverAccount("https://example.com");
+  }
+}
+```
+
+In the example above, the `recoverAccount()` method is called from the catch block of a failed login attempt using a disabled account. If the login attempt fails with the error code "USER_IS_DISABLED," the `recoverAccount()` method is called to send a recovery email to the user. The recovery email contains a link, and when the user clicks on the link, they will be redirected to the specified URL ("https://example.com") upon successful account recovery.
+ 
+ :::danger WARNING
+If the account is unverified, it cannot be recovered.
+ :::
+
 ## Retrieving Other User Profiles
 
-The `skapi.getUsers()` method allows users to retrieve other user profiles from your service's database. By default, the method will return all users sorted by most recent sign-up date. A user login is required to use this method.
+### [`getUsers(params?, fetchOptions?): Promise<DatabaseResponse>`](/api-reference/user/#getusers)
+
+You can retrieve information of other users in your service using the `getUsers()` method. By default, `getUsers()` will return all users chronologically from the most recent sign-up. The user account using this method has to be logged in.
+
+### Example: Retrieve All User Profiles
 
 ```js
 skapi.getUsers().then(u=>{
   console.log(u.list); // List of all users in your service, sorted by most recent sign-up date.
 });
 ```
+In the example above, the `getUsers()` method is called without any parameters. This retrieves a list of all user profiles in your service.
 
-You can also search for specific users based on attributes such as name, email, and phone number. Any attributes that the user has set to private will not be searchable.
-
-The following attributes can be used in the 'searchFor' parameter:
-
-- 'user_id': unique user identifier, string
-- 'email': user's email address, string
-- 'phone_number': user's phone number, string
-- 'name': user's profile name, string
-- 'address': user's physical address, string
-- 'gender': user's gender, string
-- 'birthdate': user's birthdate in "YYYY-MM-DD" format, string
-- 'locale': the user's locale, a string representing the country code (e.g "US" for United States).
-- 'subscribers': number of subscribers the user has, number
-- 'timestamp': timestamp of user's sign-up, number(13 digit unix time)
-
-The 'condition' parameter allows you to specify the search criteria when searching for user attributes. Available options include '>', '>=', '=', '<', '<='. Default condition is '='. When searching for a string attribute, '>' and '<' will search for strings that are higher or lower in lexicographical order, respectively. '>=' will search for strings that start with the given value, '<=' will work like '='.
-
-:::warning NOTE
-- 'user_id' attribute can only be searched with '=' condition.
-- Users won't be able to search for attributes that is not set to public.
-:::
-
-The 'range' parameter allows you to search for the users who have the certain attribute value between the given value and the range value. The 'range' parameter cannot be used with 'condition' parameter.
+You can also search for users using attributes such as name, email, and phone number. Attributes that the user has set to private will not be searchable.
 
 ```js
 // Search for users whose name starts with 'Baksa'
@@ -130,68 +259,96 @@ skapi.getUsers(params).then(u=>{
 });
 
 // Search for users who joined before 2023 jan 1
-let params = {
+let timestampParams = {
   searchFor: 'timestamp',
   condition: '<',
   value: 1672498800000
 }
 
-skapi.getUsers(params).then(u=>{
+skapi.getUsers(timestampParams).then(u=>{
   console.log(u.list); // List of users who joined before 2023 jan 1
 });
 
 // Search for users whose birthday is between 1985 ~ 1990
-let params = {
+let birthdateParams = {
   searchFor: 'birthdate',
   value: '1985-01-01',
   range: '1990-12-31'
 }
 
-skapi.getUsers(params).then(u=>{
+skapi.getUsers(birthdateParams).then(u=>{
   console.log(u.list); // List of users whose birthday is between 1985 ~ 1990
 });
 ```
-### Options
+In the examples above, different search criteria are used to filter the user profiles. The searchFor parameter specifies the attribute to search for, and the value parameter specifies the search value. The condition parameter is used to set the search condition.
 
-The `skapi.getUsers()` method allows you to specify additional options to customize the data retrieval process.
+The following attributes can be used in `searchFor` to search for users:
 
-#### Limit
-By default, the method will return a maximum of 100 items per call. If you need to fetch more data, you can set the `limit` parameter up to 1000 items per call in the optional second argument of the method. Here is an example:
+- `user_id`: unique user identifier, string
+- `email`: user's email address, string
+- `phone_number`: user's phone number, string
+- `name`: user's profile name, string
+- `address`: user's physical address, string
+- `gender`: user's gender, string
+- `birthdate`: user's birthdate in "YYYY-MM-DD" format, string
+- `locale`: the user's locale, a string representing the country code (e.g "US" for United States).
+- `subscribers`: number of subscribers the user has, number
+- `timestamp`: timestamp of user's sign-up, number(13 digit unix time)
 
-```js
-let options = {
-  limit: 1000
-}
-// Retrieve a list of up to 1000 users in your service, sorted by most recent sign-up date.
-skapi.getUsers(null, options).then(u=>{
-  console.log(u.list); // List of up to 1000 users in your service, sorted by most recent sign-up date.
-});
-```
+The `condition` parameter allows you to specify the search criteria when searching with user attributes. 
 
-It is important to note that the maximum limit of items that can be retrieved per call is 1000. Any value above 1000 will be ignored and the default limit of 100 will be used.
+The operaters that can be used with `condition` include `>`, `>=`, `=`, `<`, and `<=`. If `condition` is not defined, it will compare with `=`. 
 
-#### fetchMore
-If you need to fetch users beyond the limit, you can set the fetchMore parameter to true in the options. The method will then fetch the next batch of list of users on every execution until it reaches the end of the list. Below is an example:
+When searching for a `string` attribute, `>` and `<` will search for strings that are higher or lower in the lexicographical order, respectively. To search using 'starts with', use the `>=` operator.
+
+:::warning NOTE
+- `user_id`, `email`, `phone_number`, and `address` must be searched with the '=' condition.
+- Users cannot search for attributes that are not set to public. Refer to [User Profile](/api-reference/data-types/#user-profile)
+:::
+
+The `range` parameter enables searching for users based on a specific attribute value within a given range. For example, if searching by `timestamp` with a range of 1651748526 to 1651143726, only users created between the two timestamps will be returned. 
+
+:::warning NOTE
+The `range` parameter cannot be used with the `condition` parameter.
+:::
+
+### FetchOptions Additional Parameters (Optional)
+
+`FetchOptions` helps you to specify the number of results to return per API call and fetching the next batch of records. This is used globally for all database related methods that allows optional `fetchOptions` argument.
+
+See full list of [FetchOptions](/api-reference/data-types/#fetch-options)
+
+
+### Limit Results with `fetchOptions.limit`
+
+By default, 50 rows will be fetched per call. You can adjust the limit to your preference, allowing up to **1000 rows**, by using the `limit` key.
+
+### Fetch More Results with `fetchOptions.fetchMore`
+
+To fetch more results, you can set the `fetchMore` parameter to `true` in the `fetchOptions` object. This allows you to retrieve results in batches until the end of the list is reached.
+
+### Example: Fetching 100 More Results
 
 ``` js
-let options = {
+let fetchOptions = {
   limit: 100,
   fetchMore: true
 }
 // Retrieve a list of up to 100 users in your service, sorted by most recent sign-up date.
-skapi.getUsers(null, options).then(u=>{
+skapi.getUsers(null, fetchOptions).then(u=>{
   console.log(u.list); // List of up to 100 users in your service, sorted by most recent sign-up date.
 
   // If there is more users to fetch, retrieve the next batch of 100 users
   if(!u.endOfList) {
-    skapi.getUsers(null, options).then(u=>{
+    skapi.getUsers(null, fetchOptions).then(u=>{
       console.log(u.list); // List of the next 100 users from the database.
     });
   }
 });
 
 ```
+In this example, the `fetchOptions` object includes `fetchMore: true` and `limit: 100`. This allows the `getUsers()` method to fetch the next batch of 100 users on each execution until the end of the list is reached.
 
-:::warning NOTE
-When using the fetchMore parameter, it is the developer's responsibility to check if the returned list is the last batch of data. The method will continue to fetch the next batch of data until the end of the list is reached. Once the end of the list is reached, the method will return an empty list, indicating that there are no more items to fetch.
+:::danger WARNING
+When using the `fetchMore` parameter, you must check if the response's `endOfList` is `true` before making the next call. `getUsers()` will return an empty list if there are no results.
 :::

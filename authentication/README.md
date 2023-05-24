@@ -1,83 +1,89 @@
 # Authentication
 
+Methods related to authentication.
+
 ## Creating an Account
 
-To create a new account with skapi, you can use the `signup()` method. This method allows you to specify a variety of parameters to create the account, as well as some optional options.
+### [`signup(params, options?): Promise<User | string>`](/api-reference/user/#signup)
 
-Here's an example of how to use `signup(params, options?)`:
+To create a new account (user) in your service, you can use the `signup()` method. Users will appear in your service's list of users after they have logged in for the first time.
 
-```ts
+### Example: Creating an Account
+Here's an example of how to use `signup()`:
+
+<CodeSwitcher :languages="{js:'Using JavaScript',form:'Using Forms'}">
+<template v-slot:js>
+
+```js
 let parameters = {
   email: "user@email.com",
-  password: "password", // The password should be at least 6 characters.
+  password: "password", // Password must be between 6 and 60 characters.
   name: "User's name"
 };
 
 let options = {
-  login: true // If set to true, the user will be automatically logged in to the service upon successful signup.
+  login: true // If set to true, users will be automatically logged in on signup.
 };
 
-skapi.signup(parameters, options).then(r => console.log(r));
+skapi.signup(parameters, options)
+  .then(res => console.log({res}))
+  .catch(err => console.log({err}));
 ```
 
-### parameters
+</template>
+<template v-slot:form>
 
-``` ts
-type parameters = {
-  email: string; // The email address to use for the account. The email should be at least 5 characters and a maximum of 64 characters.
-  password: string; // The password to use for the account. The password should be at least 6 characters and a maximum of 60 characters.
-  name?: string; // The user's name to be used in their login profile.
-  email_public?: boolean; // Set to true to make the email address visible to others.
-  phone_number?: string; // The user's phone number. The format should be "+0012341234". This will not be visible to others unless the phone_number_public option is set to true.
-  phone_number_public?: boolean; // Set to true to make the phone number visible to others.
-  address?: string; // The user's address to be used in their login profile. This will not be visible to others unless the address_public option is set to true.
-  address_public?: boolean; // Set to true to make the address visible to others.
-  birthdate?: string; // The user's birthdate to be used in their login profile. The format should be "YYYY-MM-DD". This will not be visible to others unless the birthdate_public option is set to true.
-  birthdate_public?: boolean; // Set to true to make the birthdate visible to others.
-  gender?: string; // The user's gender to be used in their login profile. Can be "female" or "male". Other values can be used if neither of these are applicable. This will not be visible to others unless the gender_public option is set to true.
-  gender_public?: boolean; // Set to true to make the gender visible to others.
-};
+```html
+<form onsubmit="skapi.signup(event, 
+    { 
+        login: true, 
+        response: (res) => {console.log({res})}, // response runs on successful signup
+        onerror: err => console.log({err}) // onerror runs when signup fails 
+    })">
+    <input type="email" name="email" placeholder="E-Mail" required>
+    <br>
+    <input id="password" type="password" name="password" placeholder="Password" required>
+    <br>
+    <input id="confirm_password" type="password" placeholder="Confirm Password" required>
+    <br>
+    <input name="name" placeholder="Your name">
+    <br>
+    <input type="submit" value="Create Account">
+</form>
 ```
 
-### Options (Optional)
+The `signup()` method accepts `SubmitEvent` as its parameter. See [Working with forms](/the-basics/#working-with-forms) for more information.
 
-Optional parameters for the `signup()` method.
+</template>
+</CodeSwitcher>
 
-- signup_confirmation:
-  - If `options.signup_confirmation` is set to `true`, the user will receive an email to confirm their signup. Once they click the link in the email, their signup will be confirmed, and they will be able to log in to your service. If the user does not confirm within a day, their signup will be invalid, and they will need to sign up again. Alternatively, you can specify a URL to redirect the user to when they click the confirmation link. It is advised to let your users confirm their signup to prevent automated bots.
-- login:
-  - If set to `true`, the user will be automatically logged in to the service upon successful signup.
-- email_subscription:
-  - If set to `true`, the user is subscribed to the service newsletters when account is created. `options.signup_confirmation` must be `true`.
+### Additional Parameters (Optional)
 
-```ts
-type options = {
-  signup_confirmation?: boolean | string;
-  email_subscription?: boolean;
-  login?: boolean;
-  response?(response: any): any; // A callback function to be called upon success.
-  onerror?(error: Error): any; // A callback function to be called on error.
-};
-```
-### Returns
+- `options`(Type: `Object`, optional):
+  - `login`(`boolean`): If `true`, the user will be automatically logged in to the service upon successful signup. (default: `true`)
+  - `signup_confirmation`(`boolean`): If `true` users must verify their email before they can login. (default: `false`). See [Signup Confirmation](/authentication/#signup-confirmation)
 
-Returns an [User profile object](/data-types/#user-profile) when `options.login` is `true`.
+See [full list of parameters](/api-reference/user/#signup)
 
-If `options.login` is not set or is set to `false`, the method returns one of the following message strings:
-- "SUCCESS: The account has been created. User's signup confirmation is required."
-- "SUCCESS: The account has been created."
+::: warning NOTE
+If the user fails to confirm within a day, their signup will be invalidated, and they will need to sign up again. 
+:::
+::: warning NOTE
+You should always use the `signup_confirmation` option to prevent automated signup by bots.
+:::
 
 ## Signup Confirmation
 
-When the user created an account with `options.signup_confirmation` = `true` in `signup()` options,
-User will need to click the link in the email to log in to your service.
-If a user didn't receive or lost their signup confirmation email, you can allow them to request another one by using the `resendSignupConfirmation()` method.
-To resend the user's signup confirmation email, the user must have at least one attempt to login to your service.
+### [`resendSignupConfirmation(redirect?): Promise<string>`](/api-reference/user/#resendSignupConfirmation)
+
+When an account is created with `signup_confirmation` set to `true`, users must verify their email before logging into your service. If you need to resend the confirmation email, use the `resendSignupConfirmation()` method. 
+
+### Example: Resending Signup Confirmation Email
 
 ```js
 // user tries to login
 try {
-  let user = await skapi.login('user@email.com', 'password');
+  let user = await skapi.login({email: 'user@email.com', password: 'password'});
 } catch(err) {
   /**
    * {
@@ -98,11 +104,24 @@ try {
 }
 ```
 
+In this example, when a user tries to log in and receives a `SIGNUP_CONFIRMATION_NEEDED` error, you can use the `resendSignupConfirmation()` method to resend the confirmation email to the user's email address. Provide a `redirectUrl` parameter to specify the URL to redirect the user after successful confirmation.
+
+::: warning Note
+To resend signup confirmation emails, users must have at least one login or signup attempt to the service.
+:::
+
 ## Login
 
-Use the `login` method to log a user into your service.
-If the `options.signup_confirmation` was set to `true` in the `skapi.signup()` options,
-the user will not be able to log in until they have confirmed their signup confirmation email.
+### [`login(params, options?): Promise<User>`](/api-reference/user/#login)
+
+Use the `login()` method to log a user into your service.
+If `signup_confirmation` was set to `true` during signup,
+users will not be able to log in until they have confirmed their account.
+
+### Example: Logging in a User
+
+<CodeSwitcher :languages="{js:'Using JavaScript',form:'Using Forms'}">
+<template v-slot:js>
 
 ```js
 let parameters = {
@@ -110,81 +129,56 @@ let parameters = {
   password: 'password'
 }
 
-skapi.login(parameters).then(account => console.log(account));
+skapi.login(parameters)
+  .then(res => console.log({res}))
+  .catch(err => console.log({err}));
 ```
 
-### parameters
+In this example, the `login()` method is used to log in a user with the specified email and password. The response will contain the user information upon successful login.
 
-```ts
-// Params accepts SubmitEvent
+</template>
+<template v-slot:form>
 
-type parameters = {
-  email:string; // User's login E-Mail.
-  password:string; // User's login password.
-}
+```html
+<form onsubmit="skapi.login(event, 
+    { 
+        response: (res) => {console.log({res})}, // response runs on successful signup
+        onerror: err => console.log({err}) // onerror runs when signup fails 
+    })">
+    <input type="email" name="email" placeholder="E-Mail" required>
+    <br>
+    <input id="password" type="password" name="password" placeholder="Password" required>
+    <br>
+    <input type="submit" value="Login">
+</form>
 ```
 
-### Returns
+This example demonstrates a login form that uses the `login()` method to handle the form submission. The `response` callback will return the user information upon successful login.
 
-Returns an [User profile object](/data-types/#user-profile) when log in is successful.
-
-### Errors
-```ts
-{
-  code: 'INVALID_REQUEST';
-  message: string;
-  name: 'SkapiError';
-}
-|
-{
-  code: 'SIGNUP_CONFIRMATION_NEEDED';
-  message: "User's signup confirmation is required.";
-  name: 'SkapiError';
-}
-|
-{
-  code: 'USER_IS_DISABLED';
-  message: 'This account is disabled.';
-  name: 'SkapiError';
-}
-|
-{
-  code: 'INCORRECT_USERNAME_OR_PASSWORD';
-  message: 'Incorrect username or password.';
-  name: 'SkapiError';
-}
-```
+</template>
+</CodeSwitcher>
 
 ## User's Profile
 
-Once a user has been logged in, you can call `skapi.getProfile()` to retrieve [User's Profile](/data-types/#user-profile).
-If the user is not logged in, `skapi.getProfile()` will return null.
+### [`getProfile(options?): Promise<User | null>`](/api-reference/user/#getprofile)
+
+The `getProfile()` method allows you to retrieve the profile of a user that is logged in. It returns the [User's Profile](/api-reference/data-types/#user-profile) object.
+If a user is not logged in, `getProfile()` returns `null`.
+
+### Example: Retrieving User's Profile
 
 ```js
-skapi.getProfile().then(account=>{
-  console.log(account);
+skapi.getProfile().then(profile=>{
+  console.log(profile);
 })
 ```
-
-### redirectUrl (optional)
-When a URL string is provided as an argument, you can redirect the user to the URL once they click on the confirmation email link.
-
-### Return
-```ts
-'SUCCESS: Signup confirmation E-Mail has been sent.'
-```
-
-### Errors
-```ts
-{
-  code: 'INVALID_REQUEST',
-  message: 'Least one login attempt is required.' | '"Url" is an invalid url.'
-}
-```
-
 ## Logout
 
-Logs user out from the service.
+### [`logout(): Promise<string>`](/api-reference/user/#logout)
+
+The `logout()` method logs the user out from the service.
+
+### Example: Logging Out
 
 ```js
 skapi.logout();
@@ -197,58 +191,90 @@ skapi.logout();
 
 ## Forgot password
 
-To reset a forgotten password, a user can follow the steps below:
+### [`forgotPassword(params, options?): Promise<string>`](/api-reference/user/#forgotpassword)
 
-- Request a reset password code by calling `skapi.forgotPassword(params)`, where `params` is an object containing the user's email address.
-- The user will receive an email containing a verification code.
-- Use the `skapi.resetPassword(params)` method to reset the password, passing in an object containing the user's email, the verification code, and the new password.
-- Upon successful password reset, the user's account password will be set to the new password provided.
+### [`resetPassword(params, options?): Promise<string>`](/api-reference/user/#resetpassword)
+
+To reset a forgotten password, you can use the following methods:
+
+### Step 1: Request Verification Code
+
+Use the `forgotPassword()` method to request a verification code.
+
+<CodeSwitcher :languages="{js:'Using JavaScript',form:'Using Forms'}">
+<template v-slot:js>
 
 ```js
-let params = {
-  email: 'user@email.com'
-}
-
-skapi.forgotPassword(params);
+skapi.forgotPassword({email: 'someone@gmail.com'});
 // User receives an e-mail with a verification code.
 ```
 
-```js
-// User can now use the verification code to reset password.
-let params = {
-  email: 'user@email.com',
-  code: 'xxxx...',
-  new_password: 'users_new_password' // The password should be at least 6 characters and 60 characters maximum.
-}
-skapi.resetPassword({ email, code, new_password })
-    .then(()=>{
-        // New password is set.
-    });
+In this example, the `forgotPassword()` method is called with the user's email as a parameter. The user will receive an email containing a verification code that they can use to reset their password.
+
+</template>
+<template v-slot:form>
+
+```html
+<form onsubmit="skapi.forgotPassword(event, 
+    { 
+        response: (res) => {console.log({res})}, // response runs on successful signup
+        onerror: err => console.log({err}) // onerror runs when signup fails 
+    })">
+    <input type="email" name="email" placeholder="E-Mail" required>
+    <br>
+    <input type="submit" value="Request Verification Code">
+</form>
 ```
 
-::: warning NOTE
-If the user's account does not have a verified e-mail address, user will not be able to receive any verification code.
-Advise users to verify their e-mail.
+In this example, a form is used to submit the email address. When the form is submitted, the `forgotPassword()` method is called with the email parameter.
+
+</template>
+</CodeSwitcher>
+
+### Step 2: Reset Password
+
+The user will receive an email containing a verification code. After the user receives the verification code, they can use the `resetPassword()` method to reset their password.
+
+<CodeSwitcher :languages="{js:'Using JavaScript',form:'Using Forms'}">
+<template v-slot:js>
+
+In this example, the `resetPassword()` method is called with the user's email, the verification code received via email, and the new password. Upon successful password reset, the user's account password will be set to the new password provided.
+
+```js
+skapi.resetPassword({
+  email: 'someone@gmail.com', 
+  code: '123456', // code sent to user's registered email address
+  new_password: 'new_password' // The password should be at least 6 characters and 60 characters maximum.
+}).then(() => {
+  // new password is set
+});
+```
+</template>
+<template v-slot:form>
+
+In this example, a form is used to submit the email, verification code, and new password. When the form is submitted, the `resetPassword()` method is called with the corresponding parameters.
+
+```html
+<form onsubmit="skapi.resetPassword(event, 
+    { 
+        response: (res) => {console.log({res})}, // response runs on successful signup
+        onerror: err => console.log({err}) // onerror runs when signup fails 
+    })">
+    <input type="email" name="email" placeholder="E-Mail" required>
+    <br>
+    <input type="text" name="code" placeholder="Verification Code" required>
+    <br>
+    <input type="password" name="new_password" placeholder="New Password" required>
+    <br>
+    <input type="submit" placeholder="Confirm Password" value="Change Password">
+</form>
+```
+
+</template>
+</CodeSwitcher>
+
+:::danger WARNING
+If a user's email is not verified, they will not be able to receive a verification code and may lose access to their account permanently. 
+
+It is highly recommended to encourage users to verify their email addresses.
 :::
-
-## Recovering a Disabled Account
-
-If a user's account has been disabled, it is possible to recover it within 3 months by using the `skapi.recoverAccount()` method. In order to initiate the account recovery process, the user must have at least one sign-in attempt associated with their disabled account and their email must have been verified. If the account is unverified, it cannot be recovered.
-
-The `skapi.recoverAccount()` method sends a signup confirmation email to the user with a confirmation link. It also accepts an optional URL argument, which will be used to redirect the user to a specific page upon successful account recovery.
-
-Here is an example of how to use the `skapi.recoverAccount()` method:
-
-```js
-try {
-  await skapi.signin('user@email.com','password'); // user attempt to login
-} catch(failed) {
-  console.log(failed.message); // This account is disabled.
-  console.log(failed.code); // USER_IS_DISABLED
-  if(failed.code === 'USER_IS_DISABLED') {
-    // Send a recovery email to the user with a link.
-    // When the user click on the link, the user will be redirected when account recovery is successful.
-    await skapi.recoverAccount("http://mywebsite.com/welcome-back");
-  }
-}
-```
