@@ -84,7 +84,7 @@ skapi.postRecord(album_data, {
 
 In this example, we have created a compound index name by joining the artist type, artist name, and "year" with a period. The `value` for the `index` is set to the "year" value of 2023.
 
-Using compound index names, you can easily query records by artist type, artist name, or release year.
+Using compound index names, you can easily query records by artist type, artist name, or release year. The value of `index` can only be searched when using the full index name. If you search for the value while using only part of the index, the results is based on the child indexes.
 
 ::: warning
 Note that the order in which you use the index is important to how you can retrieve your data. In the example above, your index cannot begin with "year" when querying records as "year" comes last.

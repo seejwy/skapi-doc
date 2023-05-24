@@ -16,7 +16,7 @@ postRecord(
             name: string; // Only alphanumeric and period allowed.
             value: string | number | boolean; // Only alphanumeric and spaces allowed.
         };
-        tags: string | <string>[]; // other than space and period, special characters are not allowed 
+        tags: string | <string>[]; // Only alphanumeric and spaces allowed.
         reference?: {
             allow_multiple_reference?: boolean; // default: true
             record_id?: string;
