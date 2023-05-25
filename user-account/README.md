@@ -336,9 +336,7 @@ By default, 50 sets of the data will be fetched per call. You can adjust the lim
 
 ### Fetch More Results with `fetchOptions.fetchMore`
 
-To fetch more results, you can set the `fetchMore` parameter to `true` in the `fetchOptions` object. This allows you to retrieve results in batches until the end of the list is reached.
-
-### Example: Fetching 100 More Results
+To fetch the next batch of results, you can set the `fetchMore` parameter to `true` in the `fetchOptions` object. This allows you to retrieve results in batches until the end of the list is reached.
 
 ``` js
 let fetchOptions = {
