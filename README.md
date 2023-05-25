@@ -29,9 +29,7 @@ To import skapi using the script tag, add the following script to the head tag o
 This is what your starter code should look like:
 ```html
 <!DOCTYPE html>
-<head>
-    <script src="https://cdn.jsdelivr.net/npm/skapi-js@latest/dist/skapi.js"></script>
-</head>
+<script src="https://cdn.jsdelivr.net/npm/skapi-js@latest/dist/skapi.js"></script>
 <body>
   <!-- Your content goes here -->
 </body>
@@ -43,7 +41,6 @@ This is what your starter code should look like:
 </script>
 ```
 
-The `Skapi` constructor accepts a third argument which is `{autologin: true}`. If `autologin` is `true`, it keeps users logged in until `logout()` is called.
 
 ### Using NPM and build tools such as webpack
 
@@ -60,7 +57,7 @@ Then, import the library into your main JavaScript file:
 import { Skapi } from 'skapi-js'; // imports the library
 
 // Initialize Skapi
-// Replace 'service_id' and 'owner_id' with your service's values found in your skapi dashboard.
+// Replace 'service_id' and 'owner_id' with the values from your skapi dashboard.
 const skapi = new Skapi('service_id', 'owner_id');
 
 // export the initialized skapi instance.
@@ -68,6 +65,7 @@ export { skapi }
 
 // Now you can import skapi from anywhere in your project.
 ```
+
 ![Get your owner's ID and service ID](/images/service.jpg)
 ::: warning NOTE
 Don't forget to replace `service_id` and `owner_id` with the values provided in your skapi dashboard.
@@ -79,20 +77,20 @@ Now you can now use your initialized skapi object in your application.
 The example below is calling the `getConnection()` method:
 
 ```js
-// First, instantiate the skapi object
+// Initializing the skapi object...
 const skapi = new Skapi('service_id', 'owner_id');
 
-// You can now call any skapi methods. Example, getConnection()
+// ...you can now call any skapi methods. Example, getConnection()
 skapi.getConnection();
 ```
 
 ::: warning NOTE
-You should only instantiate `skapi` once.
+You should initialize `skapi` only once in your application.
 :::
 
 ### Auto Login
 
-The Skapi constructor accepts an optional options object as the third argument.
+The skapi constructor accepts an optional options object as the third argument.
 
 ```javascript
 const options = {
@@ -122,16 +120,14 @@ After initializing the skapi object, you can retrieve information about the curr
 Here's an example of how to use `getConnection()`:
 
 ```javascript
-skapi
-  .getConnection()
-  .then((c) => {
+skapi.getConnection().then((c) => {
     // Connection successful
     console.log(c);
-  })
-  .catch((err) => {
+  }).catch((err) => {
     // Connection failed
     console.log(err);
     throw err;
   });
 ```
-If you need a refresher on working with promises, read [Working with Promises](/the-basics/#working-with-promises).
+
+Every skapi method returns a `promise`. Refer [Working with Promises](/the-basics/#working-with-promises).

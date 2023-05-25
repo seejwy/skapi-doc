@@ -126,5 +126,3 @@ skapi.getConnection().then((c) => {
     throw err;
   });
 ```
-
-Every skapi method returns a `promise`. Refer [Working with Promises](/the-basics/#working-with-promises).
