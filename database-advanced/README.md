@@ -294,7 +294,7 @@ To remove a reference, set the the `reference.record_id` parameter to `null` whe
 
 ```js
 skapi.postRecord(undefined, {
-    record_id: 'record_id_of_the_comment_to_edit',
+    record_id: 'record_id_of_the_comment_to_remove',
     reference: { record_id: null }
 }).then(record => {
     console.log(record);  // The reference has been removed.
@@ -368,6 +368,9 @@ skapi database provides `subscription_group` in its records. You can use `subscr
 To create a subscription group, specify a `subscription_group` between 1 and 99 when uploading a record.
 
 ### Example: Subscribing to a User's Subscription Group
+
+
+First let's add a new record into `subscription_group` 5 using User A. 
 
 ```js
 // User 'A' uploads record in subscription group 5.
@@ -498,21 +501,21 @@ The `getSubscriptions()` method retrieves subscription information from the data
 ```js
 // Retrieve all subscription information where userA is the subscriber
 skapi.getSubscriptions({
-  subscriber: "userA"
+  subscriber: "userA_user_id"
 }).then((response) => {
   console.log(response.list); // An array of subscription information
 });
 
 // Retrieve all subscription information where userB is being subscribed to
 skapi.getSubscriptions({
-  subscription: "userB"
+  subscription: "userB_user_id"
 }).then((response) => {
   console.log(response.list); // An array of subscription information
 });
 
 // Retrieve subscription information where userA is the subscriber in subscription group is 2
 skapi.getSubscriptions({
-  subscriber: "userA",
+  subscriber: "userA_user_id",
   group: 2,
 }).then((response) => {
   console.log(response.list); // An array of subscription information
@@ -520,7 +523,7 @@ skapi.getSubscriptions({
 
 // Retrieve all subscription information where userA is a subscriber and subscription group is group 2 and userA is blocked
 skapi.getSubscriptions({
-  subscriber: "userA",
+  subscriber: "userA_user_id",
   group: 2,
   blocked: true,
 }).then((response) => {
@@ -529,11 +532,11 @@ skapi.getSubscriptions({
 
 // Check if userA is subscribed to userB in group 2
 skapi.getSubscriptions({
-  subscriber: "userA",
-  subscription: "userB",
+  subscriber: "userA_user_id",
+  subscription: "userB_user_id",
   group: 2
 }).then((response) => {
-  console.log(response.list?[0]); // subscription information if subscribed
+  console.log(response.list?.[0]); // subscription information if subscribed
 });
 ```
 
