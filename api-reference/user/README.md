@@ -17,7 +17,7 @@ signup(
         address_public?: boolean; // Default = false
         gender_public?: boolean; // Default = false
         birthdate_public?: boolean; // Default = false
-        misc: string; // Additional string value that can be used freely.
+        misc?: string; // Additional string value that can be used freely.
     } | SubmitEvent;
     options?: {
         signup_confirmation?: boolean | string; // Default = false
@@ -32,12 +32,12 @@ signup(
 
 ```ts
 // when options.login is true, return User
-User
+UserProfile
 | "SUCCESS: The account has been created. User's signup confirmation is required." 
 | "SUCCESS: The account has been created."
 ```
 
-See [User](/api-reference/data-types/#user)
+See [UserProfile](/api-reference/data-types/#user-profile)
 
 ### Errors
 ```ts
@@ -62,8 +62,6 @@ resendSignupConfirmation(
 'SUCCESS: Signup confirmation E-Mail has been sent.'
 ```
 
-See [User](/api-reference/data-types/#user)
-
 ### Errors
 ```ts
 {
@@ -78,7 +76,7 @@ See [User](/api-reference/data-types/#user)
 
 ```ts
 login(
-    params: { 
+    params: {
         email: string; 
         password: string;
     } | SubmitEvent;
@@ -88,7 +86,7 @@ login(
     };
 )
 ```
-#### Returns [User](/api-reference/data-types/#user)
+#### Returns [UserProfile](/api-reference/data-types/#user-profile)
 
 ### Errors
 ```ts
@@ -116,12 +114,12 @@ login(
 ```ts
 getProfile(
     options?: {
-        refreshToken: boolean;
+        refreshToken: boolean; // When true, JWT token is refreshed before fetching the user attributes.
     }
 )
 ```
 
-#### Returns [User](/api-reference/data-types/#user)
+#### Returns [UserProfile](/api-reference/data-types/#user-profile)
 
 ## logout
 
@@ -303,7 +301,7 @@ type DatabaseResponse = {
         address_public?: boolean;
         gender_public?: boolean;
         birthdate_public?: boolean;
-        misc: string;
+        misc?: string;
     }[];
     startKey: string;
     endOfList: boolean;

@@ -27,7 +27,7 @@ skapi.getTables({
 })
 ```
 
-In this example, the condition property is set to `>`, and `table` is set to `C`.  This query will return the table names that come after table 'C' in lexographic order, such as 'D', 'E', 'F', 'G', and so on.
+In this example, the condition property is set to `>`, and `table` is set to `C`.  This query will return the table names that come after table 'C' in lexographic order, such as 'Cc', 'D', 'E', 'F', 'G'... and so on.
 
 ## Fetching Tags
 
@@ -61,7 +61,7 @@ In this example, the condition property is set to `>`, and `table` is set to `A`
 
 ## Compound Index Names
 
-When posting records, you can use compound index names to have more control over querying the records. This makes it easier to search and retrieve records.
+When posting records, you can use compound index names to have more control over querying the records. This makes it more flexible to search and retrieve records.
 
 ### Example: Uploading a Record with Compound Index Name
 
@@ -321,10 +321,10 @@ When uploading records, you can set restrictions on referencing using the follow
 `reference_limit`: The maximum number of references that can be created for a given record. If this parameter is set to null, the number of references is unlimited. The default value is `null`.
 
 :::tip Hint
-Set `reference_limit` to `0` to prevent referencing.
+Set `reference_limit` to `0` to prevent others to reference the record.
  :::
 
-`allow_multiple_reference`: If set to `false`, a user will be able to post only one reference to the same record. If set to `true`, a user will be able to post multiple references. The default value is `true`.
+`allow_multiple_reference`: If set to `false`, a user will be able to post only one reference to the same record. This is useful for building a Voting systems where user should be allowed to reference a certain record only once. If set to `true`, a user will be able to post multiple references. The default value is `true`.
 
 ### Example: Creating a Poll with Restricted Referencing
 
@@ -513,7 +513,7 @@ skapi.getSubscriptions({
   console.log(response.list); // An array of subscription information
 });
 
-// Retrieve subscription information where userA is the subscriber and subscription group is 2
+// Retrieve subscription information where userA is the subscriber in subscription group is 2
 skapi.getSubscriptions({
   subscriber: "userA_user_id",
   group: 2,
